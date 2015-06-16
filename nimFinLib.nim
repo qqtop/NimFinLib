@@ -795,7 +795,8 @@ proc rsi* (dx:Df , N: int):Ts =
   
   # call : rsi(dfobject, numberofdays for ema)
   
-  # that means we need to calc ema 2 times so we make to series of our closeprices
+  # that means we need to calc ema 2 times so we make two series
+  # of our closeprices for up and down side days
   var closeup : Df
   var closedn : Df
   
@@ -857,12 +858,13 @@ proc sharpe*(adfstock:Df, adfriskfree:Df):float =
   ## 
   ## This is not ok yet 
   
-  #  values seem incorrect  this ratios seem to be calculated nilly willy differently everywhere
-  # maybe becoz they have a 95% p value factored in
+  # values seem incorrect  this ratios seem to be calculated nilly willy 
+  # differently everywhere
+  # maybe becoz they have a 95% p value factored in or different undarlying assumtions
   # also note we use riskfree as 0  so adfriskfree is
   # currently not really required 
   # 
-  # ingredients (returnsstock - returnsriskfree) / stdev stock
+  # ingredients (returnsstock - returnsriskfree) / sqrt (stdev stock - riskfree)
   var retstock = dailyReturns(adfstock.close)
   var retrf    = dailyReturns(adfriskfree.close)
 
