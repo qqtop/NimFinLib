@@ -28,12 +28,13 @@ Description: A basic library for financial calculations with Nim
               
 
 
-nimFinTxx are test programs .
+nimFinTxx are test programs to show use of various procs and functions.
+
 
 NOTE : 
   
-     This alpha software and may change without prior notice              
-     Forking , suggestions welcome .
+     This is alpha software and may change without prior notice              
+     Forking , suggestions are welcome .
               
               
               
