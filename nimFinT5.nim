@@ -1,7 +1,8 @@
 import os,terminal,sequtils,strutils,times,math,unicode,tables,strfmt,random
 import nimFinLib
 
-# Master Testing of nimFinLib do not delete
+# Master Testing Suite of nimFinLib 
+# 
 # compile with 
 # nim c -d:release -d:speed -d:ssl nimFinT5
 
@@ -52,20 +53,30 @@ var
    endDate   = getDateStr()
    #endDate = "2015-01-01"  
 
-# pools holds a list of symbols of interest , thee can be any number of pools
-# like etf pool ukpool , uspool , etc here we have 2 pools
+# set up some lists to hold stock codes , let's call them pools
+# pools hold a list of symbols of interest , there can be any number of pools
+# like etfpool ukpool , uspool , etc here we have 2 pools
+
 var
   stockpool     = newSeq[Df]()       # holds all history data for each stock fetched
   indexpool     = newSeq[Df]()       # holds index history data
-  
+
+# init manually  
 stockpool = @[]
 indexpool = @[]
 
+# we also can init Df objects like so
+#stockpool = initDf(stockpool)
+#indexpool = initDf(indexpool)
 
-# load the pools with data
+# the pools are empty , so now load the pools with data based
+# on above provided symbol lists , of course this symbols can
+# come from a database or text file
+# note getSymbol2 use below , this pulls in the yahoo historical data
 for symbx in symbols:
     stockpool.add(getSymbol2(symbx,startDate,endDate))
 echo()  
+
 # also load the indexpool 
 for symbx in indexes:
     indexpool.add(getSymbol2(symbx,startDate,endDate))
@@ -82,18 +93,20 @@ account   = initPf(account)
 portfolio = initNf(portfolio)
 stockdata = initDf(stockdata)
 # stockdata holds a Df object that has all historical data of a single stock 
-# here we use the first stock in stockpool , for many stocks
-# we wud iterate over stockpool to load all
-#stockdata = stockpool[0] 
+# we can use the first stock in stockpool like so: 
+# stockdata = stockpool[0] 
+  
+# for many stocks we iterate over stockpool to load all
+
 # create a portfolio and add a single stockdata object
-portfolio.nx = "TestPortfolio"
+portfolio.nx = "TestPortfolio"   # nx holds the relevant portfolio name
 for stockdata in stockpool:  
-   portfolio.dx.add(stockdata)  
+   portfolio.dx.add(stockdata)   # dx holds the historical data series
 # add the just created portfolio to account, an object which holds all porfolios
 account.pf.add(portfolio)
 
+# now all is set and data can be used 
 
-# now we can access our data 
 # access the first portfolio inside of account and show name of this portfolio
 echo account.pf[0].nx 
 # access the first stock in the first portfolio in account and show some data
@@ -107,7 +120,7 @@ echo "AdjClose: ",account.pf[0].dx[0].adjc.last
 echo "StDevCl : ",account.pf[0].dx[0].rc[0].standardDeviation 
 echo "StDevClA: ",account.pf[0].dx[0].rca[0].standardDeviation
 # alternative way to work with the stock data 
-# to save some writing is like so
+# to save some writing 
 var data = account.pf[0].dx[0]
 echo()
 echo "Using shortcut to display most recent open value"
@@ -124,16 +137,17 @@ echo()
 msgy() do: echo "Most recent 5 dailyreturns based on adjc price"
 showdailyReturnsAdCl(data,5)
 
-# if we need the actual returnseries for further use here based on adjusted close
-# Note : we need to pass the desired data column
+
 echo ()
 msgy() do: echo "Show tail 2 rows = most recent dailyreturns based on adjc"
+# if we need the actual returnseries for further use we need to save it
+# Note : we need to pass the desired data column  
 var rets = dailyreturns(data.adjc)
 # display last 2 lines of our rets series
 for x in 0.. <rets.tail(2).len :
    echo data.date[x],"  ",rets[x]  
 
-# we also can use the show proc 
+# we also can use the convenient show proc 
 showdailyReturnsAdCl(data,2)  
  
 echo () 
@@ -142,26 +156,27 @@ echo "DailyReturns sum based on Close Price     : ",Rune(ord(11593))," ",sumdail
 echo "DailyReturns sum based on AdjClose Price  : ",Rune(ord(11593))," ",sumdailyReturnsAdCl(data)
 
 
-# Testing timeseries  basically this returns 
-# one of the ohlcva data seqs with a date column
+# Testing timeseries  
+# this returns a date column and one of the ohlcva data columns 
 msgy() do : echo "\nTest timeseries - show recent 5 rows for $1\n" % data.stock
-
 # available headers  
 var htable = {"o": "Open", "h": "High","l":"Low","c":"Close","v":"Volume","a":"Adj.Close"}.toTable 
 var ohlcva = "a"  # here we choose adjclose column 
 var ts = data.timeseries(ohlcva)
+# once we have the timeseries it can be displayed with the showTimeseries function
 msgy() do : echo "Head"
 showTimeseries(ts,htable[ohlcva],"head",5) # newest on top
 msgy() do : echo "Tail"
 showTimeseries(ts,htable[ohlcva],"tail",5) # oldest on bottom
+# if you need to see all rows
 #msgy() do : echo "All"
-#showTimeseries(ts,htable[ohlcva],"all",5) # also available , the days rows has no effect
+#showTimeseries(ts,htable[ohlcva],"all",5) # also available , the 5 here has no effect
 
 
-# if we use an orderedtable we get the same effect
+# if we use an orderedtable we also can get a nicely formated display
 # so a table with its many options can be a good choice too
 # http://nim-lang.org/docs/tables.html#OrderedTable
-# keep here for reference
+# for reference:
 # echo ()
 # msgy() do : echo"Test OrderedTable"
 # msgg() do : echo "{:<11} {:>11} ".fmt("Date",htable[ohlcva]) 
@@ -185,12 +200,16 @@ showTimeseries(ts,htable[ohlcva],"tail",5) # oldest on bottom
 echo ()
 var ndays = 22
 var ema22 = ema(data,ndays)
+# show it
 showEma(ema22,5)
 
 # testing rsi
-# does not yet line up with quantmod 
-# # Note rsi comes in as Ts with newest value at bottom
-# our displayroutine shows top down
+# does not yet line up with quantmod and should not be used
+# current underlying price column is : close
+# rsi is under development
+# Note rsi comes in as Ts with newest value at bottom
+# our displayroutine will show top down
+
 echo ()
 msgg() do : echo "{:<11} {:>11} ".fmt("Date","RSI (ema 14)") 
 var arsi = rsi(data,ndays)
@@ -203,8 +222,9 @@ msgy() do : echo "{}  {:<10} {}".fmt("head(1) ",arsi.dd.head(1),arsi.tx.head(1))
 msgy() do : echo "{}  {:<10} {}".fmt("last    ",arsi.dd.last,arsi.tx.last)
 msgy() do : echo "{}  {:<10} {}".fmt("tail(1) ",arsi.dd.tail(1),arsi.tx.tail(1))
 
+
 # remember that : data = account.pf[0].dx[0] 
-# so we can get the statistics for this stock as
+# so we can get the statistics for this stock like so
 echo ()
 msgy() do : echo "Stats for : ", data.stock , " based on close price"
 statistics(data.rc[0])
@@ -255,8 +275,8 @@ for x in -a.. a:
 # we can pass a single stock code or multiple stockcodes like so IBM+BP.L+ORCL
 
 # example for single stock ,index
-# stockDf is a helper proc to conver a Df.stock object to a string without 
-# this the compiler burps
+# stockDf is a helper proc to convert a Df.stock object to a string 
+# this may be deprecated in the future
 
 # produce a string of one or more stock codes coming from a Nf object
 # which holds all stocks in a portfolio
@@ -274,7 +294,7 @@ var idx : string = indexpool[0].stock  # here just passing a single code (index)
 showCurrentIndexes(idx)
 
  
-# show time of this run
+# show time elapsed for this run
 msgc() do: echo "\nElapsed  : ",epochTime() - start," secs\n\n"
 
 when isMainModule:
@@ -285,3 +305,4 @@ when isMainModule:
   #echo GC_getStatistics()
   
   quit 0    
+  
