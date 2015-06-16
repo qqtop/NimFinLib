@@ -2,15 +2,15 @@
 Financial Library for Nim language
 
 
-Program.:nimFinLib  
+Program.: nimFinLib  
 
-Status..:Development - alpha
+Status..: Development - alpha
 
-License.:MIT opensource  
+License.: MIT opensource  
 
-Version.:0.1
+Version.: 0.1
 
-Compiler:nim development branch (nim 0.11.3 or better)
+Compiler: nim development branch (nim 0.11.3 or better)
 
 Description: A basic library for financial calculations with Nim
 
