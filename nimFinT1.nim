@@ -17,11 +17,6 @@ showEma(ema22,5)
 # show returns closing price
 showdailyReturnsCl(z,5)     
 
-# RSI still under development current values are borked
-var RSI = rsi(z,22)
-echo "RSI for : ",stockDf(z)
-showRsi(RSI,5)
-
 echo()
 msgy() do: echo "Close prices for ",z.stock
 var dada = timeseries(z,"c")
@@ -29,7 +24,15 @@ var dada = timeseries(z,"c")
 showTimeseries(dada,"Close-HEAD","head",5)
 showTimeseries(dada,"Close-TAIL","tail",5)
 
-#showcurrentStocks(z.stock)
+showcurrentStocks(z.stock)
+
+
+# some items under development 
 
 # we are still a bit off quantmod
 echo " Sharpe std.dev  : " ,sharpe(z,ix)
+
+# RSI still under development current values are borked
+var RSI = rsi(z,22)
+echo "RSI for : ",stockDf(z)
+showRsi(RSI,5)

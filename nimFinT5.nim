@@ -255,18 +255,12 @@ for x in -a.. a:
 # we can pass a single stock code or multiple stockcodes like so IBM+BP.L+ORCL
 
 # example for single stock ,index
-# aha is a helper proc to conver a Df.stock object to a string without 
+# stockDf is a helper proc to conver a Df.stock object to a string without 
 # this the compiler burps
-
-# below is ok but not nice 
-# aha and the xs generating loop shud be in the lib
-# so what we want is to call showCurrentStocks(account.pf[0].dx) 
-# which wud be much cleaner , without the preprocessing stuff here
-# maybe allow for both solutions 
-# aha proc moved to lib is ok
 
 # produce a string of one or more stock codes coming from a Nf object
 # which holds all stocks in a portfolio
+
 var xs = ""
 for x in 0.. <account.pf[0].dx.len:
     # need to pass multiple code like so code+code+ , an initial + is also ok apparently
@@ -287,7 +281,7 @@ when isMainModule:
   system.addQuitProc(resetAttributes)
   # some system stats
   GC_fullCollect()
-  # for development we can see what gc is doing
+  # we can see what gc is doing
   #echo GC_getStatistics()
   
   quit 0    
