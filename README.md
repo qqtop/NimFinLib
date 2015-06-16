@@ -20,11 +20,15 @@ Description: A basic library for financial calculations with Nim
               
               Dataframe like structure for easy working with dataseries
               
+              Multiple accounts and portfolios management
+              
               Returns calculations
               
               Ema calculation
               
               Date manipulations
+              
+              
               
               
 Documentation: see nimFinLib.html
@@ -33,8 +37,7 @@ Documentation: see nimFinLib.html
 nimFinTxx are test programs to show use of the library .
 
 
-
-Example:
+example1.nim :
          
          
           import nimFinLib,times
@@ -66,6 +69,9 @@ NOTE :
   
      This is alpha software and may change without prior notice              
      Forking , suggestions are welcome .
+     
+     Executables - if any - here will have been build to run on linux 64
+     and tested on Ubuntu 14.04 LTS and opensuse 13.2
               
               
               
