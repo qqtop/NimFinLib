@@ -763,7 +763,7 @@ proc showEma* (emx:Ts , N:int) {.discardable.} =
      
 
 # --------------------------------------------------------------------------------------------
-# Development snippets to ready for use yet
+# Development snippets not ready for use yet
 # --------------------------------------------------------------------------------------------
 #
 # ToDo or not ok yet
