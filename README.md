@@ -26,6 +26,15 @@ Description: A basic library for financial calculations with Nim
               
               Date manipulations
               
+
+
+nimFinTxx are test programs .
+
+NOTE : 
+  
+     This alpha software and may change without prior notice              
+     Forking , suggestions welcome .
+              
               
               
               
