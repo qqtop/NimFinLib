@@ -10,7 +10,7 @@ License     : MIT opensource
 
 Version     : 0.1
 
-Compiler    : nim 0.11.3
+Compiler    : nim development branch (nim 0.11.3 or better)
 
 Description : A basic library for financial calculations with Nim
 
