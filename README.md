@@ -26,9 +26,11 @@ Description: A basic library for financial calculations with Nim
               
               Date manipulations
               
+              
+Documentation: see nimFinLib.html
 
 
-nimFinTxx are test programs to show use of various procs and functions.
+nimFinTxx are test programs to show use of the library .
 
 
 NOTE : 

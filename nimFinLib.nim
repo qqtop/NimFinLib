@@ -1,36 +1,51 @@
 
 ##
 ## Program     : nimFinLib  
+## 
 ## Status      : Development - alpha
+## 
 ## License     : MIT opensource  
+## 
 ## Version     : 0.1
+## 
 ## Compiler    : nim 0.11.3
 ## 
+## 
 ## Description : A basic library for financial calculations with Nim
+## 
 ##               Yahoo historical stock data
+##               
 ##               Yahoo current quotes
+##               
 ##               Dataframe like structure for easy working with dataseries
+##               
 ##               Returns calculations
+##               
 ##               Ema calculation
+##               
 ##               Date manipulations
 ##               
 ##               
 ##               Documents creation with nim doc nimFinLib ==> nimFinLib.html
-##               ToDo : Ratios ,plotting, currency, metals
+##               
+##               
 ##                            
 ##               
-## Tested on   : Linux              
+## Tested on   : Linux
+##               
 ## ProjectStart: 2015-06-05
-## Todo        : 
-## Pastebin    : 
-## Last        : 2015-06-14
 ## 
-## Programming : qqTop/Niminator
+## ToDo        : Ratios ,plotting, currency, metals
+## 
+##  
+## Last        : 2015-06-16
+## 
+## Programming : qqTop
 ## 
 
 
 import os,strutils,parseutils,sequtils,httpclient,strfmt,terminal,times,tables
-import parsecsv,streams,algorithm,math,random,unicode
+import parsecsv,streams,algorithm,math,unicode
 
 type
    
@@ -38,7 +53,7 @@ type
       ## Pf type
       ## holds all portfolios similar to a master account
       ## portfolios are Nf objects
-      pf* : seq[Nf]
+      pf* : seq[Nf]  ## pf holds all Nf type portfolios for an account
   
   
     
@@ -54,16 +69,17 @@ type
     ## Df type
     ## holds individual stocks history data and RunningStat for close and adj.close
     ## even more items may be added like full company name etc in the future
-    stock* : string
+    ## items are stock code, ohlcva, rc and rca . 
+    stock* : string           ## yahoo style stock code 
     date*  : seq[string]
     open*  : seq[float]
     high*  : seq[float]
     low*   : seq[float]
     close* : seq[float]
-    vol*   : seq[float]
-    adjc*  : seq[float]
-    rc*    : seq[Runningstat]
-    rca*   : seq[Runningstat]
+    vol*   : seq[float]        ## volume
+    adjc*  : seq[float]        ## adjusted close price
+    rc*    : seq[Runningstat]  ## RunningStat for close price
+    rca*   : seq[Runningstat]  ## RunningStat for adjusted close price
    
  
  
@@ -222,9 +238,13 @@ converter toTwInt(x: cushort): int = result = int(x)
 when defined(Linux):
     proc getTerminalWidth*() : int =
       ## getTerminalWidth
+      ## 
       ## utility to easily draw correctly sized lines on linux terminals
+      ## 
       ## and get linux get terminal width
+      ## 
       ## for windows this currently is set to terminalwidth 80 
+      ## 
       type WinSize = object
         row, col, xpixel, ypixel: cushort
       const TIOCGWINSZ = 0x5413
@@ -246,8 +266,11 @@ when defined(Windows):
 
 proc currentStocks(aurl:string) {.discardable.} =
   ## currentStocks 
+  ## 
   ## display routine for current stock quote maybe 15 mins delayed
+  ## 
   ## not callable
+  ## 
   for line in getContent(aurl).splitLines:
       var data = line[1..line.high].split(",")
       if data.len > 0:
@@ -261,8 +284,11 @@ proc currentStocks(aurl:string) {.discardable.} =
 
 proc currentIndexes(aurl:string) {.discardable.} =
   ## currentIndexes
+  ## 
   ## display routine for current index quote
+  ## 
   ## not callable
+  ## 
   for line in getContent(aurl).splitLines:
       var data = line[1..line.high].split(",")
       if data.len > 0:
@@ -276,7 +302,9 @@ proc currentIndexes(aurl:string) {.discardable.} =
 
 proc showCurrentIndexes*(idxs:string){.discardable.} =
    ## showCurrentIndexes
+   ## 
    ## callable display routine for currentIndexes
+   ## 
    hdx(echo "Index Data")
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % idxs
    currentIndexes(qurl)  
@@ -284,34 +312,41 @@ proc showCurrentIndexes*(idxs:string){.discardable.} =
 
 proc showCurrentStocks*(stcks:string){.discardable.} =
    ## showCurrentStocks
+   ## 
    ## callable display routine for currentStocks
+   ## 
    hdx(echo "Stocks Current Quote")
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
    currentStocks(qurl)  
 
 
 
-
-
-
 proc day*(aDate:string) : string = 
    ## Various procs for massaging the startdate and enddate into a format for
+   ## 
    ## currently used yahoo url to fetch history data
+   ## 
+   ## Format dd
+   ## 
    aDate.split("-")[2]
 
 
 proc month*(aDate:string) : string =
-  # month starts with 00 for jan
+  ## month starts with 00 for jan
+  ## 
+  ## Format MM
+  # 
   var asdm = $(parseInt(aDate.split("-")[1])-1)
   if len(asdm) < 2: asdm = "0" & asdm
   result = asdm
     
 proc year*(aDate:string) : string = aDate.split("-")[0]
-
+     ## Format yyyy
 
 
 proc intervalsecs*(startDate,endDate:string) : float =
       ## interval procs returns time elapsed between two dates in secs,hours etc. 
+      ## 
       var f     = "yyyy-MM-dd"
       var ssecs = toSeconds(timeinfototime(startDate.parse(f)))
       var esecs = toSeconds(timeinfototime(endDate.parse(f)))
@@ -344,9 +379,13 @@ proc intervalyears*(startDate,endDate:string) : float =
  
 proc getSymbol2*(symb,startDate,endDate : string) : Df =
     ## getSymbol2
+    ## 
     ## the work horse proc for getting yahoo data in csv format 
+    ## 
     ## and then to parse into a Df object
+    ## 
     # feedbackline can be commented out if not desired 
+    # 
     stdout.write("{:<15}".fmt("Processing   : "))
     msgg() do: stdout.write("{:<8} ".fmt(symb))
     stdout.write("{:<11} {:<11}".fmt(startDate,endDate))
@@ -485,17 +524,22 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
     
 proc last*[T](self : seq[T]): T =
           ## Various data navigation routines
+          ## 
           ## first,last,head,tail 
+          ## 
           ## last means most recent row 
+          ## 
           result = self[self.low]
           
     
 proc first*[T](self : seq[T]): T =
           ## first means oldest row 
+          ## 
           result = self[self.high]
   
 proc tail*[T](self : seq[T] , n: int) : seq[T] =
           ## tail means most recent rows 
+          ## 
           if len(self) >= n:
              result = self[0.. <n]
           else:
@@ -503,6 +547,7 @@ proc tail*[T](self : seq[T] , n: int) : seq[T] =
  
 proc head*[T](self : seq[T] , n: int) : seq[T] =
           ## head means oldest rows 
+          ## 
           var self2 = reversed(self)
           if len(self2) >= n:
              result = self2[0.. <n].tail(n)
@@ -512,15 +557,20 @@ proc head*[T](self : seq[T] , n: int) : seq[T] =
  
 proc lagger*[T](self:T , days : int) : T =
      ## lagger
+     ## 
      ## often we need a timeseries off by x days
+     ## 
      ## this functions provides this
+     ## 
      var lgx = self[days.. <self.len]
      result = lgx
 
  
 proc dailyReturns*(self:seq[float]):seq = 
       ## dailyReturns
-      ## returns like in R quantmod
+      ## 
+      ## daily returns calculation gives same results as dailyReturns in R / quantmod
+      ## 
       var k = 1
       var lgx = newSeq[float]()
       for z in 1+k.. <self.len:
@@ -530,8 +580,11 @@ proc dailyReturns*(self:seq[float]):seq =
 
 proc showdailyReturnsCl*(self:Df , N:int) {.discardable.} =
       ## showdailyReturnsCl
+      ## 
       ## display returns based on close price
+      ## 
       ## formated output to show date and returns columns
+      ## 
       var dfr = self.close.dailyReturns    # note the first in seq corresponds to date closest to now
       # we also need to lag the dates  
       var dfd = self.date.lagger(1) 
@@ -549,8 +602,11 @@ proc showdailyReturnsCl*(self:Df , N:int) {.discardable.} =
 
 proc showdailyReturnsAdCl*(self:Df , N:int) {.discardable.} =
       ## showdailyReturnsAdCl 
+      ## 
       ## returns based on adjusted close price
+      ## 
       ## formated output to only show date and returns
+      ## 
       var dfr = self.adjc.dailyReturns    # note the first in seq corresponds to date closest to now
       # we also need to lag the dates 
       var dfd = self.date.lagger(1) 
@@ -568,7 +624,9 @@ proc showdailyReturnsAdCl*(self:Df , N:int) {.discardable.} =
   
 proc sumdailyReturnsCl*(self:Df) : float =
       ## sumdailyReturnsCl
+      ## 
       ## returns sum based on close price
+      ## 
       # returns a sum of dailyreturns but is off from quantmod more than expected why ?
       # the len of seq roughly the same of by 1-2 vals as expected but 
       # the sum is of by too much , maybe it is in the missing values
@@ -581,7 +639,9 @@ proc sumdailyReturnsCl*(self:Df) : float =
   
 proc sumdailyReturnsAdCl*(self:Df) : float =
       ## sumdailyReturnsAdCl
+      ## 
       ## returns sum based on adjc 
+      ## 
       # returns a sum of dailyreturns but is off from quantmod more than expected why ?
       # the len of seq roughly the same of by 1-2 vals as expected but 
       # the sum is of by too much , maybe it is in the missing values
@@ -594,7 +654,9 @@ proc sumdailyReturnsAdCl*(self:Df) : float =
 
 proc statistics*(x:Runningstat) {.discardable.} =
         ## statistics
+        ## 
         ## display output of a runningstat object
+        ## 
         echo "RunningStat Sum     : ", $formatFloat(x.sum,ffDecimal,5)
         echo "RunningStat Var     : ", $formatFloat(x.variance,ffDecimal,5)
         echo "RunningStat mean    : ", $formatFloat(x.mean,ffDecimal,5)
@@ -605,7 +667,9 @@ proc statistics*(x:Runningstat) {.discardable.} =
         
 proc stockDf*(dx : Df) : string =
   ## stockDf
+  ## 
   ## get the stock name from a Df object and return as string
+  ## 
   var stk: string = dx.stock
   result = stk        
   
@@ -617,20 +681,28 @@ proc stockDf*(dx : Df) : string =
 var emaflag : bool = false 
 
 proc CalculateEMA(todaysPrice : float , numberOfDays: int , EMAYesterday : float) : float =
-   # supporting proc for ema calculation, not callable
+   ## supporting proc for ema calculation, not callable
+   ## 
    var k = 2 / (float(numberOfDays) + 1.0)
    var ce = (todaysPrice * k) + (EMAYesterday * (1.0 - k))
    result = ce
 
 proc ema* (dx : Df , N: int) : Ts =
     ## ema
+    ## 
     ## exponential moving average
+    ## 
     ## returns a Ts object loaded with date,ema pairs
+    ## 
     ## calling with Df object and number of days for moving average
-    ## results match quantmod/portfolioanalytics
+    ## 
+    ## results match R quantmod/TTR
+    ## 
     
     ## we need at least 5 * N > 100 days of data or ema will be skewed or invalid
+    ## 
     ## EMA = Price(t) * k + EMA(y) * (1 – k)
+    ## 
     # t = today, y = yesterday, N = number of days in EMA, k = 2/(N+1)
     
     var m_emaSeries : Ts # we use our Ts object to hold a series of dates and ema
@@ -677,16 +749,24 @@ proc ema* (dx : Df , N: int) : Ts =
 
 proc showEma* (emx:Ts , N:int) {.discardable.} =
    ## showEma
+   ## 
    ## convenience proc to display ema series with dates
+   ## 
    ## input is a ema series Ts object and rows to display
+   ## 
    ## latest data is on top
+   ## 
    echo()
    msgg() do : echo "{:<11} {:>11} ".fmt("Date","EMA") 
    for x in countdown(emx.dd.len-1,emx.dd.len-N,1) : 
           echo "{:<11} {:>11} ".fmt(emx.dd[x],emx.tx[x])
      
 
-### ToDo or not ok yet
+# --------------------------------------------------------------------------------------------
+# Development snippets to ready for use yet
+# --------------------------------------------------------------------------------------------
+#
+# ToDo or not ok yet
 # proc sharpe ()
 # 
 # proc sharpeannualized ()
@@ -704,9 +784,12 @@ proc showEma* (emx:Ts , N:int) {.discardable.} =
 
 proc rsi* (dx:Df , N: int):Ts = 
   ## rsi
+  ## 
   ## oscillator
+  ## 
   ## under Development
-  ## this is not ok yet
+  ## 
+  ## This is not ok yet , values seem incorrect 
   
   # values are off from quantmod rsi 
   
@@ -756,7 +839,9 @@ proc rsi* (dx:Df , N: int):Ts =
 
 proc showRsi* (rsx:Ts , N:int) {.discardable.} = 
     ## showRsi 
+    ## 
     ## a convenience proc to display rsi latest is on top
+    ## 
     echo ()
     msgg() do : echo "{:<11} {:>11}".fmt("Date","RSI")
     for x in countdown(rsx.dd.len-1,rsx.dd.len-N,1) :
@@ -765,10 +850,14 @@ proc showRsi* (rsx:Ts , N:int) {.discardable.} =
                     
 
 proc sharpe*(adfstock:Df, adfriskfree:Df):float = 
-  # another attempt on the sharpe Ratios based on std.dev
-  # it still does not line up with quantmod 
+  ## sharpe ratios based on std.dev
+  ## it does not match with R / quantmod output 
+  ## 
+  ## under Development
+  ## 
+  ## This is not ok yet 
   
-  # this ratios seem to be calculated nilly willy differently everywhere
+  #  values seem incorrect  this ratios seem to be calculated nilly willy differently everywhere
   # maybe becoz they have a 95% p value factored in
   # also note we use riskfree as 0  so adfriskfree is
   # currently not really required 
@@ -810,17 +899,22 @@ proc sharpe*(adfstock:Df, adfriskfree:Df):float =
 # proc overbought/oversold
 
 
-## procs for future use
+# procs for future use
  
 proc logisticf* (z:float):float =
      ## logisticf
-     # maps the input z to an output between 0 and 1 
+     ## 
+     ## maps the input z to an output between 0 and 1 
+     ## 
      # good for smaller numbers -10 .. 10
      var lf:float = 1 / (1 + pow(E,-z))
      result = lf
 
 proc logisticf_derivative* (z:float): float =  
-     ## logistic_derivative
+     ## logisticf_derivative
+     ## 
      ## returns derivative of logisticf for gradient solutions
+     ## 
      result = logisticf(z) * (1 - logisticf(z))
 
+#------------------------------------------------------------------------------------------
