@@ -31,7 +31,10 @@ Description: A basic library for financial calculations with Nim
               
               
               
-Documentation: see nimFinLib.html
+API Docs
+--------
+
+http://qqtop.github.io/nimFinLib.html
 
 
 nimFinTxx are test programs to show use of the library .
