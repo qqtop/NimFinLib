@@ -37,28 +37,31 @@ Documentation: see nimFinLib.html
 nimFinTxx are test programs to show use of the library .
 
 
-example1.nim :
-         
-         
-          import nimFinLib,times
+example1.nim 
+------------
 
-          # instead of hello world 
+```nimrod         
 
-          # show latest stock quotes
-          showCurrentStocks("IBM+BP.L+0001.HK")
-          echo()
-          echo()
+import nimFinLib,times
 
-          # get latest historic data for a stock
-          var ibm : Df
-          ibm = getsymbol2("IBM","2014-01-01",getDateStr())
-          # show recent 5 returns based on closing price
-          showdailyReturnsCl(ibm,5)     
-          echo()
-          echo()
+# instead of hello world 
 
-          # show stock name and latest adjusted close
-          echo ibm.stock ,"     ",ibm.date.last,"    ",ibm.adjc.last
+# show latest stock quotes
+showCurrentStocks("IBM+BP.L+0001.HK")
+echo()
+echo()
+
+# get latest historic data for a stock
+var ibm : Df
+ibm = getsymbol2("IBM","2014-01-01",getDateStr())
+
+# show recent 5 returns based on closing price
+showdailyReturnsCl(ibm,5)     
+echo()
+echo()
+
+# show stock name and latest adjusted close
+echo ibm.stock ,"     ",ibm.date.last,"    ",ibm.adjc.last
 
 
 
