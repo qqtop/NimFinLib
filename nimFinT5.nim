@@ -99,9 +99,10 @@ stockdata = initDf(stockdata)
 # for many stocks we iterate over stockpool to load all
 
 # create a portfolio and add a single stockdata object
-portfolio.nx = "TestPortfolio"   # nx holds the relevant portfolio name
+portfolio.nx = "TestPortfolio"    # nx holds the relevant portfolio name
 for stockdata in stockpool:  
-   portfolio.dx.add(stockdata)   # dx holds the historical data series
+    portfolio.dx.add(stockdata)   # dx holds the historical data series
+    
 # add the just created portfolio to account, an object which holds all porfolios
 account.pf.add(portfolio)
 
@@ -109,6 +110,9 @@ account.pf.add(portfolio)
 
 # access the first portfolio inside of account and show name of this portfolio
 echo account.pf[0].nx 
+# of course this works too
+#echo account.pf.last.nx
+
 # access the first stock in the first portfolio in account and show some data
 echo "Name    : ",account.pf[0].dx[0].stock
 echo "Open    : ",account.pf[0].dx[0].open.last
@@ -121,7 +125,9 @@ echo "StDevCl : ",account.pf[0].dx[0].rc[0].standardDeviation
 echo "StDevClA: ",account.pf[0].dx[0].rca[0].standardDeviation
 # alternative way to work with the stock data 
 # to save some writing 
-var data = account.pf[0].dx[0]
+# # note last ==> last in from the left or from top
+# # so we also can write data = account.pf[0].dx[0] or
+var data = account.pf.last.dx.last  
 echo()
 echo "Using shortcut to display most recent open value"
 echo data.open.last
@@ -260,7 +266,7 @@ var a = 5
 echo "{:>15} {:>15} {:>15}".fmt("Value","logisticf","logistic_derivative")
 for x in -a.. a:
   var xx = random.random() * 1.8
-  echo "{:>15.f14} {:>15.f14} {:>15.f14}".fmt(xx,logisticf(xx),logistic_derivative(xx))
+  echo "{:>15.f14} {:>15.f14} {:>15.f14}".fmt(xx,logisticf(xx),logisticf_derivative(xx))
 
 
 
