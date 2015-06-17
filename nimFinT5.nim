@@ -36,7 +36,7 @@ var symbols5 = @["AFK", "ASHR", "ECH", "EGPT",
              "VNM", "TLT"]
 
 
-var symbols = symbols3
+var symbols = symbols1
 
 
 # make sure the list is unique
