@@ -62,7 +62,9 @@ echo()
 
 # show stock name and latest adjusted close
 echo ibm.stock ,"     ",ibm.date.last,"    ",ibm.adjc.last
-
+echo()
+echo()
+```
 
 
 
