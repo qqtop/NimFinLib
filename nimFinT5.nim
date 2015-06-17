@@ -209,26 +209,6 @@ var ema22 = ema(data,ndays)
 # show it
 showEma(ema22,5)
 
-# testing rsi
-# does not yet line up with quantmod and should not be used
-# current underlying price column is : close
-# rsi is under development
-# Note rsi comes in as Ts with newest value at bottom
-# our displayroutine will show top down
-
-echo ()
-msgg() do : echo "{:<11} {:>11} ".fmt("Date","RSI (ema 14)") 
-var arsi = rsi(data,ndays)
-showRsi(arsi,5)
-
-# testing utility functions on Rsi 
-msgg() do : echo "\nRSI series display test "
-msgy() do : echo "{}  {:<10} {}".fmt("first   ",arsi.dd.first,arsi.tx.first)
-msgy() do : echo "{}  {:<10} {}".fmt("head(1) ",arsi.dd.head(1),arsi.tx.head(1))
-msgy() do : echo "{}  {:<10} {}".fmt("last    ",arsi.dd.last,arsi.tx.last)
-msgy() do : echo "{}  {:<10} {}".fmt("tail(1) ",arsi.dd.tail(1),arsi.tx.tail(1))
-
-
 # remember that : data = account.pf[0].dx[0] 
 # so we can get the statistics for this stock like so
 echo ()
