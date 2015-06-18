@@ -75,8 +75,8 @@ echo()
 
 NOTE : 
   
-     This is alpha software and may change without prior notice              
-     Forking , suggestions are welcome .
+     Improvements may be made at any time.              
+     Forking , suggestions ,ideas are welcome .
      
      Executables - if any - here will have been build to run on linux 64
      and tested on Ubuntu 14.04 LTS and opensuse 13.2

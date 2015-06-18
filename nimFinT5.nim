@@ -345,7 +345,11 @@ echo()
  
 when isMainModule:
   # show time elapsed for this run
-  msgc() do: echo "\nElapsed  : ",epochTime() - start," secs\n\n"
+  echo ()
+  msgc() do: echo "Elapsed           : ",epochTime() - start," secs\n"
+  msgg() do: echo "nimlibFin Version : ",VERSION 
+  echo()
+  echo()
   system.addQuitProc(resetAttributes)
   # some system stats
   GC_fullCollect()

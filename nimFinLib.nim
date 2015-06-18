@@ -6,7 +6,7 @@
 ## 
 ## License     : MIT opensource  
 ## 
-## Version     : 0.1
+## Version     : 0.2
 ## 
 ## Compiler    : nim 0.11.3
 ## 
@@ -26,7 +26,7 @@
 ##               Date manipulations
 ##               
 ##               
-##               Documents creation with nim doc nimFinLib ==> nimFinLib.html
+##               Documention was created with : nim doc nimFinLib 
 ##               
 ##               
 ##                            
@@ -38,7 +38,7 @@
 ## ToDo        : Ratios ,plotting, currency, metals
 ## 
 ##  
-## Last        : 2015-06-16
+## Last        : 2015-06-18
 ## 
 ## Programming : qqTop
 ## 
@@ -46,6 +46,8 @@
 
 import os,strutils,parseutils,sequtils,httpclient,strfmt,terminal,times,tables
 import parsecsv,streams,algorithm,math,unicode
+
+let VERSION* = "0.2"
 
 type
    
