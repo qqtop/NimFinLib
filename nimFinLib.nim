@@ -15,7 +15,7 @@
 ## 
 ##               Yahoo historical stock data
 ##               
-##               Yahoo current quotes
+##               Yahoo current quotes and forex rates
 ##               
 ##               Dataframe like structure for easy working with dataseries
 ##               
