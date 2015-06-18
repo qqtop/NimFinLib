@@ -775,7 +775,7 @@ proc showEma* (emx:Ts , N:int) {.discardable.} =
 
 
 proc getCurrentForex*(curs:seq[string]):Cf =
-  ## getcurrentForex2
+  ## getCurrentForex
   ## get the latest yahoo exchange rate info for a currency pair
   ## e.g EURUSD , JPYUSD ,GBPHKD
   # currently using cvs data url 
