@@ -8,7 +8,7 @@ Status..: Development - alpha
 
 License.: MIT opensource  
 
-Version.: 0.1
+Version.: 0.2
 
 Compiler: nim development branch (nim 0.11.3 or better)
 
