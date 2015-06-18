@@ -92,6 +92,14 @@ type
        tx* : seq[float]   # data
 
 
+  Cf* {.inheritable.} = object
+       ## Cf type
+       ## is a simple object to hold current currency data
+       
+       cu* : seq[string]  # currency code pair e.g. EURUSD
+       ra* : seq[float]   # relevant rate  e.g 1.354
+
+
 template msgg*(code: stmt): stmt {.immediate.} =
       ## msgX templates 
       ## convenience templates for colored text output
@@ -763,6 +771,64 @@ proc showEma* (emx:Ts , N:int) {.discardable.} =
      
 
 
+
+
+
+proc getCurrentForex*(curs:seq[string]):Cf =
+  ## getcurrentForex2
+  ## get the latest yahoo exchange rate info for a currency pair
+  ## e.g EURUSD , JPYUSD ,GBPHKD
+  # currently using cvs data url 
+  var aurl = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=c4l1&s="    #  EURUSD=X,GBPUSD=X
+  for ac in curs:
+     aurl = aurl & ac & "=X,"
+  
+  var rf : Cf
+  rf.cu = @[]   # currency code 
+  rf.ra = @[]   # rate
+     
+  var acvsfile = "nimcurmp.csv"  # temporary file
+  downloadFile(aurl,acvsfile)
+  var s = newFileStream(acvsfile, fmRead)
+  if s == nil:
+       # in case of problems with the yahoo csv file we show a message
+       msgr() do : echo "Hello : Forex data file $1 could not be opened " % acvsfile
+
+  # now parse the csv file
+  var x: CsvParser
+  var c = 0
+  open(x, s , acvsfile, separator=',')
+  while readRow(x):
+      c = 0 # counter to assign item to correct var
+      for val in items(x.row):
+              c += 1
+
+              case c 
+              of 1:
+                    rf.cu.add(val)
+              of 2:
+                    if val == "N/A":
+                       rf.ra.add(0.00)
+                    else:
+                       rf.ra.add(parseFloat(val)) 
+              else:
+                    msgr() do : echo "Csv currency data in unexpected format "
+  
+  # clean up
+  removeFile(acvsfile)
+  result = rf
+ 
+   
+proc showCurrentForex*(curs : seq[string]) {.discardable.} =
+       ## showCurrentForex      
+       ## a convenience proc to display exchange rates
+       var cx = getcurrentForex(curs) # we get a Cf object back
+       msgg() do : echo "{:<8} {:<4} {}".fmt("Pair","Cur","Rate")
+       for x in 0.. <cx.cu.len:
+             echo "{:<8} {:<4} {}".fmt(curs[x],cx.cu[x],cx.ra[x])
+          
+          
+
 # procs for future use
  
 proc logisticf* (z:float):float =
@@ -782,3 +848,4 @@ proc logisticf_derivative* (z:float): float =
      result = logisticf(z) * (1 - logisticf(z))
 
 #------------------------------------------------------------------------------------------
+

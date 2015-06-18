@@ -27,12 +27,3 @@ showTimeseries(dada,"Close-TAIL","tail",5)
 showcurrentStocks(z.stock)
 
 
-# some items under development 
-
-# we are still a bit off quantmod
-echo " Sharpe std.dev  : " ,sharpe(z,ix)
-
-# RSI still under development current values are borked
-var RSI = rsi(z,22)
-echo "RSI for : ",stockDf(z)
-showRsi(RSI,5)

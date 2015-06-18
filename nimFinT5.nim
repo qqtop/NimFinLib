@@ -9,10 +9,11 @@ import nimFinLib
 
 var start = epochTime()      
 
-
-##############
-# TESTING    #
-##############
+echo ()
+msgy() do : echo "###############################################"
+msgy() do : echo "# Testing nimFinLib                           #"
+msgy() do : echo "###############################################"
+echo ()
 
 
 # symbols holds a list of yahoo type stock codes
@@ -107,6 +108,11 @@ for stockdata in stockpool:
 account.pf.add(portfolio)
 
 # now all is set and data can be used 
+echo ()
+msgy() do : echo "###############################################"
+msgy() do : echo "# Tests for Pf , Nf ,Df types                 #"
+msgy() do : echo "###############################################"
+echo ()
 
 # access the first portfolio inside of account and show name of this portfolio
 echo account.pf[0].nx 
@@ -132,6 +138,13 @@ echo()
 echo "Using shortcut to display most recent open value"
 echo data.open.last
 echo()
+
+echo ()
+msgy() do : echo "###############################################"
+msgy() do : echo "# Tests for dailyReturns                      #"
+msgy() do : echo "###############################################"
+echo ()
+
 
 # now we can use our data for some basic calculations
 # we show the most recent 5 dailyreturns for data based on close price
@@ -161,8 +174,12 @@ echo ()
 echo "DailyReturns sum based on Close Price     : ",Rune(ord(11593))," ",sumdailyReturnsCl(data)
 echo "DailyReturns sum based on AdjClose Price  : ",Rune(ord(11593))," ",sumdailyReturnsAdCl(data)
 
-
-# Testing timeseries  
+echo ()
+msgy() do : echo "###############################################"
+msgy() do : echo "# Tests for timeseries                        #"
+msgy() do : echo "###############################################"
+echo () 
+ 
 # this returns a date column and one of the ohlcva data columns 
 msgy() do : echo "\nTest timeseries - show recent 5 rows for $1\n" % data.stock
 # available headers  
@@ -177,6 +194,14 @@ showTimeseries(ts,htable[ohlcva],"tail",5) # oldest on bottom
 # if you need to see all rows
 #msgy() do : echo "All"
 #showTimeseries(ts,htable[ohlcva],"all",5) # also available , the 5 here has no effect
+
+echo()
+# testing utility procs
+msgg() do : echo "Timeseries display test "
+msgy() do : echo "{}  {:<10} {}".fmt("first   ",ts.dd.first,ts.tx.first)
+msgy() do : echo "{}  {:<10} {}".fmt("head(1) ",ts.dd.head(1),ts.tx.head(1))
+msgy() do : echo "{}  {:<10} {}".fmt("last    ",ts.dd.last,ts.tx.last)
+msgy() do : echo "{}  {:<10} {}".fmt("tail(1) ",ts.dd.tail(1),ts.tx.tail(1))
 
 
 # if we use an orderedtable we also can get a nicely formated display
@@ -198,28 +223,41 @@ showTimeseries(ts,htable[ohlcva],"tail",5) # oldest on bottom
 # echo "Keys : ",atable.len  
 
 
-# testing ema
+echo ()
+msgy() do : echo "###############################################"
+msgy() do : echo "# Tests for ema (exponential moving average)  #"
+msgy() do : echo "###############################################"
+echo () 
+ 
 # for ema  we need a df object and number of days , maybe 22  <-- N
 # we get back a Ts object  
 # Note we need min 5 * N days of data points
 # this meets R quantmod output 100%
-echo ()
 var ndays = 22
 var ema22 = ema(data,ndays)
+
+echo "EMA for : ", data.stock
 # show it
 showEma(ema22,5)
 
+
+echo ()
+msgy() do : echo "###############################################"
+msgy() do : echo "# Tests for statistics on Df type             #"
+msgy() do : echo "###############################################"
+echo () 
+ 
 # remember that : data = account.pf[0].dx[0] 
 # so we can get the statistics for this stock like so
 echo ()
 msgy() do : echo "Stats for : ", data.stock , " based on close price"
 statistics(data.rc[0])
 
-
-############################# 
-# Tests for helper procs    #
-#############################
-
+echo ()
+msgy() do : echo "###############################################"
+msgy() do : echo "# Tests for date and logistic helper procs    #"
+msgy() do : echo "###############################################"
+echo ()
 # test date routines
  
 var s     = ts.dd.min  # note we use the date series from the timeseries test above
@@ -235,10 +273,12 @@ echo "Hours      : ", intervalhours(s,e)
 echo "Mins       : ", intervalmins(s,e)
 echo "Secs       : ", intervalsecs(s,e)
 
+echo ()
+echo "Extract items from date string ",s
 echo s.year," ",s.month," ",s.day
+echo()
 
-
-# testing logistics functions
+msgy() do : echo "Testing logistics functions"
 # logisticf maps values to between 0 and 1
 # logistic_derivative is the derivative for gradient optm. use
 
@@ -254,13 +294,13 @@ for x in -a.. a:
 # how to see whats going on inside the object 
 #echo repr(t1)
 
+echo ()
+msgy() do : echo "############################################"
+msgy() do : echo "# Tests for Current Stocks and Indexes     #"
+msgy() do : echo "############################################"
+echo ()
 
-############################################
-# Tests for Current Stocks and Indexes     #
-############################################
 # we can pass a single stock code or multiple stockcodes like so IBM+BP.L+ORCL
-
-# example for single stock ,index
 # stockDf is a helper proc to convert a Df.stock object to a string 
 # this may be deprecated in the future
 
@@ -279,16 +319,37 @@ showCurrentStocks(xs)
 var idx : string = indexpool[0].stock  # here just passing a single code (index)
 showCurrentIndexes(idx)
 
- 
-# show time elapsed for this run
-msgc() do: echo "\nElapsed  : ",epochTime() - start," secs\n\n"
 
+
+echo ()
+msgy() do : echo "###############################################"
+msgy() do : echo "# Tests for Forex rates                       #"
+msgy() do : echo "###############################################"
+echo () 
+
+# look at "current" exchange rates as supplied from yahoo
+echo()
+msgy() do : echo "Yahoo Exchange Rates"
+var checkcurrencies = @["EURUSD","GBPUSD","GBPHKD","JPYUSD","AUDUSD","EURHKD","JPYHKD","CNYHKD"]
+showCurrentForex(checkcurrencies)
+
+
+# if the exchangerates are needed for further processing
+# use the getcurrentForex proc  , we receive a Cf type for unpacking
+var curs = getCurrentForex(@["EURUSD","EURHKD"])
+echo()
+echo "Current EURUSD Rate : ","{:<8}".fmt(curs.ra.last)
+echo "Current EURHKD Rate : ","{:<8}".fmt(curs.ra.first)
+echo()
+
+ 
 when isMainModule:
+  # show time elapsed for this run
+  msgc() do: echo "\nElapsed  : ",epochTime() - start," secs\n\n"
   system.addQuitProc(resetAttributes)
   # some system stats
   GC_fullCollect()
   # we can see what gc is doing
   #echo GC_getStatistics()
-  
   quit 0    
   

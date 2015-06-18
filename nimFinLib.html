@@ -1181,6 +1181,10 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="Ts* = object 
   dd*: seq[string]
   tx*: seq[float]"><wbr />Ts</a></li>
+  <li><a class="reference" href="#Cf"
+    title="Cf* = object 
+  cu*: seq[string]
+  ra*: seq[float]"><wbr />Cf</a></li>
 
   </ul>
 </li>
@@ -1283,12 +1287,10 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="ema*(dx: Df; N: int): Ts"><wbr />ema</a></li>
   <li><a class="reference" href="#showEma,Ts,int"
     title="showEma*(emx: Ts; N: int)"><wbr />show<wbr />Ema</a></li>
-  <li><a class="reference" href="#rsi,Df,int"
-    title="rsi*(dx: Df; N: int): Ts"><wbr />rsi</a></li>
-  <li><a class="reference" href="#showRsi,Ts,int"
-    title="showRsi*(rsx: Ts; N: int)"><wbr />show<wbr />Rsi</a></li>
-  <li><a class="reference" href="#sharpe,Df,Df"
-    title="sharpe*(adfstock: Df; adfriskfree: Df): float"><wbr />sharpe</a></li>
+  <li><a class="reference" href="#getCurrentForex,seq[string]"
+    title="getCurrentForex*(curs: seq[string]): Cf"><wbr />get<wbr />Current<wbr />Forex</a></li>
+  <li><a class="reference" href="#showCurrentForex,seq[string]"
+    title="showCurrentForex*(curs: seq[string])"><wbr />show<wbr />Current<wbr />Forex</a></li>
   <li><a class="reference" href="#logisticf,float"
     title="logisticf*(z: float): float"><wbr />logisticf</a></li>
   <li><a class="reference" href="#logisticf_derivative,float"
@@ -1383,6 +1385,14 @@ Df type holds individual stocks history data and RunningStat for close and adj.c
 </pre></dt>
 <dd>
 Ts type is a simple timeseries object which can hold one column of any OHLCVA data
+
+</dd>
+<dt id="Cf"><a name="Cf"></a><pre><span class="Identifier">Cf</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span> 
+  <span class="Identifier">cu</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">ra</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">float</span><span class="Other">]</span>
+</pre></dt>
+<dd>
+Cf type is a simple object to hold current currency data
 
 </dd>
 
@@ -1670,28 +1680,14 @@ head means oldest rows
 
 
 </dd>
-<dt id="rsi"><a name="rsi,Df,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">rsi</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">dx</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Ts</span></pre></dt>
+<dt id="getCurrentForex"><a name="getCurrentForex,seq[string]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getCurrentForex</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">curs</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Cf</span></pre></dt>
 <dd>
-<p>rsi</p>
-<p>oscillator</p>
-<p>under Development</p>
-<p>This is not ok yet , values seem incorrect </p>
-
+getcurrentForex2 get the latest yahoo exchange rate info for a currency pair e.g EURUSD , JPYUSD ,GBPHKD
 
 </dd>
-<dt id="showRsi"><a name="showRsi,Ts,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showRsi</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">rsx</span><span class="Other">:</span> <span class="Identifier">Ts</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other">{.</span><span class="Identifier">discardable</span><span class="Other">.}</span></pre></dt>
+<dt id="showCurrentForex"><a name="showCurrentForex,seq[string]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showCurrentForex</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">curs</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span> <span class="Other">{.</span><span class="Identifier">discardable</span><span class="Other">.}</span></pre></dt>
 <dd>
-<p>showRsi</p>
-<p>a convenience proc to display rsi latest is on top </p>
-
-
-</dd>
-<dt id="sharpe"><a name="sharpe,Df,Df"></a><pre><span class="Keyword">proc</span> <span class="Identifier">sharpe</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adfstock</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">;</span> <span class="Identifier">adfriskfree</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span></pre></dt>
-<dd>
-<p>sharpe ratios based on std.dev it does not match with R / quantmod output</p>
-<p>under Development</p>
-<p>This is not ok yet </p>
-
+showCurrentForex a convenience proc to display exchange rates
 
 </dd>
 <dt id="logisticf"><a name="logisticf,float"></a><pre><span class="Keyword">proc</span> <span class="Identifier">logisticf</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">z</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span></pre></dt>
@@ -1748,7 +1744,7 @@ msgX templates convenience templates for colored text output the assumption is t
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-06-16 15:29:18 UTC</small>
+        <small>Made with Nim. Generated: 2015-06-18 16:18:50 UTC</small>
       </div>
     </div>
   </div>
