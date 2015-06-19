@@ -4,7 +4,7 @@ import nimFinLib
 # Master Testing Suite of nimFinLib 
 # 
 # compile with 
-# nim c -d:release -d:speed -d:ssl nimFinT5
+# nim c --deadcodeelim:on -d:release --opt:size -d:ssl nimFinT5
 
 
 var start = epochTime()      
@@ -39,7 +39,6 @@ var symbols5 = @["AFK", "ASHR", "ECH", "EGPT",
 
 var symbols = symbols1
 
-
 # make sure the list is unique
 symbols = deduplicate(symbols) 
 # indexes holds a list of yahoo type index codes
@@ -56,24 +55,15 @@ var
 
 # set up some lists to hold stock codes , let's call them pools
 # pools hold a list of symbols of interest , there can be any number of pools
-# like etfpool ukpool , uspool , etc here we have 2 pools
+# like etfpool ,ukpool , uspool , etc here we have 2 pools
 
-var
-  stockpool     = newSeq[Df]()       # holds all history data for each stock fetched
-  indexpool     = newSeq[Df]()       # holds index history data
-
-# init manually  
-stockpool = @[]
-indexpool = @[]
-
-# we also can init Df objects like so
-#stockpool = initDf(stockpool)
-#indexpool = initDf(indexpool)
+var stockpool = initPool()             # holds all history data for each stock fetched
+var indexpool = initPool()             # holds index history data
 
 # the pools are empty , so now load the pools with data based
 # on above provided symbol lists , of course this symbols can
 # come from a database or text file
-# note getSymbol2 use below , this pulls in the yahoo historical data
+# note getSymbol2 use below , gets the yahoo historical data
 for symbx in symbols:
     stockpool.add(getSymbol2(symbx,startDate,endDate))
 echo()  
@@ -83,16 +73,11 @@ for symbx in indexes:
     indexpool.add(getSymbol2(symbx,startDate,endDate))
 echo() 
 
-# setup a new account structure
-     
-var account    : Pf
-var portfolio  : Nf
-var stockdata  : Df
+# setup a new account structure 
+var account     = initPf()
+var portfolio   = initNf()
+var stockdata   = initDf()
 
-# initialize 
-account   = initPf(account)
-portfolio = initNf(portfolio)
-stockdata = initDf(stockdata)
 # stockdata holds a Df object that has all historical data of a single stock 
 # we can use the first stock in stockpool like so: 
 # stockdata = stockpool[0] 
@@ -130,9 +115,9 @@ echo "AdjClose: ",account.pf[0].dx[0].adjc.last
 echo "StDevCl : ",account.pf[0].dx[0].rc[0].standardDeviation 
 echo "StDevClA: ",account.pf[0].dx[0].rca[0].standardDeviation
 # alternative way to work with the stock data 
-# to save some writing 
+# and to save some writing 
 # # note last ==> last in from the left or from top
-# # so we also can write data = account.pf[0].dx[0] or
+# # so we also can write :   data = account.pf[0].dx[0] or
 var data = account.pf.last.dx.last  
 echo()
 echo "Using shortcut to display most recent open value"
@@ -235,9 +220,7 @@ echo ()
 # this meets R quantmod output 100%
 var ndays = 22
 var ema22 = ema(data,ndays)
-
 echo "EMA for : ", data.stock
-# show it
 showEma(ema22,5)
 
 
@@ -253,12 +236,12 @@ echo ()
 msgy() do : echo "Stats for : ", data.stock , " based on close price"
 statistics(data.rc[0])
 
+
 echo ()
 msgy() do : echo "###############################################"
 msgy() do : echo "# Tests for date and logistic helper procs    #"
 msgy() do : echo "###############################################"
 echo ()
-# test date routines
  
 var s     = ts.dd.min  # note we use the date series from the timeseries test above
 var e     = ts.dd.max
@@ -290,10 +273,6 @@ for x in -a.. a:
 
 
 
-
-# how to see whats going on inside the object 
-#echo repr(t1)
-
 echo ()
 msgy() do : echo "############################################"
 msgy() do : echo "# Tests for Current Stocks and Indexes     #"
@@ -309,9 +288,7 @@ echo ()
 
 var xs = ""
 for x in 0.. <account.pf[0].dx.len:
-    # need to pass multiple code like so code+code+ , an initial + is also ok apparently
-    # stockDf proc does some required type massaging by nim and gets
-    # the stock name from a Df object
+    # need to pass multiple code like so code+code+ , an initial + is also ok.
     xs = xs & "+" & stockDf(account.pf[0].dx[x])  
   
 showCurrentStocks(xs)
@@ -334,13 +311,17 @@ var checkcurrencies = @["EURUSD","GBPUSD","GBPHKD","JPYUSD","AUDUSD","EURHKD","J
 showCurrentForex(checkcurrencies)
 
 
-# if the exchangerates are needed for further processing
+# if the exchange rates are needed for further processing
 # use the getcurrentForex proc  , we receive a Cf type for unpacking
 var curs = getCurrentForex(@["EURUSD","EURHKD"])
 echo()
 echo "Current EURUSD Rate : ","{:<8}".fmt(curs.ra.last)
 echo "Current EURHKD Rate : ","{:<8}".fmt(curs.ra.first)
 echo()
+
+
+# how to see whats going on inside an object 
+#echo repr(t1)
 
  
 when isMainModule:

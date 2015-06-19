@@ -158,6 +158,8 @@ proc timeseries*[T](self:T,ty:string): Ts =
      return ts
 
 
+ 
+
 proc showTimeseries* (ats:Ts,header,ty:string,N:int) {.discardable.} =
    ## showTimeseries 
    ## takes a Ts object as input as well as a header string
@@ -215,21 +217,24 @@ proc rca*(self: var Df) : seq[RunningStat] =
      result = self.rca   
 
 
-proc initPf*(apf:var PF):PF = 
+proc initPf*():PF = 
      ## init a new empty account object
+     var apf : Pf
      apf.pf = @[]
      result = apf
 
 
-proc initNf*(anf:var Nf):Nf =
+proc initNf*():Nf =
     ## init a new empty portfolio object
+    var anf : Nf
     anf.nx = ""
     anf.dx = @[]
     result = anf 
 
 
-proc initDf*(adf:var Df):Df =
+proc initDf*():Df =
     ## init stock data object 
+    var adf : Df
     adf.stock = ""
     adf.date  = @[]
     adf.open  = @[]
@@ -243,6 +248,26 @@ proc initDf*(adf:var Df):Df =
     result = adf
 
 
+proc initTs*():Ts=
+     ## init a timeseries object
+     var ats : Ts
+     ats.dd = @[]
+     ats.tx = @[]
+     result = ats
+     
+proc initCf*():Cf=
+     ## init a Cf object to hold basic forex data
+     var acf : Cf
+     acf.cu = @[]
+     acf.ra = @[]
+     result = acf
+     
+     
+proc initPool*():seq[Df] =
+  ## init pools , which are sequences of Df objects used in portfolio building
+  var apool = newSeq[Df]()     
+  apool = @[]
+  result  = apool
 
 converter toTwInt(x: cushort): int = result = int(x)
 when defined(Linux):
@@ -342,7 +367,7 @@ proc day*(aDate:string) : string =
 
 
 proc month*(aDate:string) : string =
-  ## month starts with 00 for jan
+  ## yahoo month starts with 00 for jan
   ## 
   ## Format MM
   # 
@@ -442,7 +467,7 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
     var headerset = [symb,"Date","Open","High","Low","Close","Volume","Adj Close"]
     var c = 0
     var hflag  : bool # used for testing maybe removed later
-    var astock : Df   # this will hold our result history data for one stock
+    var astock = initDf()   # this will hold our result history data for one stock
                     
     # naming outputfile nimfintmp.csv as many stock symbols have dots like 0001.HK
     # could also be done to be in memory like /shm/  this file will be auto removed.
@@ -785,9 +810,8 @@ proc getCurrentForex*(curs:seq[string]):Cf =
   for ac in curs:
      aurl = aurl & ac & "=X,"
   
-  var rf : Cf
-  rf.cu = @[]   # currency code 
-  rf.ra = @[]   # rate
+  # init a Cf object to hold forex data
+  var rf = initCf() 
      
   var acvsfile = "nimcurmp.csv"  # temporary file
   downloadFile(aurl,acvsfile)

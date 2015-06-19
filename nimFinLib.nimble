@@ -1,8 +1,8 @@
 [Package]
 name          = "nimFinLib"
-version       = "0.1.0"
+version       = "0.2.0"
 author        = "qqTop"
-description   = "Financial library for Nim"
+description   = "Financial Library for Nim"
 license       = "MIT"
 
 srcDir        = "src"
