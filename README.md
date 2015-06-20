@@ -85,8 +85,8 @@ NOTE :
      Forking ,testing, suggestions ,ideas are welcome.
      This is development code , hence use at your own risk.
      
-     Executables - if any - here will have been build to run on linux 64
-     and tested on Ubuntu 14.04 LTS and opensuse 13.2
+     Executables - if any - will have been build to run on linux 64
+     and tested on Ubuntu 14.04 LTS and openSuse 13.2.
               
               
               
