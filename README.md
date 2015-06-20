@@ -4,7 +4,7 @@ Financial Library for Nim language
 
 Program.: nimFinLib  
 
-Status..: Development - alpha
+Status..: Development
 
 License.: MIT opensource  
 
@@ -82,7 +82,8 @@ decho(3)
 NOTE : 
   
      Improvements may be made at any time.              
-     Forking , suggestions ,ideas are welcome .
+     Forking ,testing, suggestions ,ideas are welcome.
+     This is development code , hence use at your own risk.
      
      Executables - if any - here will have been build to run on linux 64
      and tested on Ubuntu 14.04 LTS and opensuse 13.2
