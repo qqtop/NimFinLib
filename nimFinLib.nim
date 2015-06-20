@@ -186,7 +186,7 @@ proc showTimeseries* (ats:Ts,header,ty:string,N:int) {.discardable.} =
 proc stock*(self: var Df) : string =
      ## Various convenience procs to access the data and some calcs like returns etc 
      ## stock,close,open,high,low,vol,adjc,date,rc,rca
-     ## initDf,initPf,initNf 
+     ## initDf,initPf,initNf,initCf,initTs,initPool 
      result = self.stock
      
 proc close*(self: var Df) : seq[float] =
@@ -247,13 +247,6 @@ proc initDf*():Df =
     adf.rca   = @[]
     result = adf
 
-
-proc initTs*():Ts=
-     ## init a timeseries object
-     var ats : Ts
-     ats.dd = @[]
-     ats.tx = @[]
-     result = ats
      
 proc initCf*():Cf=
      ## init a Cf object to hold basic forex data
@@ -262,6 +255,12 @@ proc initCf*():Cf=
      acf.ra = @[]
      result = acf
      
+proc initTs*():Ts=
+     ## init a timeseries object
+     var ats : Ts
+     ats.dd = @[]
+     ats.tx = @[]
+     result = ats
      
 proc initPool*():seq[Df] =
   ## init pools , which are sequences of Df objects used in portfolio building
@@ -297,7 +296,10 @@ when defined(Linux):
 when defined(Windows):
    tw = repeat("-",80)
 
-
+proc decho*(z:int) {.discardable.} =
+    ## blank lines 
+    for x in 0.. <z:
+      echo()
 
 proc currentStocks(aurl:string) {.discardable.} =
   ## currentStocks 
@@ -379,6 +381,38 @@ proc year*(aDate:string) : string = aDate.split("-")[0]
      ## Format yyyy
 
 
+
+proc validdate*(adate:string):bool =
+     var xdate = parseInt(aDate.replace("-",""))
+     if xdate > 19000101 and xdate < 50001212:
+        result = true
+     else:
+        result = false
+       
+proc compareDates*(startDate,endDate:string) : int = 
+     # dates must be in form yyyy-MM-dd      
+     # we want this to answer 
+     # s == e   ==> 0
+     # s >= e   ==> 1
+     # s <= e   ==> 2  
+     # -1 undefined , invalid s date   
+     # -2 undefined . invalid e and or s date
+     if validdate(startDate) and validdate(enddate):
+        
+        var std = startDate.replace("-","")
+        var edd = endDate.replace("-","")
+        if std == edd:
+          result = 0
+        elif std >= edd:
+          result = 1
+        elif std <= edd:
+          result = 2
+        else:
+          result = -1
+     else:
+          result = -2
+        
+ 
 proc intervalsecs*(startDate,endDate:string) : float =
       ## interval procs returns time elapsed between two dates in secs,hours etc. 
       ## 
@@ -556,38 +590,73 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
     # send astock back
     result = astock
       
+proc showhistData*(adf: Df,n:int) {.discardable.} =
+    ## showhistData
+    ## 
+    ## Show n recent rows historical stock data
+    decho(1)
+    msgg() do: echo "{:<8}{:<11}{:>10}{:>10}{:>10}{:>10}{:>14}{:>10}".fmt("Code","Date","Open","High","Low","Close","Volume","AdjClose")
+    if n >= adf.date.len:
+      for x in 0.. <adf.date.len: 
+        echo "{:<8}{:<11}{:>10}{:>10}{:>10}{:>10}{:>14}{:>10}".fmt(adf.stock,adf.date[x],adf.open[x],adf.high[x],adf.low[x],adf.close[x],adf.vol[x],adf.adjc[x])
+    else:
+      for x in 0.. <n: 
+        echo "{:<8}{:<11}{:>10}{:>10}{:>10}{:>10}{:>14}{:>10}".fmt(adf.stock,adf.date[x],adf.open[x],adf.high[x],adf.low[x],adf.close[x],adf.vol[x],adf.adjc[x])
+    decho(2)
+    
+      
+proc showhistData*(adf: Df,s: string,e:string) {.discardable.} =
+    ## showhistData
+    ## 
+    ## show historical stock data between 2 dates
+    ## 
+    ## dates must be of format yyyy-MM-dd
+    # s == e   ==> 0
+    # s >= e   ==> 1
+    # s <= e   ==> 2
+    decho(1)
+    msgg() do: echo "{:<8}{:<11}{:>10}{:>10}{:>10}{:>10}{:>14}{:>10}".fmt("Code","Date","Open","High","Low","Close","Volume","AdjClose")
+    for x in 0.. <adf.date.len: 
+      
+      var c1 = compareDates(adf.date[x],s) 
+      var c2 = compareDates(adf.date[x],e) 
+      if c1 == 1 or c1 == 0:
+          if c2 == 2  or c2 == 0:  
+             echo "{:<8}{:<11}{:>10}{:>10}{:>10}{:>10}{:>14}{:>10}".fmt(adf.stock,adf.date[x],adf.open[x],adf.high[x],adf.low[x],adf.close[x],adf.vol[x],adf.adjc[x])
+    decho(2)            
+  
     
 proc last*[T](self : seq[T]): T =
-          ## Various data navigation routines
-          ## 
-          ## first,last,head,tail 
-          ## 
-          ## last means most recent row 
-          ## 
-          result = self[self.low]
+    ## Various data navigation routines
+    ## 
+    ## first,last,head,tail 
+    ## 
+    ## last means most recent row 
+    ## 
+    result = self[self.low]
           
     
 proc first*[T](self : seq[T]): T =
-          ## first means oldest row 
-          ## 
-          result = self[self.high]
+    ## first means oldest row 
+    ## 
+    result = self[self.high]
   
 proc tail*[T](self : seq[T] , n: int) : seq[T] =
-          ## tail means most recent rows 
-          ## 
-          if len(self) >= n:
-             result = self[0.. <n]
-          else:
-             result = self[0.. <len(self)]
+    ## tail means most recent rows 
+    ## 
+    if len(self) >= n:
+        result = self[0.. <n]
+    else:
+        result = self[0.. <len(self)]
  
 proc head*[T](self : seq[T] , n: int) : seq[T] =
-          ## head means oldest rows 
-          ## 
-          var self2 = reversed(self)
-          if len(self2) >= n:
-             result = self2[0.. <n].tail(n)
-          else:
-             result = self2[0.. <len(self2)].tail(n)    
+    ## head means oldest rows 
+    ## 
+    var self2 = reversed(self)
+    if len(self2) >= n:
+        result = self2[0.. <n].tail(n)
+    else:
+        result = self2[0.. <len(self2)].tail(n)    
  
  
 proc lagger*[T](self:T , days : int) : T =
@@ -602,15 +671,15 @@ proc lagger*[T](self:T , days : int) : T =
 
  
 proc dailyReturns*(self:seq[float]):seq = 
-      ## dailyReturns
-      ## 
-      ## daily returns calculation gives same results as dailyReturns in R / quantmod
-      ## 
-      var k = 1
-      var lgx = newSeq[float]()
-      for z in 1+k.. <self.len:
-          lgx.add(1-(self[z] / self[z-k]))  
-      result = lgx   
+    ## dailyReturns
+    ## 
+    ## daily returns calculation gives same results as dailyReturns in R / quantmod
+    ## 
+    var k = 1
+    var lgx = newSeq[float]()
+    for z in 1+k.. <self.len:
+        lgx.add(1-(self[z] / self[z-k]))  
+    result = lgx   
                          
 
 proc showdailyReturnsCl*(self:Df , N:int) {.discardable.} =
@@ -629,10 +698,10 @@ proc showdailyReturnsCl*(self:Df , N:int) {.discardable.} =
       # show limited rows output if c<>0
       if N == 0:
         for  x in 0.. <dfr.len:
-             echo "{:<8} {:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
+             echo "{:<8}{:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
       else:
         for  x in 0.. <N:
-             echo "{:<8} {:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
+             echo "{:<8}{:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
   
 
 proc showdailyReturnsAdCl*(self:Df , N:int) {.discardable.} =
