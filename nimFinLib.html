@@ -1249,8 +1249,18 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="getTerminalWidth*(): int"><wbr />get<wbr />Terminal<wbr />Width</a></li>
   <li><a class="reference" href="#decho,int"
     title="decho*(z: int)"><wbr />decho</a></li>
+  <li><a class="reference" href="#stockDf,Df"
+    title="stockDf*(dx: Df): string"><wbr />stock<wbr />Df</a></li>
+  <li><a class="reference" href="#buildStockString,Nf"
+    title="buildStockString*(apf: Nf): string"><wbr />build<wbr />Stock<wbr />String</a></li>
+  <li><a class="reference" href="#buildStockString,seq[Df]"
+    title="buildStockString*(adf: seq[Df]): string"><wbr />build<wbr />Stock<wbr />String</a></li>
   <li><a class="reference" href="#showCurrentIndexes,string"
     title="showCurrentIndexes*(idxs: string)"><wbr />show<wbr />Current<wbr />Indexes</a></li>
+  <li><a class="reference" href="#showCurrentIndexes,seq[Df]"
+    title="showCurrentIndexes*(adf: seq[Df])"><wbr />show<wbr />Current<wbr />Indexes</a></li>
+  <li><a class="reference" href="#showCurrentStocks,Nf"
+    title="showCurrentStocks*(apf: Nf)"><wbr />show<wbr />Current<wbr />Stocks</a></li>
   <li><a class="reference" href="#showCurrentStocks,string"
     title="showCurrentStocks*(stcks: string)"><wbr />show<wbr />Current<wbr />Stocks</a></li>
   <li><a class="reference" href="#day,string"
@@ -1305,8 +1315,6 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="sumdailyReturnsAdCl*(self: Df): float"><wbr />sumdaily<wbr />Returns<wbr />Ad<wbr />Cl</a></li>
   <li><a class="reference" href="#statistics,Runningstat"
     title="statistics*(x: Runningstat)"><wbr />statistics</a></li>
-  <li><a class="reference" href="#stockDf,Df"
-    title="stockDf*(dx: Df): string"><wbr />stock<wbr />Df</a></li>
   <li><a class="reference" href="#ema,Df,int"
     title="ema*(dx: Df; N: int): Ts"><wbr />ema</a></li>
   <li><a class="reference" href="#showEma,Ts,int"
@@ -1344,7 +1352,7 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   </div>
   <div class="nine columns" id="content">
   <p class="module-desc"><blockquote><p><p>Program     : nimFinLib</p>
-<p>Status      : Development - alpha</p>
+<p>Status      : Development</p>
 <p>License     : MIT opensource</p>
 <p>Version     : 0.2</p>
 <p>Compiler    : nim 0.11.3</p>
@@ -1359,8 +1367,7 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
 </p></blockquote>
 <p>Tested on   : Linux</p>
 <p>ProjectStart: 2015-06-05</p>
-<p>ToDo        : Ratios ,plotting, currency, metals</p>
-<p>Last        : 2015-06-18</p>
+<p>ToDo        : Ratios ,plotting, metals</p>
 <p>Programming : qqTop</p>
 </p></blockquote>
 </p>
@@ -1556,6 +1563,23 @@ init pools , which are sequences of Df objects used in portfolio building
 blank lines 
 
 </dd>
+<dt id="stockDf"><a name="stockDf,Df"></a><pre><span class="Keyword">proc</span> <span class="Identifier">stockDf</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">dx</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+<p>stockDf</p>
+<p>get the stock name from a Df object and return as string </p>
+
+
+</dd>
+<dt id="buildStockString"><a name="buildStockString,Nf"></a><pre><span class="Keyword">proc</span> <span class="Identifier">buildStockString</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apf</span><span class="Other">:</span> <span class="Identifier">Nf</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+Produce a string of one or more stock codes coming from a Nf object
+
+</dd>
+<dt id="buildStockString"><a name="buildStockString,seq[Df]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">buildStockString</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adf</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Df</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+Produce a string of one or more stock codes coming from a pool  Df object
+
+</dd>
 <dt id="showCurrentIndexes"><a name="showCurrentIndexes,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showCurrentIndexes</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">idxs</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span class="Other">{.</span><span class="Identifier">discardable</span><span class="Other">.}</span></pre></dt>
 <dd>
 <p>showCurrentIndexes</p>
@@ -1563,10 +1587,24 @@ blank lines
 
 
 </dd>
+<dt id="showCurrentIndexes"><a name="showCurrentIndexes,seq[Df]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showCurrentIndexes</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adf</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Df</span><span class="Other">]</span><span class="Other">)</span> <span class="Other">{.</span><span class="Identifier">discardable</span><span class="Other">.}</span></pre></dt>
+<dd>
+<p>showCurrentIndexes</p>
+<p>callable display routine for currentIndexes with a pool object passed in </p>
+
+
+</dd>
+<dt id="showCurrentStocks"><a name="showCurrentStocks,Nf"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showCurrentStocks</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apf</span><span class="Other">:</span> <span class="Identifier">Nf</span><span class="Other">)</span> <span class="Other">{.</span><span class="Identifier">discardable</span><span class="Other">.}</span></pre></dt>
+<dd>
+<p>showCurrentStocks</p>
+<p>callable display routine for currentStocks with Nf portfolio object passed in </p>
+
+
+</dd>
 <dt id="showCurrentStocks"><a name="showCurrentStocks,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showCurrentStocks</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">stcks</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span class="Other">{.</span><span class="Identifier">discardable</span><span class="Other">.}</span></pre></dt>
 <dd>
 <p>showCurrentStocks</p>
-<p>callable display routine for currentStocks </p>
+<p>callable display routine for currentStocks with stockstring passed in </p>
 
 
 </dd>
@@ -1733,13 +1771,6 @@ head means oldest rows
 
 
 </dd>
-<dt id="stockDf"><a name="stockDf,Df"></a><pre><span class="Keyword">proc</span> <span class="Identifier">stockDf</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">dx</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
-<dd>
-<p>stockDf</p>
-<p>get the stock name from a Df object and return as string </p>
-
-
-</dd>
 <dt id="ema"><a name="ema,Df,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">ema</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">dx</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Ts</span></pre></dt>
 <dd>
 <p>ema</p>
@@ -1823,7 +1854,7 @@ msgX templates convenience templates for colored text output the assumption is t
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-06-20 10:49:14 UTC</small>
+        <small>Made with Nim. Generated: 2015-06-20 15:06:35 UTC</small>
       </div>
     </div>
   </div>

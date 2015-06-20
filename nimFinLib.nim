@@ -291,7 +291,6 @@ when defined(Linux):
     var aline* = repeat("-",tw)
 
 # will change this once windows gets a real terminal or shell
-
 when defined(Windows):
    tw = repeat("-",80)
 
@@ -299,6 +298,17 @@ proc decho*(z:int) {.discardable.} =
     ## blank lines 
     for x in 0.. <z:
       echo()
+
+       
+proc stockDf*(dx : Df) : string =
+  ## stockDf
+  ## 
+  ## get the stock name from a Df object and return as string
+  ## 
+  var stk: string = dx.stock
+  result = stk        
+  
+
 
 proc currentStocks(aurl:string) {.discardable.} =
   ## currentStocks 
@@ -336,6 +346,27 @@ proc currentIndexes(aurl:string) {.discardable.} =
               echo repeat("-",tw)
 
 
+
+proc buildStockString*(apf:Nf):string =
+  ## Produce a string of one or more stock codes coming from a Nf object
+  var xs = ""
+  for x in 0.. <apf.dx.len:
+    # need to pass multiple code like so code+code+ , an initial + is also ok.
+    xs = xs & "+" & stockDf(apf.dx[x]) 
+  result = xs  
+  
+proc buildStockString*(adf:seq[Df]):string =
+  ## Produce a string of one or more stock codes coming from a pool  Df object
+  var xs = ""
+  for x in 0.. <adf.len:
+    # need to pass multiple code like so code+code+ , an initial + is also ok.
+    xs = xs & "+" & adf[x].stock 
+  result = xs   
+  
+
+# Note showCurrentIndexes and showCurrentStocks are basically the same
+# but it makes for easier reading in the application to give it different names
+
 proc showCurrentIndexes*(idxs:string){.discardable.} =
    ## showCurrentIndexes
    ## 
@@ -346,10 +377,34 @@ proc showCurrentIndexes*(idxs:string){.discardable.} =
    currentIndexes(qurl)  
 
 
+proc showCurrentIndexes*(adf:seq[Df]){.discardable.} =
+   ## showCurrentIndexes
+   ## 
+   ## callable display routine for currentIndexes with a pool object passed in
+   ## 
+   var idxs = buildStockString(adf)
+   hdx(echo "Index Data for a pool" )
+   var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % idxs
+   currentIndexes(qurl)  
+
+
+
+proc showCurrentStocks*(apf:Nf){.discardable.} =
+   ## showCurrentStocks
+   ## 
+   ## callable display routine for currentStocks with Nf portfolio object passed in
+   ## 
+   var stcks = buildStockString(apf)
+   hdx(echo "Stocks Current Quote for $1" % apf.nx)
+   var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
+   currentStocks(qurl)  
+
+
+
 proc showCurrentStocks*(stcks:string){.discardable.} =
    ## showCurrentStocks
    ## 
-   ## callable display routine for currentStocks
+   ## callable display routine for currentStocks with stockstring passed in
    ## 
    hdx(echo "Stocks Current Quote")
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
@@ -767,15 +822,7 @@ proc statistics*(x:Runningstat) {.discardable.} =
         echo "RunningStat Min     : ", $formatFloat(x.min,ffDecimal,5)
         echo "RunningStat Max     : ", $formatFloat(x.max,ffDecimal,5)
         
-        
-proc stockDf*(dx : Df) : string =
-  ## stockDf
-  ## 
-  ## get the stock name from a Df object and return as string
-  ## 
-  var stk: string = dx.stock
-  result = stk        
-  
+ 
 
 
 # emaflag = false meaning all ok

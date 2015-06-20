@@ -18,7 +18,7 @@ echo ()
 
 # symbols holds a list of yahoo type stock codes
 var symbols1  = @["0386.HK","0880.HK","0555.HK"]
-# some more symbol sets for testing for actual running always use symbols
+# some more symbol sets for testing always use symbols
 var symbols2 = @["0386.HK","0005.HK","0880.HK","3311.HK","3688.HK","2727.HK","3337.HK","3968.HK"]  # some stock code
 var symbols3 = @["1766.HK","0386.HK","0880.HK","0555.HK"]
 var symbols4 = @["SNP","SBUX","IBM","BP.L"]
@@ -36,12 +36,13 @@ var symbols5 = @["AFK", "ASHR", "ECH", "EGPT",
              "QQQ", "RSX", "THD", "TUR",
              "VNM", "TLT"]
 
-
+# select one of the lists or use your own
 var symbols = symbols1
 
 # make sure the list is unique
 symbols = deduplicate(symbols) 
 # indexes holds a list of yahoo type index codes
+# and maybe used as 'risk free' in var. calculations like sharpe etc.
 var indexes = @["SPY","^HSI"]  
 # make sure the list is unique
 indexes = deduplicate(indexes)
@@ -63,7 +64,7 @@ var indexpool = initPool()             # holds index history data
 # the pools are empty , so now load the pools with data based
 # on above provided symbol lists , of course this symbols can
 # come from a database or text file
-# note getSymbol2 use below , gets the yahoo historical data
+# note: getSymbol2 use below , this gets the yahoo historical data
 for symbx in symbols:
     stockpool.add(getSymbol2(symbx,startDate,endDate))
 echo()  
@@ -82,14 +83,14 @@ var stockdata   = initDf()
 # we can use the first stock in stockpool like so: 
 # stockdata = stockpool[0] 
   
-# for many stocks we iterate over stockpool to load all
+# for multiple stocks we iterate over stockpool to load all
 
 # create a portfolio and add a single stockdata object
 portfolio.nx = "TestPortfolio"    # nx holds the relevant portfolio name
 for stockdata in stockpool:  
     portfolio.dx.add(stockdata)   # dx holds the historical data series
     
-# add the just created portfolio to account, an object which holds all porfolios
+# add the just created portfolio to account, an object which holds all portfolios
 account.pf.add(portfolio)
 
 # now all is set and data can be used 
@@ -102,7 +103,9 @@ echo ()
 # access the first portfolio inside of account and show name of this portfolio
 echo account.pf[0].nx 
 # of course this works too
-#echo account.pf.last.nx
+# echo account.pf.last.nx
+# note : first , last maybe confusing in the beginning 
+# last = most recent , first = oldest
 
 # access the first stock in the first portfolio in account and show some data
 echo "Name    : ",account.pf[0].dx[0].stock
@@ -116,8 +119,9 @@ echo "StDevCl : ",account.pf[0].dx[0].rc[0].standardDeviation
 echo "StDevClA: ",account.pf[0].dx[0].rca[0].standardDeviation
 # alternative way to work with the stock data 
 # and to save some writing 
-# # note last ==> last in from the left or from top
-# # so we also can write :   data = account.pf[0].dx[0] or
+# note last ==> last in from the left or from top
+# so we also can write :  
+# data = account.pf[0].dx[0] or
 var data = account.pf.last.dx.last  
 echo()
 echo "Using shortcut to display most recent open value"
@@ -155,11 +159,11 @@ var rets = dailyreturns(data.adjc)
 for x in 0.. <rets.tail(2).len :
    echo data.date[x],"  ",rets[x]  
 
-# we also can use the convenient show proc 
+# we also can use the convenient show proc to display data
 showdailyReturnsAdCl(data,2)  
  
 echo () 
-# we can show sum of dailyreturns
+# we can show the sum of dailyreturns
 echo "DailyReturns sum based on Close Price     : ",Rune(ord(11593))," ",sumdailyReturnsCl(data)
 echo "DailyReturns sum based on AdjClose Price  : ",Rune(ord(11593))," ",sumdailyReturnsAdCl(data)
 
@@ -247,8 +251,8 @@ msgy() do : echo "# Tests for date and logistic helper procs    #"
 msgy() do : echo "###############################################"
 echo ()
  
-var s     = ts.dd.min  # note we use the date series from the timeseries test above
-var e     = ts.dd.max
+var s = ts.dd.min  # note we use the date series from the timeseries test above
+var e = ts.dd.max
  
 msgy() do: echo "\nInterval Information\n"
 echo s,"  -  ",e
@@ -287,20 +291,19 @@ echo ()
 # stockDf is a helper proc to convert a Df.stock object to a string 
 # this may be deprecated in the future
 
-# produce a string of one or more stock codes coming from a Nf object
-# which holds all stocks in a portfolio
+ 
+# we can pass some some stocks  
+showCurrentStocks("AAPL+IBM+BP.L")
 
-var xs = ""
-for x in 0.. <account.pf[0].dx.len:
-    # need to pass multiple code like so code+code+ , an initial + is also ok.
-    xs = xs & "+" & stockDf(account.pf[0].dx[x])  
-  
-showCurrentStocks(xs)
+# we also can pass all stocks in a portfolio and display the latest quotes
+# here we use the first portfolio in account
+showCurrentStocks(account.pf[0])
+
 
 var idx : string = indexpool[0].stock  # here just passing a single code (index)
 showCurrentIndexes(idx)
 
-
+showCurrentIndexes(indexpool)          # here passing in our indexpool a  seq[Df] type
 
 echo ()
 msgy() do : echo "###############################################"
@@ -338,7 +341,7 @@ when isMainModule:
   system.addQuitProc(resetAttributes)
   # some system stats
   GC_fullCollect()
-  # we can see what gc is doing
+  # we can see what GC has to say
   #echo GC_getStatistics()
   quit 0    
   
