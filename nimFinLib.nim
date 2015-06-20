@@ -2,7 +2,7 @@
 ##
 ## Program     : nimFinLib  
 ## 
-## Status      : Development - alpha
+## Status      : Development 
 ## 
 ## License     : MIT opensource  
 ## 
@@ -35,10 +35,9 @@
 ##               
 ## ProjectStart: 2015-06-05
 ## 
-## ToDo        : Ratios ,plotting, currency, metals
+## ToDo        : Ratios ,plotting, metals
 ## 
 ##  
-## Last        : 2015-06-18
 ## 
 ## Programming : qqTop
 ## 
