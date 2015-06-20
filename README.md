@@ -44,7 +44,6 @@ example1.nim
 ------------
 
 ```nimrod         
-
 import nimFinLib,times,strfmt,strutils
 
 # show latest stock quotes
@@ -53,7 +52,7 @@ decho(2)
 
 # get latest historic data for a stock
 var ibm = initDf()
-ibm = getsymbol2("0386.HK","2000-01-01",getDateStr())
+ibm = getsymbol2("IBM","2000-01-01",getDateStr())
 
 # show recent 5 historical data rows
 showhistdata(ibm,5)
@@ -76,6 +75,7 @@ decho(1)
 
 showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"])
 decho(3)
+
 ```
 
 
