@@ -863,14 +863,10 @@ proc ema* (dx : Df , N: int) : Ts =
        msgr() do : echo "Insufficient data for valid ema calculation, need min. $1 data points" % $(5 * N)
       
     else:
-      # so to calc this we need our price series dx.close 
-      # which holds all available historical prices
-      # 1) Start by calculating k for the given timeframe. 2 / (22 + 1) = 0,0869
-      
+        
       # lets calc the first ema by hand as per 
       # http://www.iexplain.org/ema-how-to-calculate/
       # note that our list is upside down so the first is actually the bottom in our list
-      # compared to quantmod ema,22 we are still off a bit so this needs further adjustment
       # 
       var nk = 2/(N + 1)
       var ns = 0.0
