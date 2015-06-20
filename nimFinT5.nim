@@ -122,6 +122,10 @@ var data = account.pf.last.dx.last
 echo()
 echo "Using shortcut to display most recent open value"
 echo data.open.last
+decho(2) # print 2 blank lines
+
+echo "Show hist. stock data between 2 dates incl. if available"
+showhistdata(data,"2015-04-12","2015-05-10")
 echo()
 
 echo ()

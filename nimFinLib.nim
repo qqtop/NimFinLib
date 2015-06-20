@@ -864,9 +864,6 @@ proc showEma* (emx:Ts , N:int) {.discardable.} =
    msgg() do : echo "{:<11} {:>11} ".fmt("Date","EMA") 
    for x in countdown(emx.dd.len-1,emx.dd.len-N,1) : 
           echo "{:<11} {:>11} ".fmt(emx.dd[x],emx.tx[x])
-     
-
-
 
 
 
@@ -884,6 +881,7 @@ proc getCurrentForex*(curs:seq[string]):Cf =
      
   var acvsfile = "nimcurmp.csv"  # temporary file
   downloadFile(aurl,acvsfile)
+  
   var s = newFileStream(acvsfile, fmRead)
   if s == nil:
        # in case of problems with the yahoo csv file we show a message
