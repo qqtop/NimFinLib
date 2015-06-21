@@ -1269,8 +1269,8 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="month*(aDate: string): string"><wbr />month</a></li>
   <li><a class="reference" href="#year,string"
     title="year*(aDate: string): string"><wbr />year</a></li>
-  <li><a class="reference" href="#validdate,string"
-    title="validdate*(adate: string): bool"><wbr />validdate</a></li>
+  <li><a class="reference" href="#validDate,string"
+    title="validDate*(adate: string): bool"><wbr />valid<wbr />Date</a></li>
   <li><a class="reference" href="#compareDates,string,string"
     title="compareDates*(startDate, endDate: string): int"><wbr />compare<wbr />Dates</a></li>
   <li><a class="reference" href="#intervalsecs,string,string"
@@ -1610,26 +1610,34 @@ Produce a string of one or more stock codes coming from a pool  Df object
 </dd>
 <dt id="day"><a name="day,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">day</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">aDate</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
-<p>Various procs for massaging the startdate and enddate into a format for</p>
-<p>currently used yahoo url to fetch history data</p>
+<p>day</p>
+<p>get day substring from a yyyy-MM-dd date string</p>
 <p>Format dd </p>
 
 
 </dd>
 <dt id="month"><a name="month,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">month</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">aDate</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
-<p>yahoo month starts with 00 for jan</p>
-<p>Format MM</p>
+<p>month</p>
+<p>get month substring from a yyyy-MM-dd date string</p>
+<p>Format MM </p>
 
 
 </dd>
 <dt id="year"><a name="year,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">year</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">aDate</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
-Format yyyy
+<p>year</p>
+<p>get year substring from a yyyy-MM-dd date string</p>
+<p>Format yyyy</p>
+
 
 </dd>
-<dt id="validdate"><a name="validdate,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">validdate</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adate</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dt id="validDate"><a name="validDate,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">validDate</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adate</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
 <dd>
+<p>validDate</p>
+<p>ensure that a date is in form yyyy-MM-dd (eg. 2015-03-20) and</p>
+<p>contains correct entries for year,month,day incl. leapyears</p>
+<p>date range allowed 1900-01-01  to  3000-12-31 </p>
 
 
 </dd>
@@ -1854,7 +1862,7 @@ msgX templates convenience templates for colored text output the assumption is t
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-06-20 15:06:35 UTC</small>
+        <small>Made with Nim. Generated: 2015-06-21 10:39:39 UTC</small>
       </div>
     </div>
   </div>

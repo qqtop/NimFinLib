@@ -267,7 +267,20 @@ echo "Secs       : ", intervalsecs(s,e)
 echo ()
 echo "Extract items from date string ",s
 echo s.year," ",s.month," ",s.day
+decho(2)
+
+
+echo "Test validDate proc"
+var somedates = @["2015-05-10","2015-02-29","3000-15-10","1899-12-31","2018-12-31","2016-02-29",
+                 "2017-02-29","2018-02-29","2019-02-29","2019-01-02",getDateStr()]
+for sd in somedates:
+  if validDate(sd) == true:
+      msgg() do: echo "{:<11} {}".fmt(sd,"true")
+  else:
+      msgr() do: echo "{:<11} {}".fmt(sd,"false")
 echo()
+
+
 
 msgy() do : echo "Testing logistics functions"
 # logisticf maps values to between 0 and 1
@@ -292,7 +305,7 @@ echo ()
 # this may be deprecated in the future
 
  
-# we can pass some some stocks  
+# we can pass some stocks  
 showCurrentStocks("AAPL+IBM+BP.L")
 
 # we also can pass all stocks in a portfolio and display the latest quotes

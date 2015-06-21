@@ -413,35 +413,96 @@ proc showCurrentStocks*(stcks:string){.discardable.} =
 
 
 proc day*(aDate:string) : string = 
-   ## Various procs for massaging the startdate and enddate into a format for
+   ## day
    ## 
-   ## currently used yahoo url to fetch history data
+   ## get day substring from a yyyy-MM-dd date string  
    ## 
    ## Format dd
    ## 
    aDate.split("-")[2]
 
 
-proc month*(aDate:string) : string =
+proc ymonth(aDate:string) : string =
+  ## ymonth 
+  ## 
   ## yahoo month starts with 00 for jan
   ## 
   ## Format MM
+  ## 
+  ## not exported and only used here for yahoo url setup
   # 
   var asdm = $(parseInt(aDate.split("-")[1])-1)
   if len(asdm) < 2: asdm = "0" & asdm
   result = asdm
-    
+ 
+proc month*(aDate:string) : string =
+  ## month
+  ##
+  ## get month substring from a yyyy-MM-dd date string  
+  ##
+  ## Format MM
+  ## 
+  var asdm = $(parseInt(aDate.split("-")[1]))
+  if len(asdm) < 2: asdm = "0" & asdm
+  result = asdm 
+ 
+ 
 proc year*(aDate:string) : string = aDate.split("-")[0]
+     ## year
+     ## 
+     ## get year substring from a yyyy-MM-dd date string  
+     ## 
      ## Format yyyy
 
 
-
-proc validdate*(adate:string):bool =
+proc validDate*(adate:string):bool =
+     ## validDate
+     ## 
+     ## ensure that a date is in form yyyy-MM-dd (eg. 2015-03-20) and
+     ## 
+     ## contains correct entries for year,month,day incl. leapyears
+     ## 
+     ## date range allowed 1900-01-01  to  3000-12-31
+     ## 
+     var m30 = @["04","06","08","09","11"]
+     var m31 = @["01","03","05","07","10","12"]
+       
      var xdate = parseInt(aDate.replace("-",""))
-     if xdate > 19000101 and xdate < 50001212:
-        result = true
-     else:
-        result = false
+     # check 1 is our date between 1900 - 3000
+     if xdate > 19000101 and xdate < 30001231:
+        var spdate = aDate.split("-")
+        if parseint(spdate[0]) >= 1900 and parseint(spdate[0]) <= 3000:
+             if spdate[1] in m30:
+               # so day max 30
+                if parseInt(spdate[2]) > 0 and parseInt(spdate[2]) < 31:
+                   result = true
+                else:
+                   result = false
+                   
+             elif spdate[1] in m31:
+               # so day max 30
+                if parseInt(spdate[2]) > 0 and parseInt(spdate[2]) < 32:
+                   result = true     
+                else:
+                   result = false
+             
+             else:
+                   # so its february
+                   if spdate[1] == "02" : 
+                      # check leapyear
+                      if isleapyear(parseint(spdate[0])) == true:
+                          if parseInt(spdate[2]) > 0 and parseint(spdate[2]) < 30:
+                            result = true
+                          else:
+                            result = false
+                      else:
+                          if parseInt(spdate[2]) > 0 and parseint(spdate[2]) < 29:
+                            result = true
+                          else:
+                            result = false
+         
+         
+ 
        
 proc compareDates*(startDate,endDate:string) : int = 
      # dates must be in form yyyy-MM-dd      
@@ -514,13 +575,13 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
     stdout.write("{:<11} {:<11}".fmt(startDate,endDate))
     # end feedback line
     
-    # set up dates
+    # set up dates for yahoo
     var sdy = year(startDate)
-    var sdm = month(startDate)
+    var sdm = ymonth(startDate)
     var sdd = day(startDate)
           
     var edy = year(endDate)
-    var edm = month(endDate)
+    var edm = ymonth(endDate)
     var edd = day(endDate)
 
     # set up df variables    
