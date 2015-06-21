@@ -562,14 +562,14 @@ proc validDate*(adate:string):bool =
         var spdate = aDate.split("-")
         if parseint(spdate[0]) >= 1900 and parseint(spdate[0]) <= 3000:
              if spdate[1] in m30:
-               # so day max 30
+               # day max 30
                 if parseInt(spdate[2]) > 0 and parseInt(spdate[2]) < 31:
                    result = true
                 else:
                    result = false
                    
              elif spdate[1] in m31:
-               # so day max 30
+               # day max 31
                 if parseInt(spdate[2]) > 0 and parseInt(spdate[2]) < 32:
                    result = true     
                 else:
