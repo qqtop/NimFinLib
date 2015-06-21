@@ -6,7 +6,7 @@
 ## 
 ## License     : MIT opensource  
 ## 
-## Version     : 0.2
+## Version     : 0.2.x
 ## 
 ## Compiler    : nim 0.11.3
 ## 
@@ -159,7 +159,7 @@ proc timeseries*[T](self:T,ty:string): Ts =
 
  
 
-proc showTimeseries* (ats:Ts,header,ty:string,N:int) {.discardable.} =
+proc showTimeseries* (ats:Ts,header,ty:string,N:int)  =
    ## showTimeseries 
    ## takes a Ts object as input as well as a header string
    ## for the data column , a string which can be one of

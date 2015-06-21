@@ -1162,7 +1162,7 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="Pf* = object 
   pf*: seq[Nf]                ## pf holds all Nf type portfolios for an account"><wbr />Pf</a></li>
   <li><a class="reference" href="#Nf"
-    title="Nf* = object of Pf
+    title="Nf* = object 
   nx*: string                 ## nx  holds portfolio name  e.g. MyGetRichPortfolio
   dx*: seq[Df]                ## dx  holds all stocks with historical data"><wbr />Nf</a></li>
   <li><a class="reference" href="#Df"
@@ -1202,7 +1202,7 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   <a class="reference reference-toplevel" href="#9" id="59">Lets</a>
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#VERSION"
-    title="VERSION* = &quot;0.2&quot;"><wbr />VERSION</a></li>
+    title="VERSION* = &quot;0.2.1&quot;"><wbr />VERSION</a></li>
 
   </ul>
 </li>
@@ -1354,7 +1354,7 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   <p class="module-desc"><blockquote><p><p>Program     : nimFinLib</p>
 <p>Status      : Development</p>
 <p>License     : MIT opensource</p>
-<p>Version     : 0.2</p>
+<p>Version     : 0.2.x</p>
 <p>Compiler    : nim 0.11.3</p>
 <p>Description : A basic library for financial calculations with Nim</p>
 <blockquote><p><p>Yahoo historical stock data</p>
@@ -1379,14 +1379,14 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
 <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
-<dt id="Pf"><a name="Pf"></a><pre><span class="Identifier">Pf</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span> 
+<dt id="Pf"><a name="Pf"></a><pre><span class="Identifier">Pf</span><span class="Operator">*</span> <span class="Other">=</span> <span class="Keyword">object</span> 
   <span class="Identifier">pf</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Nf</span><span class="Other">]</span>                <span class="Comment">## pf holds all Nf type portfolios for an account</span>
   </pre></dt>
 <dd>
 Pf type holds all portfolios similar to a master account portfolios are Nf objects
 
 </dd>
-<dt id="Nf"><a name="Nf"></a><pre><span class="Identifier">Nf</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Pf</span>
+<dt id="Nf"><a name="Nf"></a><pre><span class="Identifier">Nf</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span> 
   <span class="Identifier">nx</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>                 <span class="Comment">## nx  holds portfolio name  e.g. MyGetRichPortfolio</span>
   <span class="Identifier">dx</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Df</span><span class="Other">]</span>                <span class="Comment">## dx  holds all stocks with historical data </span>
   </pre></dt>
@@ -1446,7 +1446,7 @@ Cf type is a simple object to hold current currency data
 <div class="section" id="9">
 <h1><a class="toc-backref" href="#9">Lets</a></h1>
 <dl class="item">
-<dt id="VERSION"><a name="VERSION"></a><pre><span class="Identifier">VERSION</span><span class="Operator">*</span> <span class="Other">=</span> <span class="StringLit">&quot;0.2&quot;</span></pre></dt>
+<dt id="VERSION"><a name="VERSION"></a><pre><span class="Identifier">VERSION</span><span class="Operator">*</span> <span class="Other">=</span> <span class="StringLit">&quot;0.2.1&quot;</span></pre></dt>
 <dd>
 
 
@@ -1464,7 +1464,7 @@ timeseries returns a Ts type date and one data column based on ty selection inpu
 
 
 </dd>
-<dt id="showTimeseries"><a name="showTimeseries,Ts,string,string,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showTimeseries</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">ats</span><span class="Other">:</span> <span class="Identifier">Ts</span><span class="Other">;</span> <span class="Identifier">header</span><span class="Other">,</span> <span class="Identifier">ty</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other">{.</span><span class="Identifier">discardable</span><span class="Other">.}</span></pre></dt>
+<dt id="showTimeseries"><a name="showTimeseries,Ts,string,string,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showTimeseries</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">ats</span><span class="Other">:</span> <span class="Identifier">Ts</span><span class="Other">;</span> <span class="Identifier">header</span><span class="Other">,</span> <span class="Identifier">ty</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span></pre></dt>
 <dd>
 showTimeseries takes a Ts object as input as well as a header string for the data column , a string which can be one of head,tail,all and N for number of rows to display usage : showTimeseries(myTimeseries,myHeader,&quot;head|tail|all&quot;,rows)
 
@@ -1553,7 +1553,7 @@ init pools , which are sequences of Df objects used in portfolio building
 <dd>
 <p>getTerminalWidth</p>
 <p>utility to easily draw correctly sized lines on linux terminals</p>
-<p>and get linux get terminal width</p>
+<p>and get linux terminal width</p>
 <p>for windows this currently is set to terminalwidth 80 </p>
 
 
@@ -1862,7 +1862,7 @@ msgX templates convenience templates for colored text output the assumption is t
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-06-21 10:39:39 UTC</small>
+        <small>Made with Nim. Generated: 2015-06-21 11:19:40 UTC</small>
       </div>
     </div>
   </div>
