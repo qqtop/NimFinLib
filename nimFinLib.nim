@@ -385,8 +385,6 @@ proc stockDf*(dx : Df) : string =
   ## 
   var stk: string = dx.stock
   result = stk        
-  
-
 
 proc currentStocks(aurl:string) {.discardable.} =
   ## currentStocks 
@@ -395,16 +393,24 @@ proc currentStocks(aurl:string) {.discardable.} =
   ## 
   ## not callable
   ## 
+  #  some meek error handling is implemented if the yahoo servers are down
+  
+  var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
   for line in getContent(aurl).splitLines:
       var data = line[1..line.high].split(",")
-      if data.len > 0:
+      # even if yahoo servers are down our data.len is still 1 so
+      if data.len > 1: 
               setforegroundcolor(fgGreen)
               echo "Code : {:<10} Name : {}  Market : {}".fmt(data[0],data[1],data[2])
               setforegroundcolor(fgWhite)
               echo "Date : {:<12}{:<9}    Price  : {:<8} Volume : {:>12}".fmt(data[4],data[5],data[3],data[8])
               echo "Open : {:<8} High : {:<8} Change : {} Range : {}".fmt(data[6],data[7],data[9],data[10])                
               echo repeat("-",tw)
-
+      else:
+             if data.len == 1 and sflag == false:
+                msgr() do : echo "Yahoo server maybe unavailable. Try again later" 
+                sflag = true
+                
 
 proc currentIndexes(aurl:string) {.discardable.} =
   ## currentIndexes
@@ -412,20 +418,27 @@ proc currentIndexes(aurl:string) {.discardable.} =
   ## display routine for current index quote
   ## 
   ## not callable
-  ## 
+  ##
+  #  some meek error handling is implemented if the yahoo servers are down
+  
+  var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
   for line in getContent(aurl).splitLines:
       var data = line[1..line.high].split(",")
-      if data.len > 0:
+      if data.len > 1:
               setforegroundcolor(fgYellow)
               echo "Code : {:<10} Name : {}  Market : {}".fmt(data[0],data[1],data[2])
               setforegroundcolor(fgWhite)
               echo "Date : {:<12}{:<9}    Index  : {:<8}".fmt(data[4],data[5],data[3])
               echo "Open : {:<8} High : {:<8} Change : {} Range : {}".fmt(data[6],data[7],data[9],data[10])                
               echo repeat("-",tw)
-
-
+      else:
+              if data.len == 1 and sflag == false:
+                 msgr() do : echo "Yahoo server maybe unavailable. Try again later" 
+                 sflag = true
 
 proc buildStockString*(apf:Nf):string =
+  ## buildStockString
+  ## 
   ## Produce a string of one or more stock codes coming from a Nf object
   var xs = ""
   for x in 0.. <apf.dx.len:
@@ -434,7 +447,9 @@ proc buildStockString*(apf:Nf):string =
   result = xs  
   
 proc buildStockString*(adf:seq[Df]):string =
-  ## Produce a string of one or more stock codes coming from a pool  Df object
+  ## buildStockString
+  ## 
+  ## Produce a string of one or more stock codes coming from a pool Df object
   var xs = ""
   for x in 0.. <adf.len:
     # need to pass multiple code like so code+code+ , an initial + is also ok.
@@ -476,6 +491,9 @@ proc showCurrentStocks*(apf:Nf){.discardable.} =
    ##    showCurrentStocks(myAccount.Portfolio[0])
    ##    
    ## This means get all stock codes of the first portfolio in myAccount
+   ## 
+   ## Note : Yahoo servers maybe down sometimes which will make this procs
+   ## fail . Just wait a bit and try again. Stay calm ! Do not panic !
    ##    
    ## for full example see nimFinT5.nim
    ##   
@@ -495,6 +513,11 @@ proc showCurrentStocks*(stcks:string){.discardable.} =
    ##    showCurrentStocks("IBM+BP.L+0001.HK")
    ##    decho(2)
    ##    
+   ## Note : Yahoo servers maybe down sometimes which will make this procs
+   ## fail . Just wait a bit and try again. Stay calm ! Do not panic !
+   ##    
+   
+   
    hdx(echo "Stocks Current Quote")
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
    currentStocks(qurl)  

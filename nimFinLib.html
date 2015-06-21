@@ -1534,12 +1534,16 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 </dd>
 <dt id="buildStockString"><a name="buildStockString,Nf"></a><pre><span class="Keyword">proc</span> <span class="Identifier">buildStockString</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apf</span><span class="Other">:</span> <span class="Identifier">Nf</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
-Produce a string of one or more stock codes coming from a Nf object
+<p>buildStockString</p>
+<p>Produce a string of one or more stock codes coming from a Nf object</p>
+
 
 </dd>
 <dt id="buildStockString"><a name="buildStockString,seq[Df]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">buildStockString</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adf</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Df</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
-Produce a string of one or more stock codes coming from a pool  Df object
+<p>buildStockString</p>
+<p>Produce a string of one or more stock codes coming from a pool Df object</p>
+
 
 </dd>
 <dt id="showCurrentIndexes"><a name="showCurrentIndexes,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showCurrentIndexes</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">idxs</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span class="Other">{.</span><span class="Identifier">discardable</span><span class="Other">.}</span></pre></dt>
@@ -1561,6 +1565,7 @@ Produce a string of one or more stock codes coming from a pool  Df object
 <p>showCurrentStocks</p>
 <p>callable display routine for currentStocks with Nf portfolio object passed in</p>
 <pre><span class="Identifier">showCurrentStocks</span><span class="Punctuation">(</span><span class="Identifier">myAccount</span><span class="Operator">.</span><span class="Identifier">Portfolio</span><span class="Punctuation">[</span><span class="DecNumber">0</span><span class="Punctuation">]</span><span class="Punctuation">)</span></pre><p>This means get all stock codes of the first portfolio in myAccount</p>
+<p>Note : Yahoo servers maybe down sometimes which will make this procs fail . Just wait a bit and try again. Stay calm ! Do not panic !</p>
 <p>for full example see nimFinT5.nim </p>
 
 
@@ -1570,7 +1575,8 @@ Produce a string of one or more stock codes coming from a pool  Df object
 <p>showCurrentStocks</p>
 <p>callable display routine for currentStocks with stockstring passed in</p>
 <pre><span class="Identifier">showCurrentStocks</span><span class="Punctuation">(</span><span class="StringLit">&quot;IBM+BP.L+0001.HK&quot;</span><span class="Punctuation">)</span>
-<span class="Identifier">decho</span><span class="Punctuation">(</span><span class="DecNumber">2</span><span class="Punctuation">)</span></pre>
+<span class="Identifier">decho</span><span class="Punctuation">(</span><span class="DecNumber">2</span><span class="Punctuation">)</span></pre><p>Note : Yahoo servers maybe down sometimes which will make this procs fail . Just wait a bit and try again. Stay calm ! Do not panic ! </p>
+
 
 </dd>
 <dt id="day"><a name="day,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">day</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">aDate</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
@@ -1870,7 +1876,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-06-21 14:01:55 UTC</small>
+        <small>Made with Nim. Generated: 2015-06-21 21:59:51 UTC</small>
       </div>
     </div>
   </div>

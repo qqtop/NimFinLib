@@ -303,7 +303,6 @@ echo ()
 # we can pass a single stock code or multiple stockcodes like so IBM+BP.L+ORCL
 # stockDf is a helper proc to convert a Df.stock object to a string 
 # this may be deprecated in the future
-
  
 # we can pass some stocks  
 showCurrentStocks("AAPL+IBM+BP.L")
@@ -312,11 +311,13 @@ showCurrentStocks("AAPL+IBM+BP.L")
 # here we use the first portfolio in account
 showCurrentStocks(account.pf[0])
 
-
-var idx : string = indexpool[0].stock  # here just passing a single code (index)
+# here just passing a single code (index)
+var idx : string = indexpool[0].stock  
 showCurrentIndexes(idx)
 
-showCurrentIndexes(indexpool)          # here passing in our indexpool a  seq[Df] type
+# here passing in our indexpool a  seq[Df] type 
+showCurrentIndexes(indexpool)          
+  
 
 echo ()
 msgy() do : echo "###############################################"
