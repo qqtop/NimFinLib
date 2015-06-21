@@ -492,11 +492,13 @@ proc showCurrentStocks*(apf:Nf){.discardable.} =
    ##    
    ## This means get all stock codes of the first portfolio in myAccount
    ## 
-   ## Note : Yahoo servers maybe down sometimes which will make this procs
-   ## fail . Just wait a bit and try again. Stay calm ! Do not panic !
+   ## Note : Yahoo servers maybe down sometimes which will make this procs fail.
+   ## 
+   ## Just wait a bit and try again. Stay calm ! Do not panic !
    ##    
    ## for full example see nimFinT5.nim
    ##   
+   
    var stcks = buildStockString(apf)
    hdx(echo "Stocks Current Quote for $1" % apf.nx)
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
@@ -513,11 +515,10 @@ proc showCurrentStocks*(stcks:string){.discardable.} =
    ##    showCurrentStocks("IBM+BP.L+0001.HK")
    ##    decho(2)
    ##    
-   ## Note : Yahoo servers maybe down sometimes which will make this procs
-   ## fail . Just wait a bit and try again. Stay calm ! Do not panic !
+   ## Note : Yahoo servers maybe down sometimes which will make this procs fail.
+   ## Just wait a bit and try again. Stay calm ! Do not panic !
    ##    
-   
-   
+      
    hdx(echo "Stocks Current Quote")
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
    currentStocks(qurl)  
