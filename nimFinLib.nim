@@ -108,27 +108,68 @@ template msgg*(code: stmt): stmt {.immediate.} =
       ## convenience templates for colored text output
       ## the assumption is that the terminal is white text and black background
       ## naming of the templates is like msg+color so msgy => yellow
-      ## use like : msgg() do : echo "How nice, it's in green"
-     
+      ## msg+color+b turns on the bright flag
+      ## 
+      ## .. code-block:: nim
+      ##    msgg() do : echo "How nice, it's in green"
+      ##  
       setforegroundcolor(fgGreen)
       code
       setforegroundcolor(fgWhite)
+
+template msggb*(code: stmt): stmt {.immediate.} =
+      ## msggb
+      ## 
+      ## .. code-block:: nim
+      ##    msggb() do : echo "How nice, it's in bright green"
+      ##    
+     
+      setforegroundcolor(fgGreen,true)
+      code
+      setforegroundcolor(fgWhite)      
+      
       
 template msgy*(code: stmt): stmt {.immediate.} =
       setforegroundcolor(fgYellow)
       code
       setforegroundcolor(fgWhite)
+      
+template msgyb*(code: stmt): stmt {.immediate.} =
+      setforegroundcolor(fgYellow,true)
+      code
+      setforegroundcolor(fgWhite)      
+      
 
 template msgr*(code: stmt): stmt {.immediate.} =
       setforegroundcolor(fgRed)
       code
       setforegroundcolor(fgWhite)
+      
+template msgrb*(code: stmt): stmt {.immediate.} =
+      setforegroundcolor(fgRed,true)
+      code
+      setforegroundcolor(fgWhite)      
 
 template msgc*(code: stmt): stmt {.immediate.} =
       setforegroundcolor(fgCyan)
       code
       setforegroundcolor(fgWhite)
 
+template msgcb*(code: stmt): stmt {.immediate.} =
+      setforegroundcolor(fgCyan,true)
+      code
+      setforegroundcolor(fgWhite)
+
+
+template msgw*(code: stmt): stmt {.immediate.} =
+      setforegroundcolor(fgWhite)
+      code
+      setforegroundcolor(fgWhite)
+
+template msgwb*(code: stmt): stmt {.immediate.} =
+      setforegroundcolor(fgWhite,true)
+      code
+      setforegroundcolor(fgWhite)
 
 template hdx*(code:stmt):stmt {.immediate.}  =
    echo ""
@@ -145,8 +186,16 @@ proc timeseries*[T](self:T,ty:string): Ts =
      ## returns a Ts type date and one data column based on ty selection 
      ## input usually is a Df object and a string , if a string is in ohlcva
      ## the relevant series will be extracted from the Df object
-     ## usage : timeseries(myDfObject,"o") , this would return 
-     ##           dates in dd and open prices in ts
+     ## 
+     ## usage exmple : 
+     ## 
+     ## .. code-block:: nim
+     ##  
+     ##    timeseries(myDfObject,"o")
+     ##  
+     ##
+     ## this would return dates in dd and open prices in ts
+     ##  
      var ts:Ts 
      ts.dd = self.date
      case ty 
@@ -167,6 +216,7 @@ proc showTimeseries* (ats:Ts,header,ty:string,N:int)  =
    ## for the data column , a string which can be one of
    ## head,tail,all and N for number of rows to display 
    ## usage : showTimeseries(myTimeseries,myHeader,"head|tail|all",rows)
+    
    
    msgg() do : echo "{:<11} {:>11} ".fmt("Date",header) 
    if ty == "all":
@@ -185,9 +235,13 @@ proc showTimeseries* (ats:Ts,header,ty:string,N:int)  =
 
 
 proc initPf*():PF = 
-     ##initPf
+     ## initPf
      ## 
      ## init a new empty account object
+     ## 
+     ## .. code-block:: nim
+     ##    var myAccount = initPf()
+     ##  
      var apf : Pf
      apf.pf = @[]
      result = apf
@@ -197,6 +251,10 @@ proc initNf*():Nf =
     ## initNf
     ## 
     ## init a new empty portfolio object
+    ## 
+    ## .. code-block:: nim
+    ##    var myETFportfolio = initNf()
+    ##    
     var anf : Nf
     anf.nx = ""
     anf.dx = @[]
@@ -207,6 +265,10 @@ proc initDf*():Df =
     ## initDf
     ## 
     ## init stock data object 
+    ## 
+    ## .. code-block:: nim
+    ##    var mystockData = initDf()
+    ##    
     var adf : Df
     adf.stock = ""
     adf.date  = @[]
@@ -225,6 +287,10 @@ proc initCf*():Cf=
      ## initCf
      ## 
      ## init a Cf object to hold basic forex data
+     ## 
+     ## .. code-block:: nim
+     ##    var myForex = initCf()
+     ##    
      var acf : Cf
      acf.cu = @[]
      acf.ra = @[]
@@ -243,6 +309,11 @@ proc initPool*():seq[Df] =
   ## initPool
   ## 
   ## init pools , which are sequences of Df objects used in portfolio building
+  ## 
+  ## .. code-block:: nim
+  ##    var mystockPool = initPool()
+  ##    
+  
   var apool = newSeq[Df]()     
   apool = @[]
   result  = apool
@@ -258,6 +329,19 @@ when defined(Linux):
       ## 
       ## for windows this currently is set to terminalwidth 80 
       ## 
+      ## .. code-block:: nim
+      ##    
+      ##    echo "Terminalwidth : ",tw
+      ##    echo aline
+      ## 
+      ## tw and aline are exported
+      ## but of course you also can do
+      ## 
+      ## .. code-block:: nim
+      ##    var mytermwidth = getTerminalWidth() 
+      ##    echo repeat("*",mytermwidth)
+      ## in case you want to use another line building char
+      ##    
       type WinSize = object
         row, col, xpixel, ypixel: cushort
       const TIOCGWINSZ = 0x5413
@@ -275,7 +359,13 @@ when defined(Windows):
    tw = repeat("-",80)
 
 proc decho*(z:int) {.discardable.} =
-    ## blank lines 
+    ## decho
+    ##  
+    ## blank lines creator
+    ## 
+    ## .. code-block:: nim
+    ##    decho(10)
+    ## to create 10 blank lines   
     for x in 0.. <z:
       echo()
 
@@ -284,6 +374,7 @@ proc stockDf*(dx : Df) : string =
   ## stockDf
   ## 
   ## get the stock name from a Df object and return as string
+  ## (will be deprecated shortly)
   ## 
   var stk: string = dx.stock
   result = stk        
@@ -374,6 +465,13 @@ proc showCurrentStocks*(apf:Nf){.discardable.} =
    ## 
    ## callable display routine for currentStocks with Nf portfolio object passed in
    ## 
+   ## .. code-block:: nim
+   ##    showCurrentStocks(myAccount.Portfolio[0])
+   ##    
+   ## This means get all stock codes of the first portfolio in myAccount
+   ##    
+   ## for full example see nimFinT5.nim
+   ##   
    var stcks = buildStockString(apf)
    hdx(echo "Stocks Current Quote for $1" % apf.nx)
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
@@ -386,6 +484,10 @@ proc showCurrentStocks*(stcks:string){.discardable.} =
    ## 
    ## callable display routine for currentStocks with stockstring passed in
    ## 
+   ## .. code-block:: nim
+   ##    showCurrentStocks("IBM+BP.L+0001.HK")
+   ##    decho(2)
+   ##    
    hdx(echo "Stocks Current Quote")
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
    currentStocks(qurl)  
@@ -409,7 +511,7 @@ proc ymonth(aDate:string) : string =
   ## 
   ## Format MM
   ## 
-  ## not exported and only used here for yahoo url setup
+  ## not exported and only used internally for yahoo url setup
   # 
   var asdm = $(parseInt(aDate.split("-")[1])-1)
   if len(asdm) < 2: asdm = "0" & asdm
@@ -952,8 +1054,19 @@ proc showEma* (emx:Ts , N:int) {.discardable.} =
 
 proc getCurrentForex*(curs:seq[string]):Cf =
   ## getCurrentForex
+  ## 
   ## get the latest yahoo exchange rate info for a currency pair
+  ## 
   ## e.g EURUSD , JPYUSD ,GBPHKD
+  ## 
+  ## .. code-block:: nim
+  ##    var curs = getCurrentForex(@["EURUSD","EURHKD"])
+  ##    echo()
+  ##    echo "Current EURUSD Rate : ","{:<8}".fmt(curs.ra[0])
+  ##    echo "Current EURHKD Rate : ","{:<8}".fmt(curs.ra[1])
+  ##    echo()
+  ##    
+
   # currently using cvs data url 
   var aurl = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=c4l1&s="    #  EURUSD=X,GBPUSD=X
   for ac in curs:
@@ -996,8 +1109,16 @@ proc getCurrentForex*(curs:seq[string]):Cf =
  
    
 proc showCurrentForex*(curs : seq[string]) {.discardable.} =
-       ## showCurrentForex      
+       ## showCurrentForex  
+       ##     
        ## a convenience proc to display exchange rates
+       ## 
+       ## .. code-block:: nim
+       ##    showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"])
+       ##    decho(3)
+       ##  
+       ##   
+       
        var cx = getcurrentForex(curs) # we get a Cf object back
        msgg() do : echo "{:<8} {:<4} {}".fmt("Pair","Cur","Rate")
        for x in 0.. <cx.cu.len:
