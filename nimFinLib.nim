@@ -46,11 +46,11 @@
 import os,strutils,parseutils,sequtils,httpclient,strfmt,terminal,times,tables
 import parsecsv,streams,algorithm,math,unicode
 
-let VERSION* = "0.2"
+let VERSION* = "0.2.1"
 
 type
    
-  Pf* {.inheritable.} = object 
+  Pf*  = object 
       ## Pf type
       ## holds all portfolios similar to a master account
       ## portfolios are Nf objects
@@ -58,7 +58,7 @@ type
   
   
     
-  Nf* {.inheritable.} = object of Pf 
+  Nf* {.inheritable.} = object  
       ## Nf type
       ## holds one portfolio with all relevant historic stocks data
       nx* : string   ## nx  holds portfolio name  e.g. MyGetRichPortfolio
@@ -274,7 +274,7 @@ when defined(Linux):
       ## 
       ## utility to easily draw correctly sized lines on linux terminals
       ## 
-      ## and get linux get terminal width
+      ## and get linux terminal width
       ## 
       ## for windows this currently is set to terminalwidth 80 
       ## 
