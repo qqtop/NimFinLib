@@ -39,7 +39,9 @@
 ## 
 ##  
 ## 
-## Programming : qqTop
+## Programming : qqTop 
+## 
+## Contributors: reactorMonk
 ## 
 
 
@@ -180,43 +182,11 @@ proc showTimeseries* (ats:Ts,header,ty:string,N:int)  =
       ## head is the default in case an empty ty string was passed in
       for x in 0.. <N:
           echo "{:<11} {:>11} ".fmt(ats.dd[x],ats.tx[x])  
-          
-
-proc stock*(self: var Df) : string =
-     ## Various convenience procs to access the data and some calcs like returns etc 
-     ## stock,close,open,high,low,vol,adjc,date,rc,rca
-     ## initDf,initPf,initNf,initCf,initTs,initPool 
-     result = self.stock
-     
-proc close*(self: var Df) : seq[float] =
-     result = self.close
-     
-proc open*(self: var Df) : seq[float] =
-     result = self.open
-     
-proc high*(self: var Df) : seq[float] =
-     result = self.high
-     
-proc low*(self: var Df) : seq[float] =
-     result = self.low
-     
-proc vol*(self: var Df) : seq[float] =
-     result = self.vol
-     
-proc adjc*(self: var Df) : seq[float] =
-     result = self.adjc
-     
-proc date*(self: var Df) : seq[string] =
-     result = self.date
-
-proc rc*(self: var Df) : seq[RunningStat] =
-     result = self.rc
-     
-proc rca*(self: var Df) : seq[RunningStat] =
-     result = self.rca   
 
 
 proc initPf*():PF = 
+     ##initPf
+     ## 
      ## init a new empty account object
      var apf : Pf
      apf.pf = @[]
@@ -224,6 +194,8 @@ proc initPf*():PF =
 
 
 proc initNf*():Nf =
+    ## initNf
+    ## 
     ## init a new empty portfolio object
     var anf : Nf
     anf.nx = ""
@@ -232,6 +204,8 @@ proc initNf*():Nf =
 
 
 proc initDf*():Df =
+    ## initDf
+    ## 
     ## init stock data object 
     var adf : Df
     adf.stock = ""
@@ -248,6 +222,8 @@ proc initDf*():Df =
 
      
 proc initCf*():Cf=
+     ## initCf
+     ## 
      ## init a Cf object to hold basic forex data
      var acf : Cf
      acf.cu = @[]
@@ -255,6 +231,8 @@ proc initCf*():Cf=
      result = acf
      
 proc initTs*():Ts=
+     ## initTs 
+     ## 
      ## init a timeseries object
      var ats : Ts
      ats.dd = @[]
@@ -262,6 +240,8 @@ proc initTs*():Ts=
      result = ats
      
 proc initPool*():seq[Df] =
+  ## initPool
+  ## 
   ## init pools , which are sequences of Df objects used in portfolio building
   var apool = newSeq[Df]()     
   apool = @[]
