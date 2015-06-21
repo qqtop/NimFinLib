@@ -172,6 +172,13 @@ template msgwb*(code: stmt): stmt {.immediate.} =
       setforegroundcolor(fgWhite)
 
 template hdx*(code:stmt):stmt {.immediate.}  =
+   ## hdx
+   ## 
+   ## hdx is used for headers to make them stand out
+   ## 
+   ## it puts the text between 2 horizontal lines
+   ##
+
    echo ""
    echo repeat("+",tw)
    setforegroundcolor(fgCyan)
@@ -1018,7 +1025,7 @@ proc ema* (dx : Df , N: int) : Ts =
           
       ns = ns / float(N)
       ns = ns * (1 - nk)
-      # now we need the next the closing
+      # now we need the next closing
       var ms = dx.close[dx.close.len - (N + 1)]
       ms = ms * nk
       var yesterdayEMA = ms + ns   # at this stage we have a first ema which will be used for yday
@@ -1026,7 +1033,7 @@ proc ema* (dx : Df , N: int) : Ts =
       for x in countdown(dx.close.len-1,0,1):  # ok but we get the result in reverse
           # call the EMA calculation
           var aema = CalculateEMA(dx.close[x], N, yesterdayEMA)
-          # put the calculated ema in an table
+          # put the calculated ema into our Ts object
           m_emaSeries.dd.add(dx.date[x])
           m_emaSeries.tx.add(aema)
           # make sure yesterdayEMA gets filled with the EMA we used this time around
