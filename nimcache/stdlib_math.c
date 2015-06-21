@@ -3,7 +3,7 @@
 /* The generated code is subject to the original license. */
 /* Compiled for: Linux, amd64, gcc */
 /* Command for C compiler:
-   gcc -c  -w -Os  -I/data4/NimCompiler/Nim/lib -o /data4/NimStuff/NimFinLib/nimcache/stdlib_math.o /data4/NimStuff/NimFinLib/nimcache/stdlib_math.c */
+   gcc -c  -w -Os  -I/data4/NimCompiler/Nim/lib -o nimcache/stdlib_math.o nimcache/stdlib_math.c */
 #define NIM_INTBITS 64
 #include "nimbase.h"
 
