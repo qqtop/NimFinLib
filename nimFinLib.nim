@@ -582,7 +582,7 @@ proc validDate*(adate:string):bool =
      var m31 = @["01","03","05","07","10","12"]
        
      var xdate = parseInt(aDate.replace("-",""))
-     # check 1 is our date between 1900 - 3000
+     # check if the date is between 1900 - 3000
      if xdate > 19000101 and xdate < 30001231:
         var spdate = aDate.split("-")
         if parseint(spdate[0]) >= 1900 and parseint(spdate[0]) <= 3000:
