@@ -340,6 +340,15 @@ echo "Current EURUSD Rate : ","{:<8}".fmt(curs.ra.last)
 echo "Current EURHKD Rate : ","{:<8}".fmt(curs.ra.first)
 echo()
 
+echo ()
+msgy() do : echo "###############################################"
+msgy() do : echo "# Testing sleepy                              #"
+msgy() do : echo "###############################################"
+echo () 
+
+msgy() do : echo "Going to sleep for 2.5 secs"
+sleepy(2.5)
+msgg() do : echo "Ready for work again"
 
 # how to see whats going on inside an object 
 #echo repr(t1)

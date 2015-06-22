@@ -516,6 +516,7 @@ proc showCurrentStocks*(stcks:string){.discardable.} =
    ##    decho(2)
    ##    
    ## Note : Yahoo servers maybe down sometimes which will make this procs fail.
+   ## 
    ## Just wait a bit and try again. Stay calm ! Do not panic !
    ##    
       
@@ -673,6 +674,24 @@ proc intervalmonths*(startDate,endDate:string) : float =
 proc intervalyears*(startDate,endDate:string) : float =
       var iyears = intervalsecs(startDate,endDate) / 3600 / 24 / 365
       result = iyears
+
+proc sleepy*(s:float) =
+      ## sleepy
+      ## 
+      ## a sleep function to delay execution
+      ## 
+      ## usefull if fetching hundreds of stock codes or quotes from yahoo
+      ## 
+      ## in a loop in order not to hit the servers too hard.
+      ## 
+      
+      var ss = epochtime()
+      var ee = ss + s
+      var c = 0
+      while ee > epochtime():
+        inc c
+
+
  
 proc getSymbol2*(symb,startDate,endDate : string) : Df =
     ## getSymbol2
