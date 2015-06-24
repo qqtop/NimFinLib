@@ -281,6 +281,12 @@ for sd in somedates:
 echo()
 
 
+echo "Test plusDays and minusDays proc "
+var indate = getDateStr()
+echo "Indate     : ", indate
+echo "Outdate +1 : ", plusDays(indate,1)
+echo "Outdate -1 : ", minusdays(indate,1) 
+echo()
 
 msgy() do : echo "Testing logistics functions"
 # logisticf maps values to between 0 and 1

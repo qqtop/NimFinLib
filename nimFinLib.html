@@ -1253,6 +1253,10 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="validDate*(adate: string): bool"><wbr />valid<wbr />Date</a></li>
   <li><a class="reference" href="#compareDates,string,string"
     title="compareDates*(startDate, endDate: string): int"><wbr />compare<wbr />Dates</a></li>
+  <li><a class="reference" href="#plusDays,string,int"
+    title="plusDays*(aDate: string; days: int): string"><wbr />plus<wbr />Days</a></li>
+  <li><a class="reference" href="#minusDays,string,int"
+    title="minusDays*(aDate: string; days: int): string"><wbr />minus<wbr />Days</a></li>
   <li><a class="reference" href="#intervalsecs,string,string"
     title="intervalsecs*(startDate, endDate: string): float"><wbr />intervalsecs</a></li>
   <li><a class="reference" href="#intervalmins,string,string"
@@ -1621,6 +1625,24 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 
 
 </dd>
+<dt id="plusDays"><a name="plusDays,string,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">plusDays</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">aDate</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">days</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+<p>plusDays</p>
+<p>adds days to date string of format yyyy-MM-dd  or result of getDateStr()</p>
+<p>and returns a string of format yyyy-MM-dd</p>
+<p>the passed in date string must be a valid date or an error message will be returned </p>
+
+
+</dd>
+<dt id="minusDays"><a name="minusDays,string,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">minusDays</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">aDate</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">days</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+<p>minusDays</p>
+<p>subtracts days from a date string of format yyyy-MM-dd  or result of getDateStr()</p>
+<p>and returns a string of format yyyy-MM-dd</p>
+<p>the passed in date string must be a valid date or an error message will be returned </p>
+
+
+</dd>
 <dt id="intervalsecs"><a name="intervalsecs,string,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">intervalsecs</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">startDate</span><span class="Other">,</span> <span class="Identifier">endDate</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span></pre></dt>
 <dd>
 interval procs returns time elapsed between two dates in secs,hours etc. 
@@ -1889,7 +1911,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-06-22 20:31:26 UTC</small>
+        <small>Made with Nim. Generated: 2015-06-24 10:14:23 UTC</small>
       </div>
     </div>
   </div>

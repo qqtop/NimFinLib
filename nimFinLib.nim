@@ -640,6 +640,114 @@ proc compareDates*(startDate,endDate:string) : int =
           result = -1
      else:
           result = -2
+
+
+proc plusDays*(aDate:string,days:int):string =
+   ## plusDays
+   ## 
+   ## adds days to date string of format yyyy-MM-dd  or result of getDateStr()
+   ## 
+   ## and returns a string of format yyyy-MM-dd
+   ## 
+   ## the passed in date string must be a valid date or an error message will be returned
+   ##
+   var rxs = ""
+   if validdate(adate) == true:
+        
+        var spdate = aDate.split("-")
+        var tifo : TimeInfo
+        var mflag: bool = false
+        tifo.year = parseInt(spdate[0])
+
+        case parseInt(spdate[1])
+        of 1 :  tifo.month = mJan
+        of 2 :  tifo.month = mFeb
+        of 3 :  tifo.month = mMar
+        of 4 :  tifo.month = mApr
+        of 5 :  tifo.month = mMay
+        of 6 :  tifo.month = mJun
+        of 7 :  tifo.month = mJul
+        of 8 :  tifo.month = mAug
+        of 9 :  tifo.month = mSep
+        of 10:  tifo.month = mOct
+        of 11:  tifo.month = mNov
+        of 12 : tifo.month = mDec
+        else :
+          mflag = true
+        
+        tifo.monthday = parseInt(spdate[2])
+                
+        if mflag == false:
+            var myinterval = initInterval() 
+            myinterval.days = days
+            var rx = tifo + myinterval
+            rxs = rx.format("yyyy-MM-dd")
+                     
+        else :
+              msgr() do: echo "Date error. Wrong month : " &  spdate[1]
+              rxs = ""
+   else:
+        msgr() do : echo  "Date error. Invalid date : " &  aDate,"  Format yyyy-MM-dd expected"
+        rxs = ""
+     
+   result = rxs
+
+
+
+proc minusDays*(aDate:string,days:int):string =
+   ## minusDays
+   ## 
+   ## subtracts days from a date string of format yyyy-MM-dd  or result of getDateStr()
+   ## 
+   ## and returns a string of format yyyy-MM-dd
+   ## 
+   ## the passed in date string must be a valid date or an error message will be returned
+   ##
+   
+   var rxs = ""
+   if validdate(adate) == true:
+        
+        var spdate = aDate.split("-")
+        var tifo : TimeInfo
+        var mflag: bool = false
+        tifo.year = parseInt(spdate[0])
+
+        case parseInt(spdate[1])
+        of 1 :  tifo.month = mJan
+        of 2 :  tifo.month = mFeb
+        of 3 :  tifo.month = mMar
+        of 4 :  tifo.month = mApr
+        of 5 :  tifo.month = mMay
+        of 6 :  tifo.month = mJun
+        of 7 :  tifo.month = mJul
+        of 8 :  tifo.month = mAug
+        of 9 :  tifo.month = mSep
+        of 10:  tifo.month = mOct
+        of 11:  tifo.month = mNov
+        of 12 : tifo.month = mDec
+        else :
+          mflag = true
+        
+        tifo.monthday = parseInt(spdate[2])
+                
+        if mflag == false:
+            var myinterval = initInterval() 
+            myinterval.days = days
+            var rx = tifo - myinterval
+            rxs = rx.format("yyyy-MM-dd")
+            
+        else :
+              msgr() do: echo "Date error. Wrong month : " &  spdate[1]
+              rxs = ""
+   else:
+        msgr() do : echo  "Date error. Invalid date : " &  aDate ,"  Format yyyy-MM-dd expected"
+        rxs = ""
+     
+   result = rxs
+
+
+
+
         
  
 proc intervalsecs*(startDate,endDate:string) : float =
