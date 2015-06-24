@@ -578,8 +578,8 @@ proc validDate*(adate:string):bool =
      ## 
      ## date range allowed 1900-01-01  to  3000-12-31
      ## 
-     var m30 = @["04","06","08","09","11"]
-     var m31 = @["01","03","05","07","10","12"]
+     var m30 = @["04","06","09","11"]
+     var m31 = @["01","03","05","07","08","10","12"]
        
      var xdate = parseInt(aDate.replace("-",""))
      # check if the date is between 1900 - 3000
