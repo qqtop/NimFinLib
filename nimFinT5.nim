@@ -115,7 +115,11 @@ echo "Low     : ",account.pf[0].dx[0].low.last
 echo "Close   : ",account.pf[0].dx[0].close.last
 echo "Volume  : ",account.pf[0].dx[0].vol.last
 echo "AdjClose: ",account.pf[0].dx[0].adjc.last
+echo "StDevOp : ",account.pf[0].dx[0].ro[0].standardDeviation 
+echo "StDevHi : ",account.pf[0].dx[0].rh[0].standardDeviation 
+echo "StDevLo : ",account.pf[0].dx[0].rl[0].standardDeviation 
 echo "StDevCl : ",account.pf[0].dx[0].rc[0].standardDeviation 
+echo "StDevVo : ",account.pf[0].dx[0].rv[0].standardDeviation 
 echo "StDevClA: ",account.pf[0].dx[0].rca[0].standardDeviation
 # alternative way to work with the stock data 
 # and to save some writing 
@@ -184,7 +188,7 @@ msgy() do : echo "Head"
 showTimeseries(ts,htable[ohlcva],"head",5) # newest on top
 msgy() do : echo "Tail"
 showTimeseries(ts,htable[ohlcva],"tail",5) # oldest on bottom
-# if you need to see all rows
+# to see all rows
 #msgy() do : echo "All"
 #showTimeseries(ts,htable[ohlcva],"all",5) # also available , the 5 here has no effect
 
@@ -243,6 +247,13 @@ echo ()
 echo ()
 msgy() do : echo "Stats for : ", data.stock , " based on close price"
 statistics(data.rc[0])
+
+
+echo ()
+msgy() do : echo "Stats for : ", data.stock , " based on volume"
+statistics(data.rv[0])
+
+
 
 
 echo ()

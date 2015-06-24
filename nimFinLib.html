@@ -1175,7 +1175,11 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   close*: seq[float]
   vol*: seq[float]            ## volume
   adjc*: seq[float]           ## adjusted close price
+  ro*: seq[Runningstat]       ## RunningStat for open price
+  rh*: seq[Runningstat]       ## RunningStat for high price
+  rl*: seq[Runningstat]       ## RunningStat for low price
   rc*: seq[Runningstat]       ## RunningStat for close price
+  rv*: seq[Runningstat]       ## RunningStat for volume price
   rca*: seq[Runningstat]      ## RunningStat for adjusted close price"><wbr />Df</a></li>
   <li><a class="reference" href="#Ts"
     title="Ts* = object 
@@ -1365,7 +1369,7 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
 </p></blockquote>
 <p>Tested on   : Linux</p>
 <p>ProjectStart: 2015-06-05</p>
-<p>ToDo        : Ratios ,plotting, metals</p>
+<p>ToDo        : Ratios , Variance , Covariance</p>
 <p>Programming : qqTop</p>
 <p>Contributors: reactorMonk</p>
 </p></blockquote>
@@ -1402,7 +1406,11 @@ Nf type holds one portfolio with all relevant historic stocks data
   <span class="Identifier">close</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">float</span><span class="Other">]</span>
   <span class="Identifier">vol</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">float</span><span class="Other">]</span>            <span class="Comment">## volume</span>
   <span class="Identifier">adjc</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">float</span><span class="Other">]</span>           <span class="Comment">## adjusted close price</span>
+  <span class="Identifier">ro</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Runningstat</span><span class="Other">]</span>       <span class="Comment">## RunningStat for open price</span>
+  <span class="Identifier">rh</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Runningstat</span><span class="Other">]</span>       <span class="Comment">## RunningStat for high price</span>
+  <span class="Identifier">rl</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Runningstat</span><span class="Other">]</span>       <span class="Comment">## RunningStat for low price</span>
   <span class="Identifier">rc</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Runningstat</span><span class="Other">]</span>       <span class="Comment">## RunningStat for close price</span>
+  <span class="Identifier">rv</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Runningstat</span><span class="Other">]</span>       <span class="Comment">## RunningStat for volume price</span>
   <span class="Identifier">rca</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Runningstat</span><span class="Other">]</span>      <span class="Comment">## RunningStat for adjusted close price</span>
   </pre></dt>
 <dd>
@@ -1919,7 +1927,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-06-24 16:34:15 UTC</small>
+        <small>Made with Nim. Generated: 2015-06-24 21:31:42 UTC</small>
       </div>
     </div>
   </div>

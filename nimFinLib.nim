@@ -35,7 +35,7 @@
 ##               
 ## ProjectStart: 2015-06-05
 ## 
-## ToDo        : Ratios ,plotting, metals
+## ToDo        : Ratios , Variance , Covariance 
 ## 
 ##  
 ## 
@@ -73,7 +73,7 @@ type
     ## holds individual stocks history data and RunningStat for close and adj.close
     ## even more items may be added like full company name etc in the future
     ## items are stock code, ohlcva, rc and rca . 
-    stock* : string           ## yahoo style stock code 
+    stock* : string            ## yahoo style stock code 
     date*  : seq[string]
     open*  : seq[float]
     high*  : seq[float]
@@ -81,7 +81,11 @@ type
     close* : seq[float]
     vol*   : seq[float]        ## volume
     adjc*  : seq[float]        ## adjusted close price
+    ro*    : seq[Runningstat]  ## RunningStat for open price
+    rh*    : seq[Runningstat]  ## RunningStat for high price
+    rl*    : seq[Runningstat]  ## RunningStat for low price
     rc*    : seq[Runningstat]  ## RunningStat for close price
+    rv*    : seq[Runningstat]  ## RunningStat for volume price
     rca*   : seq[Runningstat]  ## RunningStat for adjusted close price
    
  
@@ -285,6 +289,10 @@ proc initDf*():Df =
     adf.close = @[]
     adf.vol   = @[]
     adf.adjc  = @[]
+    adf.ro    = @[]
+    adf.rh    = @[]
+    adf.rl    = @[]
+    adf.rv    = @[]
     adf.rc    = @[]
     adf.rca   = @[]
     result = adf
@@ -846,8 +854,12 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
     var adjclosx = 0.0
     var adjclosdf = newSeq[float]()  
         
-    # add RunningStat capability for close and adjusted close prices
+    # add RunningStat capability all columns
+    var openRC  : Runningstat
+    var highRC : Runningstat
+    var lowRC  : Runningstat
     var closeRC  : Runningstat
+    var volumeRC : Runningstat
     var closeRCA : Runningstat
           
     # note to dates for this yahoo url according to latest research
@@ -868,7 +880,10 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
     # could also be done to be in memory like /shm/  this file will be auto removed.
     
     var acvsfile = "nimfintmp.csv"
+    var acvsfile2 = "nimfintmp2.csv"
     downloadFile(qurl,acvsfile)
+    downloadFile(qurl,acvsfile2)
+  
     var s = newFileStream(acvsfile, fmRead)
     if s == nil:
        # in case of problems with the yahoo csv file we show a message
@@ -897,14 +912,17 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
                 
               of 2:
                     opex = parseFloat(val) 
+                    openRC.push(opex)      ## RunningStat for open price
                     opedf.add(opex)
                   
               of 3:
                     higx = parseFloat(val)
+                    highRC.push(higx) 
                     higdf.add(higx)
                   
               of 4:
                     lowx = parseFloat(val)
+                    lowRC.push(lowx)
                     lowdf.add(lowx)
                   
               of 5:
@@ -914,6 +932,7 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
                   
               of 6:
                     volx = parseFloat(val)     
+                    volumeRC.push(volx) 
                     voldf.add(volx)
                   
               of 7:
@@ -941,9 +960,18 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
     astock.close = closdf
     astock.adjc  = adjclosdf
     astock.vol   = voldf
+    astock.ro    = @[]
+    astock.rh    = @[]
+    astock.rl    = @[]
     astock.rc    = @[]
+    astock.rv    = @[]
     astock.rca   = @[]
+    
+    astock.ro.add(openRC)
+    astock.rh.add(highRC)
+    astock.rl.add(lowRC)
     astock.rc.add(closeRC)
+    astock.rv.add(volumeRC)
     astock.rca.add(closeRCA)
       
     # clean up
