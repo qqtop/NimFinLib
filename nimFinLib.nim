@@ -754,9 +754,6 @@ proc minusDays*(aDate:string,days:int):string =
      
    result = rxs
 
-
-
-
         
  
 proc intervalsecs*(startDate,endDate:string) : float =
