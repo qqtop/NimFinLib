@@ -243,17 +243,15 @@ msgy() do : echo "###############################################"
 echo () 
  
 # remember that : data = account.pf[0].dx[0] 
-# so we can get the statistics for this stock like so
-echo ()
-msgy() do : echo "Stats for : ", data.stock , " based on close price"
-statistics(data.rc[0])
+# so we can get all the statistics for this stock like so
 
+var ohlcvaSet    = @[data.ro[0],data.rh[0],data.rl[0],data.rc[0],data.rv[0],data.rca[0]]
+var ohlcvaheader = @["Open","High","Low","Close","Volume","Adj.Close"]
 
-echo ()
-msgy() do : echo "Stats for : ", data.stock , " based on volume"
-statistics(data.rv[0])
-
-
+for x in 0.. <ohlcvaSet.len:
+     echo aline
+     msgg() do : echo "Stats for : ", data.stock ," based on ", ohlcvaheader[x]
+     statistics(ohlcvaSet[x])
 
 
 echo ()
