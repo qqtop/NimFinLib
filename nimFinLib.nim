@@ -70,7 +70,7 @@ type
    
   Df* {.inheritable.} = object of Nf
     ## Df type
-    ## holds individual stocks history data and RunningStat for close and adj.close
+    ## holds individual stocks history data and RunningStat for ohlcva columns
     ## even more items may be added like full company name etc in the future
     ## items are stock code, ohlcva, rc and rca . 
     stock* : string            ## yahoo style stock code 
