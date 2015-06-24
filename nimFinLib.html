@@ -1622,6 +1622,14 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 </dd>
 <dt id="compareDates"><a name="compareDates,string,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">compareDates</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">startDate</span><span class="Other">,</span> <span class="Identifier">endDate</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
 <dd>
+<p>compareDates</p>
+<p>compare two dates of format yyyy-MM-dd</p>
+<p>results returned:</p>
+<p>startDate == endDate   ==&gt; 0</p>
+<p>startDate &gt;= endDate   ==&gt; 1</p>
+<p>startDate &lt;= endDate   ==&gt; 2</p>
+<p>undefined , invalid startDate ==&gt; -1</p>
+<p>undefined . invalid endDate and/or startDate  ==&gt; -2 </p>
 
 
 </dd>
@@ -1911,7 +1919,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-06-24 10:14:23 UTC</small>
+        <small>Made with Nim. Generated: 2015-06-24 16:34:15 UTC</small>
       </div>
     </div>
   </div>

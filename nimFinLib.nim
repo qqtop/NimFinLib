@@ -289,7 +289,7 @@ proc initDf*():Df =
     adf.rca   = @[]
     result = adf
 
-     
+    
 proc initCf*():Cf=
      ## initCf
      ## 
@@ -619,13 +619,22 @@ proc validDate*(adate:string):bool =
  
        
 proc compareDates*(startDate,endDate:string) : int = 
-     # dates must be in form yyyy-MM-dd      
-     # we want this to answer 
-     # s == e   ==> 0
-     # s >= e   ==> 1
-     # s <= e   ==> 2  
-     # -1 undefined , invalid s date   
-     # -2 undefined . invalid e and or s date
+     ## compareDates
+     ## 
+     ## compare two dates of format yyyy-MM-dd
+     ## 
+     ## results returned:
+     ## 
+     ## startDate == endDate   ==> 0
+     ## 
+     ## startDate >= endDate   ==> 1
+     ## 
+     ## startDate <= endDate   ==> 2  
+     ## 
+     ## undefined , invalid startDate ==> -1   
+     ## 
+     ## undefined . invalid endDate and/or startDate  ==> -2
+     ## 
      if validdate(startDate) and validdate(enddate):
         
         var std = startDate.replace("-","")
@@ -655,7 +664,7 @@ proc plusDays*(aDate:string,days:int):string =
    if validdate(adate) == true:
         
         var spdate = aDate.split("-")
-        var tifo : TimeInfo
+        var tifo = parse(aDate,"yyyy-MM-dd") # this returns a TimeInfo type
         var mflag: bool = false
         tifo.year = parseInt(spdate[0])
 
@@ -708,7 +717,7 @@ proc minusDays*(aDate:string,days:int):string =
    if validdate(adate) == true:
         
         var spdate = aDate.split("-")
-        var tifo : TimeInfo
+        var tifo = parse(aDate,"yyyy-MM-dd")  # this returns a TimeInfo type
         var mflag: bool = false
         tifo.year = parseInt(spdate[0])
 
