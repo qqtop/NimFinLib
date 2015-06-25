@@ -324,8 +324,6 @@ msgy() do : echo "############################################"
 echo ()
 
 # we can pass a single stock code or multiple stockcodes like so IBM+BP.L+ORCL
-# stockDf is a helper proc to convert a Df.stock object to a string 
-# this may be deprecated in the future
  
 # we can pass some stocks  
 showCurrentStocks("AAPL+IBM+BP.L")
