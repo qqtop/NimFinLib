@@ -871,10 +871,8 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
     # could also be done to be in memory like /shm/  this file will be auto removed.
     
     var acvsfile = "nimfintmp.csv"
-    var acvsfile2 = "nimfintmp2.csv"
     downloadFile(qurl,acvsfile)
-    downloadFile(qurl,acvsfile2)
-  
+     
     var s = newFileStream(acvsfile, fmRead)
     if s == nil:
        # in case of problems with the yahoo csv file we show a message
