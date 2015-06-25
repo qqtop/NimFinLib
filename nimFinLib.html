@@ -1305,6 +1305,10 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="sumdailyReturnsAdCl*(self: Df): float"><wbr />sumdaily<wbr />Returns<wbr />Ad<wbr />Cl</a></li>
   <li><a class="reference" href="#statistics,Runningstat"
     title="statistics*(x: Runningstat)"><wbr />statistics</a></li>
+  <li><a class="reference" href="#showStatistics,Df"
+    title="showStatistics*(z: Df)"><wbr />show<wbr />Statistics</a></li>
+  <li><a class="reference" href="#showStatisticsT,Df"
+    title="showStatisticsT*(z: Df)"><wbr />show<wbr />Statistics<wbr />T</a></li>
   <li><a class="reference" href="#ema,Df,int"
     title="ema*(dx: Df; N: int): Ts"><wbr />ema</a></li>
   <li><a class="reference" href="#showEma,Ts,int"
@@ -1797,7 +1801,22 @@ head means oldest rows
 <dt id="statistics"><a name="statistics,Runningstat"></a><pre><span class="Keyword">proc</span> <span class="Identifier">statistics</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">Runningstat</span><span class="Other">)</span> <span class="Other">{.</span><span class="Identifier">discardable</span><span class="Other">.}</span></pre></dt>
 <dd>
 <p>statistics</p>
-<p>display output of a runningstat object </p>
+<p>display statistsics output of a runningstat object </p>
+
+
+</dd>
+<dt id="showStatistics"><a name="showStatistics,Df"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showStatistics</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">z</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">)</span></pre></dt>
+<dd>
+<p>showStatistics</p>
+<p>shows all statistics from a Df objects ohlcva columns </p>
+
+
+</dd>
+<dt id="showStatisticsT"><a name="showStatisticsT,Df"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showStatisticsT</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">z</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">)</span></pre></dt>
+<dd>
+<p>showStatisticsT</p>
+<p>shows all statistics from a Df objects ohlcva columns</p>
+<p>transposed display  , needs full terminal width </p>
 
 
 </dd>
@@ -1927,7 +1946,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-06-24 21:32:56 UTC</small>
+        <small>Made with Nim. Generated: 2015-06-25 10:00:11 UTC</small>
       </div>
     </div>
   </div>

@@ -1148,16 +1148,71 @@ proc sumdailyReturnsAdCl*(self:Df) : float =
 proc statistics*(x:Runningstat) {.discardable.} =
         ## statistics
         ## 
-        ## display output of a runningstat object
+        ## display statistsics output of a runningstat object
         ## 
         echo "RunningStat Sum     : ", $formatFloat(x.sum,ffDecimal,5)
         echo "RunningStat Var     : ", $formatFloat(x.variance,ffDecimal,5)
         echo "RunningStat mean    : ", $formatFloat(x.mean,ffDecimal,5)
         echo "RunningStat Std     : ", $formatFloat(x.standardDeviation,ffDecimal,5)
-        echo "RunningStat Min     : ", $formatFloat(x.min,ffDecimal,5)
         echo "RunningStat Max     : ", $formatFloat(x.max,ffDecimal,5)
-        
+        echo "RunningStat Min     : ", $formatFloat(x.min,ffDecimal,5)
+    
  
+
+proc showStatistics*(z : Df) =
+      ## showStatistics
+      ## 
+      ## shows all statistics from a Df objects ohlcva columns
+      ## 
+      var itemset = @["sum","variance","mean","stddev","max","min"]
+      var ohSet = @[z.ro[0],z.rh[0],z.rl[0],z.rc[0],z.rv[0],z.rca[0]]
+      var z1 = newSeq[float]()
+      var z2 = newSeq[float]()
+      var z3 = newSeq[float]()
+      var z4 = newSeq[float]()
+      var z5 = newSeq[float]()
+      var z6 = newSeq[float]()
+
+      for x in 0.. 5:
+          z1.add(ohSet[x].sum)
+      for x in 0.. 5: 
+          z2.add(ohSet[x].variance)
+      for x in 0.. 5:
+          z3.add(ohSet[x].mean)
+      for x in 0.. 5:    
+          z4.add(ohSet[x].standardDeviation)
+      for x in 0.. 5:           
+          z5.add(ohSet[x].max)
+      for x in 0.. 5:    
+          z6.add(ohSet[x].min)
+               
+      decho(1)
+      msgg() do: echo "{:<11}{:>11}{:>11}{:>11}{:>11}{:>14}{:>11}".fmt("Item","Open","High","Low","Close","Volume","Adj Close")
+      echo "{:<11}{:>11}{:>11}{:>11}{:>11}{:>14}{:>11}".fmt(itemset[0],z1[0],z1[1],z1[2],z1[3],z1[4],z1[5])
+      echo "{:<11}{:>11}{:>11}{:>11}{:>11}{:>14}{:>11}".fmt(itemset[1],z2[0],z2[1],z2[2],z2[3],z2[4],z2[5])
+      echo "{:<11}{:>11}{:>11}{:>11}{:>11}{:>14}{:>11}".fmt(itemset[2],z3[0],z3[1],z3[2],z3[3],z3[4],z3[5])
+      echo "{:<11}{:>11}{:>11}{:>11}{:>11}{:>14}{:>11}".fmt(itemset[3],z4[0],z4[1],z4[2],z4[3],z4[4],z4[5])
+      echo "{:<11}{:>11}{:>11}{:>11}{:>11}{:>14}{:>11}".fmt(itemset[4],z5[0],z5[1],z5[2],z5[3],z5[4],z5[5])
+      echo "{:<11}{:>11}{:>11}{:>11}{:>11}{:>14}{:>11}".fmt(itemset[5],z6[0],z6[1],z6[2],z6[3],z6[4],z6[5])
+      decho(2)
+
+
+proc showStatisticsT*(z : Df) =
+      ## showStatisticsT
+      ## 
+      ## shows all statistics from a Df objects ohlcva columns
+      ## 
+      ## transposed display  , needs full terminal width
+      ## 
+      var ohSet = @[z.ro[0],z.rh[0],z.rl[0],z.rc[0],z.rv[0],z.rca[0]]
+      var headerset = @["Open","High","Low","Close","Volume","Adj Close"]
+     
+      decho(1)
+      msgg() do: echo "{:<11}{:>14}{:>14}{:>14}{:>14}{:>14}{:>14}".fmt("Item","sum","variance","mean","stddev","max","min")
+      for x in 0.. <ohSet.len:
+          echo "{:<11}{:>14}{:>14}{:>14}{:>14}{:>14}{:>14}".fmt(headerset[x],ohSet[x].sum,ohSet[x].variance,ohSet[x].mean,
+          ohSet[x].standardDeviation,ohSet[x].max,ohSet[x].min)
+      decho(2)  
 
 
 # emaflag = false meaning all ok

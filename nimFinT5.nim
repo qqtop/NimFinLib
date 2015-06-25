@@ -253,6 +253,14 @@ for x in 0.. <ohlcvaSet.len:
      msgg() do : echo "Stats for : ", data.stock ," based on ", ohlcvaheader[x]
      statistics(ohlcvaSet[x])
 
+decho(2)
+echo "Show full statistics - standard display"
+showStatistics(data)
+
+echo "Show full statistics - transposed display"
+showStatisticsT(data)
+
+
 
 echo ()
 msgy() do : echo "###############################################"
