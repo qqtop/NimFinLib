@@ -373,7 +373,7 @@ when defined(Linux):
 when defined(Windows):
    tw = repeat("-",80)
 
-proc decho*(z:int) {.discardable.} =
+proc decho*(z:int)  =
     ## decho
     ##  
     ## blank lines creator
@@ -394,7 +394,7 @@ proc stockDf*(dx : Df) : string =
   var stk: string = dx.stock
   result = stk        
 
-proc currentStocks(aurl:string) {.discardable.} =
+proc currentStocks(aurl:string) =
   ## currentStocks 
   ## 
   ## display routine for current stock quote maybe 15 mins delayed
@@ -979,7 +979,7 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
     # send astock back
     result = astock
       
-proc showhistData*(adf: Df,n:int) {.discardable.} =
+proc showhistData*(adf: Df,n:int) =
     ## showhistData
     ## 
     ## Show n recent rows historical stock data
@@ -994,7 +994,7 @@ proc showhistData*(adf: Df,n:int) {.discardable.} =
     decho(2)
     
       
-proc showhistData*(adf: Df,s: string,e:string) {.discardable.} =
+proc showhistData*(adf: Df,s: string,e:string) =
     ## showhistData
     ## 
     ## show historical stock data between 2 dates
@@ -1071,7 +1071,7 @@ proc dailyReturns*(self:seq[float]):seq =
     result = lgx   
                          
 
-proc showdailyReturnsCl*(self:Df , N:int) {.discardable.} =
+proc showdailyReturnsCl*(self:Df , N:int) =
       ## showdailyReturnsCl
       ## 
       ## display returns based on close price
@@ -1083,7 +1083,7 @@ proc showdailyReturnsCl*(self:Df , N:int) {.discardable.} =
       var dfd = self.date.lagger(1) 
       # now show it with symbol , date and close columns
       echo ""
-      msgg() do: echo "{:<8} {:<11} {:>15}".fmt("Code","Date","Returns")
+      msgg() do: echo "{:<8} {:<11} {:>14}".fmt("Code","Date","Returns")
       # show limited rows output if c<>0
       if N == 0:
         for  x in 0.. <dfr.len:
@@ -1093,7 +1093,7 @@ proc showdailyReturnsCl*(self:Df , N:int) {.discardable.} =
              echo "{:<8}{:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
   
 
-proc showdailyReturnsAdCl*(self:Df , N:int) {.discardable.} =
+proc showdailyReturnsAdCl*(self:Df , N:int) =
       ## showdailyReturnsAdCl 
       ## 
       ## returns based on adjusted close price
@@ -1105,7 +1105,7 @@ proc showdailyReturnsAdCl*(self:Df , N:int) {.discardable.} =
       var dfd = self.date.lagger(1) 
       # now show it with symbol , date and close columns
       echo ""
-      msgg() do: echo "{:<8} {:<11} {:>15}".fmt("Code","Date","Returns")
+      msgg() do: echo "{:<8} {:<11} {:>14}".fmt("Code","Date","Returns")
       # show limited output if c<>0
       if N == 0:
         for  x in 0.. <dfr.len:
@@ -1145,7 +1145,7 @@ proc sumdailyReturnsAdCl*(self:Df) : float =
       result = sumdfr 
 
 
-proc statistics*(x:Runningstat) {.discardable.} =
+proc statistics*(x:Runningstat) =
         ## statistics
         ## 
         ## display statistsics output of a runningstat object
@@ -1230,7 +1230,7 @@ proc CalculateEMA(todaysPrice : float , numberOfDays: int , EMAYesterday : float
 proc ema* (dx : Df , N: int) : Ts =
     ## ema
     ## 
-    ## exponential moving average
+    ## exponential moving average based on close price 
     ## 
     ## returns a Ts object loaded with date,ema pairs
     ## 
@@ -1283,7 +1283,7 @@ proc ema* (dx : Df , N: int) : Ts =
     result = m_emaSeries
 
 
-proc showEma* (emx:Ts , N:int) {.discardable.} =
+proc showEma* (emx:Ts , N:int) =
    ## showEma
    ## 
    ## convenience proc to display ema series with dates
@@ -1355,7 +1355,7 @@ proc getCurrentForex*(curs:seq[string]):Cf =
   result = rf
  
    
-proc showCurrentForex*(curs : seq[string]) {.discardable.} =
+proc showCurrentForex*(curs : seq[string]) =
        ## showCurrentForex  
        ##     
        ## a convenience proc to display exchange rates
