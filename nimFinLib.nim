@@ -384,15 +384,6 @@ proc decho*(z:int)  =
     for x in 0.. <z:
       echo()
 
-       
-proc stockDf*(dx : Df) : string =
-  ## stockDf
-  ## 
-  ## get the stock name from a Df object and return as string
-  ## (will be deprecated shortly)
-  ## 
-  var stk: string = dx.stock
-  result = stk        
 
 proc currentStocks(aurl:string) =
   ## currentStocks 
@@ -451,7 +442,7 @@ proc buildStockString*(apf:Nf):string =
   var xs = ""
   for x in 0.. <apf.dx.len:
     # need to pass multiple code like so code+code+ , an initial + is also ok.
-    xs = xs & "+" & stockDf(apf.dx[x]) 
+    xs = xs & "+" & apf.dx[x].stock
   result = xs  
   
 proc buildStockString*(adf:seq[Df]):string =
