@@ -29,7 +29,7 @@
 ##               Documention was created with : nim doc nimFinLib 
 ##               
 ##               
-##                            
+## Project     : https://github.com/qqtop/NimFinLib                           
 ##               
 ## Tested on   : Linux
 ##               
@@ -1492,7 +1492,7 @@ proc handler*() {.noconv.} =
   ##    # get the latest delayed quotes for your stock
   ##    # press ctrl-c to exit
   ##    setControlCHook(handler)    # register exit handler
-  ##    while 1 ==1 :
+  ##    while 1 == 1 :
   ##       showCurrentStocks("IBM+AAPL+BP.L")
   ##       sleepy(5)
   ##       
@@ -1532,4 +1532,6 @@ proc logisticf_derivative* (z:float): float =
      result = logisticf(z) * (1 - logisticf(z))
 
 #------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------
 
+ 

@@ -29,23 +29,5 @@ showCurrentForex(@["EURUSD","GBPEUR","EURCNY","AUDHKD"])
 
 decho(2)  
 
-
-
-
-
-
-
-
-
-
-
-
-
- 
-# next step is to table this data like in pandas
-
-
-
- 
-     
+  
 quit 0   

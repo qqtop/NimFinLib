@@ -47,7 +47,7 @@ var symbols = symbols1
 symbols = deduplicate(symbols) 
 # indexes holds a list of yahoo type index codes
 # and maybe used as 'risk free' in var. calculations like sharpe etc.
-var indexes = @["SPY","^HSI"]  
+var indexes = @["^GSPC","^HSI"]  
 # make sure the list is unique
 indexes = deduplicate(indexes)
  
