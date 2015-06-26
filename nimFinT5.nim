@@ -7,7 +7,11 @@ import nimFinLib
 # nim c --deadcodeelim:on -d:release --opt:size -d:ssl nimFinT5
 
 
-var start = epochTime()      
+var start = epochTime() 
+
+
+# testing handler --> press ctrl-c
+setControlCHook(handler)
 
 echo ()
 msgy() do : echo "###############################################"
@@ -371,6 +375,38 @@ msgy() do : echo "Going to sleep for 2.5 secs"
 sleepy(2.5)
 msgg() do : echo "Ready for work again"
 
+echo ()
+msgy() do : echo "###############################################"
+msgy() do : echo "# Testing Utility Procs                       #"
+msgy() do : echo "###############################################"
+echo () 
+
+
+var FV : float = 10000
+var PV : float = 0.0
+var r  : float = 0.0625
+var m  : int   = 2
+var t  : int   = 12
+
+echo "Test  : presentValue "
+PV = presentValue(FV,r,m,t)
+echo PV
+
+PV = presentValue(FV,0.0625,2.0,12.0)
+echo PV
+
+echo()
+echo "Test  : presentValueFV"
+
+PV = presentValueFV(FV,0.0625,10)
+echo PV
+
+PV = presentValueFV(FV,0.0625,10.0)
+echo PV
+
+
+
+
 # how to see whats going on inside an object 
 #echo repr(t1)
 
@@ -379,7 +415,7 @@ when isMainModule:
   # show time elapsed for this run
   echo ()
   msgc() do: echo "Elapsed           : ",epochTime() - start," secs\n"
-  msgg() do: echo "nimlibFin Version : ",VERSION 
+  msgg() do: echo "nimlibFin Version : ",NIMFINLIBVERSION 
   echo()
   echo()
   system.addQuitProc(resetAttributes)

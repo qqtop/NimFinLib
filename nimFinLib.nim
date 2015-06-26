@@ -35,7 +35,7 @@
 ##               
 ## ProjectStart: 2015-06-05
 ## 
-## ToDo        : Ratios , Variance , Covariance 
+## ToDo        : Ratios , Covariance , Correlation
 ## 
 ##  
 ## 
@@ -43,12 +43,16 @@
 ## 
 ## Contributors: reactorMonk
 ## 
+## Requires    : random module available on nimble 
+## 
+## 
 
 
-import os,strutils,parseutils,sequtils,httpclient,strfmt,terminal,times,tables
+import os,strutils,parseutils,sequtils,httpclient,strfmt
+import terminal,times,tables,random
 import parsecsv,streams,algorithm,math,unicode
 
-let VERSION* = "0.2.1"
+let NIMFINLIBVERSION* = "0.2.1"
 
 type
    
@@ -192,7 +196,7 @@ template hdx*(code:stmt):stmt {.immediate.}  =
    echo ""
 
   
-proc timeseries*[T](self:T,ty:string): Ts =
+proc timeSeries*[T](self:T,ty:string): Ts =
      ## timeseries
      ## returns a Ts type date and one data column based on ty selection 
      ## input usually is a Df object and a string , if a string is in ohlcva
@@ -221,7 +225,7 @@ proc timeseries*[T](self:T,ty:string): Ts =
 
  
 
-proc showTimeseries* (ats:Ts,header,ty:string,N:int)  =
+proc showTimeSeries* (ats:Ts,header,ty:string,N:int)  =
    ## showTimeseries 
    ## takes a Ts object as input as well as a header string
    ## for the data column , a string which can be one of
@@ -753,7 +757,6 @@ proc minusDays*(aDate:string,days:int):string =
      
    result = rxs
 
-        
  
 proc intervalsecs*(startDate,endDate:string) : float =
       ## interval procs returns time elapsed between two dates in secs,hours etc. 
@@ -968,7 +971,7 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
     # send astock back
     result = astock
       
-proc showhistData*(adf: Df,n:int) =
+proc showHistData*(adf: Df,n:int) =
     ## showhistData
     ## 
     ## Show n recent rows historical stock data
@@ -983,7 +986,7 @@ proc showhistData*(adf: Df,n:int) =
     decho(2)
     
       
-proc showhistData*(adf: Df,s: string,e:string) =
+proc showHistData*(adf: Df,s: string,e:string) =
     ## showhistData
     ## 
     ## show historical stock data between 2 dates
@@ -1060,7 +1063,7 @@ proc dailyReturns*(self:seq[float]):seq =
     result = lgx   
                          
 
-proc showdailyReturnsCl*(self:Df , N:int) =
+proc showDailyReturnsCl*(self:Df , N:int) =
       ## showdailyReturnsCl
       ## 
       ## display returns based on close price
@@ -1082,7 +1085,7 @@ proc showdailyReturnsCl*(self:Df , N:int) =
              echo "{:<8}{:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
   
 
-proc showdailyReturnsAdCl*(self:Df , N:int) =
+proc showDailyReturnsAdCl*(self:Df , N:int) =
       ## showdailyReturnsAdCl 
       ## 
       ## returns based on adjusted close price
@@ -1104,7 +1107,7 @@ proc showdailyReturnsAdCl*(self:Df , N:int) =
              echo "{:<8} {:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])  
   
   
-proc sumdailyReturnsCl*(self:Df) : float =
+proc sumDailyReturnsCl*(self:Df) : float =
       ## sumdailyReturnsCl
       ## 
       ## returns sum based on close price
@@ -1119,7 +1122,7 @@ proc sumdailyReturnsCl*(self:Df) : float =
       result = sumdfr 
 
   
-proc sumdailyReturnsAdCl*(self:Df) : float =
+proc sumDailyReturnsAdCl*(self:Df) : float =
       ## sumdailyReturnsAdCl
       ## 
       ## returns sum based on adjc 
@@ -1209,7 +1212,7 @@ proc showStatisticsT*(z : Df) =
 
 var emaflag : bool = false 
 
-proc CalculateEMA(todaysPrice : float , numberOfDays: int , EMAYesterday : float) : float =
+proc calculateEMA(todaysPrice : float , numberOfDays: int , EMAYesterday : float) : float =
    ## supporting proc for ema calculation, not callable
    ## 
    var k = 2 / (float(numberOfDays) + 1.0)
@@ -1261,7 +1264,7 @@ proc ema* (dx : Df , N: int) : Ts =
               
       for x in countdown(dx.close.len-1,0,1):  # ok but we get the result in reverse
           # call the EMA calculation
-          var aema = CalculateEMA(dx.close[x], N, yesterdayEMA)
+          var aema = calculateEMA(dx.close[x], N, yesterdayEMA)
           # put the calculated ema into our Ts object
           m_emaSeries.dd.add(dx.date[x])
           m_emaSeries.tx.add(aema)
@@ -1361,6 +1364,154 @@ proc showCurrentForex*(curs : seq[string]) =
              echo "{:<8} {:<4} {}".fmt(curs[x],cx.cu[x],cx.ra[x])
           
           
+
+# utility procs 
+
+proc presentValue*[T](FV: T,r:T,m:int,t:int):float =
+     ## presentValue
+     ## 
+     ## Present Value Calculation for a Lump Sum Investment
+     ## 
+     ## Future Value (FV)
+     ##   is the future value sum of an investment that you want to find a present value for
+     ## Number of Periods (t)
+     ##   commonly this will be number of years but periods can be any time unit. 
+     ##   Use int or floats for partial periods such as months for
+     ##   example, 7.5 years is 7 yr 6 mo.
+     ## Interest Rate (R)
+     ##   is the annual nominal interest rate or "stated rate" in percent.
+     ##   r = R/100, the interest rate in integer or floats
+     ## Compounding (m)
+     ##   is the number of times compounding occurs per period. If a period is a year 
+     ##   then annually=1, quarterly=4, monthly=12, daily = 365, etc.
+     ## Rate (i)
+     ##   i = (r/m); interest rate per compounding period.
+     ## Total Number of Periods (n)
+     ##   n = mt; is the total number of compounding periods for the life of the investment.
+     ## Present Value (PV)
+     ##   the calculated present value of your future value amount
+     ##   
+     ## From http://www.CalculatorSoup.com - Online Calculator Resource.
+     ## 
+     ## .. code-block:: nim
+     ##    var FV : float = 10000
+     ##    var PV : float = 0.0
+     ##    var r  : float = 0.0625
+     ##    var m  : int   = 2
+     ##    var t  : int   = 12
+     ##    
+     ##    PV = presentValue(FV,r,m,t)
+     ##    echo PV
+     ##
+       
+       
+     var z = 1.0 + r.float / m.float
+     var s = m.float * t.float
+     result = FV / pow(z,s)
+
+
+proc presentValue*(FV: float,r:float,m:float,t:float):float =
+     ## presentValue
+     ## 
+     ## Present Value Calculation for a Lump Sum Investment
+     ## 
+     ## .. code-block:: nim
+     ##      PV = presentValue(FV,0.0925,2.0,12.0)
+     ##      echo PV
+
+     var z = 1.0 + r / m
+     var s = m * t
+     result = FV / pow(z,s)
+     
+     
+proc presentValueFV*(FV:float,i:float,n:int):float =
+     ## presentValueFV
+     ## 
+     ## the present value of a future sum at a periodic 
+     ## interest rate i where n is the number of periods in the future. 
+     ## 
+     ## .. code-block:: nim    
+     ##    PV = presentValueFV(FV,0.0625,10)
+     ##    echo PV
+ 
+      
+     var zz = 1.0 + i
+     result = FV / (pow(zz,n.float))
+
+
+proc presentValueFV*(FV:float,i:float,n:float):float =
+     
+     ## .. code-block:: nim    
+     ##    PV = presentValueFV(FV,0.0625,20.5)
+     ##    echo PV
+  
+     var zz = 1.0 + i
+     result = FV / (pow(zz,n.float))
+     
+
+proc rainbow* (astr : string) =
+    ## rainbow
+    ## 
+    ## random multi colored string 
+    ## 
+    ## .. code-block:: nim    
+    ##    rainbow("Sparkling string display !")
+    ##    
+   
+    var c = 0
+    var a = toSeq(1.. 12)
+    for x in 0.. <astr.len:
+       c = a[randomInt(a.len)]
+       case c 
+        of 1  : msgg() do  : write(stdout,astr[x])
+        of 2  : msgr() do  : write(stdout,astr[x])
+        of 3  : msgc() do  : write(stdout,astr[x])
+        of 4  : msgy() do  : write(stdout,astr[x])
+        of 5  : msggb() do : write(stdout,astr[x])
+        of 6  : msgr() do  : write(stdout,astr[x])
+        of 7  : msgwb() do : write(stdout,astr[x])
+        of 8  : msgc() do  : write(stdout,astr[x])
+        of 9  : msgyb() do : write(stdout,astr[x])
+        of 10 : msggb() do : write(stdout,astr[x])
+        of 11 : msgcb() do : write(stdout,astr[x])
+        else  : msgw() do  : write(stdout,astr[x])
+     
+
+
+proc handler*() {.noconv.} =
+  ## handler
+  ## 
+  ## experimental
+  ## 
+  ## this runs if ctrl-c is pressed
+  ## 
+  ## and provides some feedback upon exit
+  ## 
+  ## .. code-block:: nim 
+  ##    import nimFinLib
+  ##    # get the latest delayed quotes for your stock
+  ##    # press ctrl-c to exit
+  ##    setControlCHook(handler)    # register exit handler
+  ##    while 1 ==1 :
+  ##       showCurrentStocks("IBM+AAPL+BP.L")
+  ##       sleepy(5)
+  ##       
+  ##    
+   
+  eraseScreen()
+  echo()  
+  echo aline
+  msgg() do: echo "Thank you for using     : ",getAppFilename()
+  msgc() do: echo "{}{:<11}{:>9}".fmt("Last compilation on     : ",CompileDate ,CompileTime)  
+  echo aline
+  echo "Using nimFinLib Version : ", NIMFINLIBVERSION
+  echo "Nim Version             : ", NimVersion
+  echo()
+  rainbow("Have a Nice Day !")  ## change or add custom messages as required
+  decho(2)
+  system.addQuitProc(resetAttributes)
+  quit(0)
+      
 
 # procs for future use
  
