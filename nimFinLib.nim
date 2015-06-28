@@ -1491,7 +1491,7 @@ proc handler*() {.noconv.} =
   ##    import nimFinLib
   ##    # get the latest delayed quotes for your stock
   ##    # press ctrl-c to exit
-  ##    setControlCHook(handler)    # register exit handler
+  ##    # setControlCHook(handler)    # auto registered exit handler
   ##    while 1 == 1 :
   ##       showCurrentStocks("IBM+AAPL+BP.L")
   ##       sleepy(5)
@@ -1511,7 +1511,9 @@ proc handler*() {.noconv.} =
   decho(2)
   system.addQuitProc(resetAttributes)
   quit(0)
-      
+
+# this handler is automatically registered , comment out if undesired
+setControlCHook(handler)      
 
 # procs for future use
  

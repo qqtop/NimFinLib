@@ -1932,7 +1932,7 @@ head means oldest rows
 <pre><span class="Keyword">import</span> <span class="Identifier">nimFinLib</span>
 <span class="Comment"># get the latest delayed quotes for your stock</span>
 <span class="Comment"># press ctrl-c to exit</span>
-<span class="Identifier">setControlCHook</span><span class="Punctuation">(</span><span class="Identifier">handler</span><span class="Punctuation">)</span>    <span class="Comment"># register exit handler</span>
+<span class="Comment"># setControlCHook(handler)    # auto registered exit handler</span>
 <span class="Keyword">while</span> <span class="DecNumber">1</span> <span class="Operator">==</span> <span class="DecNumber">1</span> <span class="Punctuation">:</span>
    <span class="Identifier">showCurrentStocks</span><span class="Punctuation">(</span><span class="StringLit">&quot;IBM+AAPL+BP.L&quot;</span><span class="Punctuation">)</span>
    <span class="Identifier">sleepy</span><span class="Punctuation">(</span><span class="DecNumber">5</span><span class="Punctuation">)</span></pre>
@@ -2025,7 +2025,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-06-26 16:40:21 UTC</small>
+        <small>Made with Nim. Generated: 2015-06-28 13:46:10 UTC</small>
       </div>
     </div>
   </div>
