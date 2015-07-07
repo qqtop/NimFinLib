@@ -1213,9 +1213,7 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#printTuple,"
-    title="printTuple*(xs: tuple): string"><wbr />print<wbr />Tuple</a></li>
-  <li><a class="reference" href="#timeSeries,T,string"
+      <li><a class="reference" href="#timeSeries,T,string"
     title="timeSeries*[T](self: T; ty: string): Ts"><wbr />time<wbr />Series</a></li>
   <li><a class="reference" href="#showTimeSeries,Ts,string,string,int"
     title="showTimeSeries*(ats: Ts; header, ty: string; N: int)"><wbr />show<wbr />Time<wbr />Series</a></li>
@@ -1399,7 +1397,9 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
 <p>Contributors: reactorMonk</p>
 <p>Requires    : random module available on nimble</p>
 <p>Notes       : it is assumed that terminal color is black background</p>
-<blockquote><p>and white text. Other color schemes may not show all output.</p></blockquote>
+<blockquote><p><p>and white text. Other color schemes may not show all output.</p>
+<p>For comprehensive tests and usage see nimFinT5.nim</p>
+</p></blockquote>
 </p></blockquote>
 </p>
   <div class="section" id="6">
@@ -1491,16 +1491,6 @@ Cf type is a simple object to hold current currency data
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<dt id="printTuple"><a name="printTuple,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">printTuple</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">xs</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
-<dd>
-<p>printTuple</p>
-<p>tuple printer , returns a string</p>
-<p>code ex nim forum</p>
-<pre><span class="Identifier">echo</span> <span class="Identifier">printTuple</span><span class="Punctuation">(</span><span class="Punctuation">(</span><span class="DecNumber">1</span><span class="Punctuation">,</span><span class="DecNumber">2</span><span class="Punctuation">)</span><span class="Punctuation">)</span>         <span class="Comment"># prints (1, 2)</span>
-<span class="Identifier">echo</span> <span class="Identifier">printTuple</span><span class="Punctuation">(</span><span class="Punctuation">(</span><span class="DecNumber">3</span><span class="Punctuation">,</span><span class="DecNumber">4</span><span class="Punctuation">)</span><span class="Punctuation">)</span>         <span class="Comment"># prints (3, 4)</span>
-<span class="Identifier">echo</span> <span class="Identifier">printTuple</span><span class="Punctuation">(</span><span class="Punctuation">(</span><span class="StringLit">&quot;A&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;B&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;C&quot;</span><span class="Punctuation">)</span><span class="Punctuation">)</span> <span class="Comment"># prints (A, B, C)</span></pre>
-
-</dd>
 <dt id="timeSeries"><a name="timeSeries,T,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">timeSeries</span><span class="Operator">*</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">ty</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Ts</span></pre></dt>
 <dd>
 <p>timeseries returns a Ts type date and one data column based on ty selection input usually is a Df object and a string , if a string is in ohlcva the relevant series will be extracted from the Df object</p>
@@ -2121,7 +2111,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-07-07 10:27:36 UTC</small>
+        <small>Made with Nim. Generated: 2015-07-07 10:33:38 UTC</small>
       </div>
     </div>
   </div>

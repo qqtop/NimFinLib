@@ -48,6 +48,9 @@
 ## Notes       : it is assumed that terminal color is black background
 ##
 ##               and white text. Other color schemes may not show all output.
+##
+##               For comprehensive tests and usage see nimFinT5.nim
+##
 
 
 import os,strutils,parseutils,sequtils,httpclient,strfmt
@@ -260,28 +263,6 @@ template withFile*(f: expr, filename: string, mode: FileMode,
         echo ()
         msgy() do : echo "Processing file " & fn & ", stopped . Reason: ", msg
         quit()
-
-
-proc printTuple*(xs: tuple): string =
-    ## printTuple
-    ##
-    ## tuple printer , returns a string
-    ##
-    ## code ex nim forum
-    ##
-    ## .. code-block:: nim
-    ##    echo printTuple((1,2))         # prints (1, 2)
-    ##    echo printTuple((3,4))         # prints (3, 4)
-    ##    echo printTuple(("A","B","C")) # prints (A, B, C)
-
-    result = "("
-    for x in xs.fields:
-      if result.len > 1:
-          result.add(", ")
-      result.add($x)
-    result.add(")")
-
-
 
 
 proc timeSeries*[T](self:T,ty:string): Ts =
