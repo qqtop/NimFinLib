@@ -184,6 +184,13 @@ template msgwb*(code: stmt): stmt {.immediate.} =
       code
       setforegroundcolor(fgWhite)
 
+
+template msgb*(code: stmt): stmt {.immediate.} =
+      setforegroundcolor(fgBlack,true)
+      code
+      setforegroundcolor(fgWhite)
+
+
 template hdx*(code:stmt):stmt {.immediate.}  =
    ## hdx
    ##
@@ -425,6 +432,21 @@ proc decho*(z:int)  =
     ## to create 10 blank lines
     for x in 0.. <z:
       echo()
+
+proc getCurrentQuote*(stcks:string) : string =
+   ## getCurrentQuote
+   ##
+   ## gets the current price/quote from yahoo for 1 stock code
+   var aurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
+   #var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
+   var data = newSeq[string]()
+   var line = getContent(aurl)
+   data = line[1..line.high].split(",")
+   #echo "DATA -> : ",data
+   if data.len > 1:
+      result = data[3]
+   else:
+      result = "-1"
 
 
 proc currentStocks(aurl:string) =
@@ -1280,7 +1302,7 @@ proc ema* (dx : Df , N: int) : Ts =
     m_emaSeries.tx = @[]
     if dx.close.len < ( 5 * N):
        emaflag = true
-       msgr() do : echo "Insufficient data for valid ema calculation, need min. $1 data points" % $(5 * N)
+       msgr() do : echo dx.stock,": Insufficient data for valid ema calculation, need min. $1 data points" % $(5 * N)
 
     else:
 

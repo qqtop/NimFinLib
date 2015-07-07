@@ -1233,6 +1233,8 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="getTerminalWidth*(): int"><wbr />get<wbr />Terminal<wbr />Width</a></li>
   <li><a class="reference" href="#decho,int"
     title="decho*(z: int)"><wbr />decho</a></li>
+  <li><a class="reference" href="#getCurrentQuote,string"
+    title="getCurrentQuote*(stcks: string): string"><wbr />get<wbr />Current<wbr />Quote</a></li>
   <li><a class="reference" href="#buildStockString,Nf"
     title="buildStockString*(apf: Nf): string"><wbr />build<wbr />Stock<wbr />String</a></li>
   <li><a class="reference" href="#buildStockString,seq[Df]"
@@ -1363,6 +1365,8 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="msgw*(code: stmt): stmt"><wbr />msgw</a></li>
   <li><a class="reference" href="#msgwb.t,stmt"
     title="msgwb*(code: stmt): stmt"><wbr />msgwb</a></li>
+  <li><a class="reference" href="#msgb.t,stmt"
+    title="msgb*(code: stmt): stmt"><wbr />msgb</a></li>
   <li><a class="reference" href="#hdx.t,stmt"
     title="hdx*(code: stmt): stmt"><wbr />hdx</a></li>
   <li><a class="reference" href="#withFile.t,expr,string,FileMode,stmt"
@@ -1564,6 +1568,13 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 <p>decho</p>
 <p>blank lines creator</p>
 <pre><span class="Identifier">decho</span><span class="Punctuation">(</span><span class="DecNumber">10</span><span class="Punctuation">)</span></pre><p>to create 10 blank lines</p>
+
+
+</dd>
+<dt id="getCurrentQuote"><a name="getCurrentQuote,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getCurrentQuote</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">stcks</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+<p>getCurrentQuote</p>
+<p>gets the current price/quote from yahoo for 1 stock code</p>
 
 
 </dd>
@@ -2053,6 +2064,11 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
 
 
 </dd>
+<dt id="msgb"><a name="msgb.t,stmt"></a><pre><span class="Keyword">template</span> <span class="Identifier">msgb</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">stmt</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">stmt</span> <span class="Other">{.</span><span class="Identifier">immediate</span><span class="Other">.}</span></pre></dt>
+<dd>
+
+
+</dd>
 <dt id="hdx"><a name="hdx.t,stmt"></a><pre><span class="Keyword">template</span> <span class="Identifier">hdx</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">stmt</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">stmt</span> <span class="Other">{.</span><span class="Identifier">immediate</span><span class="Other">.}</span></pre></dt>
 <dd>
 <p>hdx</p>
@@ -2086,7 +2102,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-07-07 10:39:19 UTC</small>
+        <small>Made with Nim. Generated: 2015-07-07 22:01:18 UTC</small>
       </div>
     </div>
   </div>

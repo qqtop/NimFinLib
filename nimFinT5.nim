@@ -426,7 +426,7 @@ echo PV
 
 echo ()
 msgy() do : echo "###############################################"
-msgy() do : echo "# Testing hkex related Procs                  #"
+msgy() do : echo "# Testing HKEX related procs                  #"
 msgy() do : echo "###############################################"
 echo ()
 
@@ -443,7 +443,7 @@ else:
    hxc = getHKEXcodesFromFile(fn)
 # at this stage three lists are available for work in hxc
 if hxc.len > 0:
-  # # we can show all
+  # # we can show all 1500 plus too ..
   # msgg() do : echo "Full List of Hongkong Stock Exchange MainBoard Listed Stocks" # show all
   # for x in 0.. <hxc[0].len :
   #   try:
@@ -452,17 +452,17 @@ if hxc.len > 0:
   #      echo "Problem with ",x
 
   echo()
-  msgg() do : echo("Top 100  List of Hongkong Stock Exchange MainBoard Listed Stocks")
+  msgg() do : echo("Top 50  List of Hongkong Stock Exchange MainBoard Listed Stocks")
   msgc() do : echo "{:<5} {:<7} {:<22}  {:<10}".fmt("No.","Code","Name","BoardLot")
-  for x in 0.. <100 :
+  for x in 0.. <50 :
     try:
        echo "{:<5} {:<7} {:<22}  {:>6}".fmt(x + 1,hxc[0][x],hxc[1][x],hxc[2][x])
     except:
        msgr() do : echo "Problem with item in hkex.csv",x
 
   echo()
-  msgg() do : echo("Bottom 100  List of Hongkong Stock Exchange MainBoard Listed Stocks")
-  for x in hxc[0].len-100.. <hxc[0].len :
+  msgg() do : echo("Bottom 50  List of Hongkong Stock Exchange MainBoard Listed Stocks")
+  for x in hxc[0].len-50.. <hxc[0].len :
      try:
         echo "{:<5} {:<7} {:<22}  {:>6}".fmt(x + 1,hxc[0][x],hxc[1][x],hxc[2][x])
      except:
@@ -478,17 +478,93 @@ if hxc.len > 1:
    for x in hxc[0].len-50.. <hxc[0].len :
          echo "{:<7} ==> {}".fmt(hxc[0][x],hkexToYhoo(hxc[0][x]))
 
-# how to see whats going on inside an object
-#echo repr(t1)
 
+echo ()
+msgy() do : echo "###############################################"
+msgy() do : echo "# Create a Random Portfolio with 10 stocks    #"
+msgy() do : echo "###############################################"
+echo ()
+
+# lets create a portfolio with 10 random hongkong stocks
+# get available stock codes
+let hkexcodes = getHKEXcodesFromFile(fn)  # hkex.csv as defined above
+# hkexcodes now holds three seqs namely : stockcodes,companynames,boardlots
+# for easier reading we can introduce constants
+const
+   stockcodes   = 0
+   companynames = 1
+   boardlots    = 2
+
+# we need a place to put the random stocks to be selected from hkexcodes
+# call it randomstockpool
+var randomstockpool = initPool()
+# lets also keep track of which random number has been generated
+var rdnseq = newSeq[int]()
+
+for x in 0.. <10:
+   # get a random number between 1 and max no of items in hkexcodes[0]
+   var rdn = randomInt(1,hkexcodes[stockcodes].len)
+   rdnseq.add(rdn)
+   # pick the stock with item number rdn from hxc[stockcodes]
+   # and convert to yahoo format then add it to a pool called randomstockpool
+   var arandomstock = hkexToYhoo(hxc[stockcodes][rdn])
+   var astartDate = "2014-01-01"
+   var aendDate = getDatestr()
+   #load the historic data for arandomstock into our randomstockpool
+   try:
+      randomstockpool.add(getSymbol2(arandomstock,astartDate,aendDate))
+   except:
+      # this may happen if yahoo does not have any data for a stock or faulty data
+      # we just skip it
+      discard
+      echo()
+
+# at this stage the historic data is ready to be used
+# create a portfolio named rpf and call it RandomTestPortfolio
+var rpf = initNF()
+# rpf.nx holds the relevant portfolio name
+rpf.nx = "RandomTestPortfolio"
+# rpf.dx holds the relevant historic data for all stocks
+# here we load all data in our randomstockpool into the new portfolio
+# in this case we could have omitted the pool because we use all stocks
+# in some cases we just want a subset of stocks in a pool hence this setup
+for stocksdata in randomstockpool:
+         rpf.dx.add(stocksdata)   # dx holds the historical data series
+
+# see what we have got
+decho(2)
+msgy() do: echo "Most recent latest dailyreturns based on close price for all stocks"
+for x in 0.. <rpf.dx.len:
+  echo "{:<8} {}".fmt(rpf.dx[x].stock,last(dailyReturns(rpf.dx[x].close)))
+
+# or show a table with some stats and data
+decho(2)
+msgy() do : echo "Kurtosis , StdDev ,EMA22 based on close price for ",rpf.nx
+msgg() do : echo "{:<8}  {:>10}  {:>10}  {:>10}  {:>10}  {:>15} {:>10}".fmt("Stock","Kurtosis","StdDev","EMA22","Close","Company","Quote")
+for x in 0.. <rpf.dx.len:
+   # to get ema we pass our data to the ema function
+   # we want 22 days so ..
+   # and we just want the newest ema data point which resides in tx[0]
+   # ema returns a time series object dx,tx ,but we only need the latest ema value
+   var emadata = ema(rpf.dx[x],22).tx[0]
+   # get the companyname
+   var compname = hkexcodes[companynames][rdnseq[x]]
+   # get the latest quote for a stock
+   # dx[x] is a Df object which has been correctly loaded so the stockcode is in stock
+   var cquote = getCurrentQuote(rpf.dx[x].stock)
+   echo "{:<8}  {:>10f2}  {:>10f2}  {:>10f2}  {:>10f2}  {:>15} {:>10}".fmt(rpf.dx[x].stock , kurtosis(rpf.dx[x].close), rpf.dx[x].rc[0].standardDeviation,emadata,last(rpf.dx[x].close),compname,cquote)
+
+
+
+# That's it
 
 when isMainModule:
   # show time elapsed for this run
   echo ()
-  msgc() do: echo "Elapsed           : ",epochTime() - start," secs\n"
-  msgg() do: echo "nimlibFin Version : ",NIMFINLIBVERSION
-  echo()
-  echo()
+  decho(2)
+  msgy() do : echo "{:<15}{}{}".fmt("Elapsed     : ",epochtime() - start," secs")
+  msgb() do : echo "{:<15}{} | {}{} | {}{} - {}".fmt("Application : ",getAppFilename(),"Nim : ",NimVersion,"  qqTop nimFinLib : ",NIMFINLIBVERSION,year(getDateStr()))
+  decho(2)
   system.addQuitProc(resetAttributes)
   # some system stats
   GC_fullCollect()
