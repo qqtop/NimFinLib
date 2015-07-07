@@ -1167,7 +1167,7 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   dx*: seq[Df]                ## dx  holds all stocks with historical data"><wbr />Nf</a></li>
   <li><a class="reference" href="#Df"
     title="Df* = object of Nf
-  stock*: string              ## yahoo style stock code 
+  stock*: string              ## yahoo style stock code
   date*: seq[string]
   open*: seq[float]
   high*: seq[float]
@@ -1213,7 +1213,9 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#timeSeries,T,string"
+      <li><a class="reference" href="#printTuple,"
+    title="printTuple*(xs: tuple): string"><wbr />print<wbr />Tuple</a></li>
+  <li><a class="reference" href="#timeSeries,T,string"
     title="timeSeries*[T](self: T; ty: string): Ts"><wbr />time<wbr />Series</a></li>
   <li><a class="reference" href="#showTimeSeries,Ts,string,string,int"
     title="showTimeSeries*(ats: Ts; header, ty: string; N: int)"><wbr />show<wbr />Time<wbr />Series</a></li>
@@ -1315,6 +1317,12 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="getCurrentForex*(curs: seq[string]): Cf"><wbr />get<wbr />Current<wbr />Forex</a></li>
   <li><a class="reference" href="#showCurrentForex,seq[string]"
     title="showCurrentForex*(curs: seq[string])"><wbr />show<wbr />Current<wbr />Forex</a></li>
+  <li><a class="reference" href="#hkexToYhoo,string"
+    title="hkexToYhoo*(stc: string): string"><wbr />hkex<wbr />To<wbr />Yhoo</a></li>
+  <li><a class="reference" href="#getHKEXcodes,"
+    title="getHKEXcodes*(): seq[seq[string]]"><wbr />get<wbr />HKEXcodes</a></li>
+  <li><a class="reference" href="#getHKEXcodesFromFile,string"
+    title="getHKEXcodesFromFile*(fname: string): seq[seq[string]]"><wbr />get<wbr />HKEXcodes<wbr />From<wbr />File</a></li>
   <li><a class="reference" href="#presentValue,T,T,int,int"
     title="presentValue*[T](FV: T; r: T; m: int; t: int): float"><wbr />present<wbr />Value</a></li>
   <li><a class="reference" href="#presentValue,float,float,float,float"
@@ -1359,6 +1367,8 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="msgwb*(code: stmt): stmt"><wbr />msgwb</a></li>
   <li><a class="reference" href="#hdx.t,stmt"
     title="hdx*(code: stmt): stmt"><wbr />hdx</a></li>
+  <li><a class="reference" href="#withFile.t,expr,string,FileMode,stmt"
+    title="withFile*(f: expr; filename: string; mode: FileMode; body: stmt): stmt"><wbr />with<wbr />File</a></li>
 
   </ul>
 </li>
@@ -1388,6 +1398,8 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
 <p>Programming : qqTop</p>
 <p>Contributors: reactorMonk</p>
 <p>Requires    : random module available on nimble</p>
+<p>Notes       : it is assumed that terminal color is black background</p>
+<blockquote><p>and white text. Other color schemes may not show all output.</p></blockquote>
 </p></blockquote>
 </p>
   <div class="section" id="6">
@@ -1407,14 +1419,14 @@ Pf type holds all portfolios similar to a master account portfolios are Nf objec
 </dd>
 <dt id="Nf"><a name="Nf"></a><pre><span class="Identifier">Nf</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span> 
   <span class="Identifier">nx</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>                 <span class="Comment">## nx  holds portfolio name  e.g. MyGetRichPortfolio</span>
-  <span class="Identifier">dx</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Df</span><span class="Other">]</span>                <span class="Comment">## dx  holds all stocks with historical data </span>
+  <span class="Identifier">dx</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Df</span><span class="Other">]</span>                <span class="Comment">## dx  holds all stocks with historical data</span>
   </pre></dt>
 <dd>
 Nf type holds one portfolio with all relevant historic stocks data
 
 </dd>
 <dt id="Df"><a name="Df"></a><pre><span class="Identifier">Df</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Nf</span>
-  <span class="Identifier">stock</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>              <span class="Comment">## yahoo style stock code </span>
+  <span class="Identifier">stock</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>              <span class="Comment">## yahoo style stock code</span>
   <span class="Identifier">date</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
   <span class="Identifier">open</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">float</span><span class="Other">]</span>
   <span class="Identifier">high</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">float</span><span class="Other">]</span>
@@ -1430,7 +1442,7 @@ Nf type holds one portfolio with all relevant historic stocks data
   <span class="Identifier">rca</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Runningstat</span><span class="Other">]</span>      <span class="Comment">## RunningStat for adjusted close price</span>
   </pre></dt>
 <dd>
-Df type holds individual stocks history data and RunningStat for ohlcva columns even more items may be added like full company name etc in the future items are stock code, ohlcva, rc and rca . 
+Df type holds individual stocks history data and RunningStat for ohlcva columns even more items may be added like full company name etc in the future items are stock code, ohlcva, rc and rca .
 
 </dd>
 <dt id="Ts"><a name="Ts"></a><pre><span class="Identifier">Ts</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span> 
@@ -1479,6 +1491,16 @@ Cf type is a simple object to hold current currency data
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
+<dt id="printTuple"><a name="printTuple,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">printTuple</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">xs</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+<p>printTuple</p>
+<p>tuple printer , returns a string</p>
+<p>code ex nim forum</p>
+<pre><span class="Identifier">echo</span> <span class="Identifier">printTuple</span><span class="Punctuation">(</span><span class="Punctuation">(</span><span class="DecNumber">1</span><span class="Punctuation">,</span><span class="DecNumber">2</span><span class="Punctuation">)</span><span class="Punctuation">)</span>         <span class="Comment"># prints (1, 2)</span>
+<span class="Identifier">echo</span> <span class="Identifier">printTuple</span><span class="Punctuation">(</span><span class="Punctuation">(</span><span class="DecNumber">3</span><span class="Punctuation">,</span><span class="DecNumber">4</span><span class="Punctuation">)</span><span class="Punctuation">)</span>         <span class="Comment"># prints (3, 4)</span>
+<span class="Identifier">echo</span> <span class="Identifier">printTuple</span><span class="Punctuation">(</span><span class="Punctuation">(</span><span class="StringLit">&quot;A&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;B&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;C&quot;</span><span class="Punctuation">)</span><span class="Punctuation">)</span> <span class="Comment"># prints (A, B, C)</span></pre>
+
+</dd>
 <dt id="timeSeries"><a name="timeSeries,T,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">timeSeries</span><span class="Operator">*</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">ty</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Ts</span></pre></dt>
 <dd>
 <p>timeseries returns a Ts type date and one data column based on ty selection input usually is a Df object and a string , if a string is in ohlcva the relevant series will be extracted from the Df object</p>
@@ -1551,7 +1573,7 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 <dd>
 <p>decho</p>
 <p>blank lines creator</p>
-<pre><span class="Identifier">decho</span><span class="Punctuation">(</span><span class="DecNumber">10</span><span class="Punctuation">)</span></pre><p>to create 10 blank lines   </p>
+<pre><span class="Identifier">decho</span><span class="Punctuation">(</span><span class="DecNumber">10</span><span class="Punctuation">)</span></pre><p>to create 10 blank lines</p>
 
 
 </dd>
@@ -1864,6 +1886,40 @@ head means oldest rows
 <span class="Identifier">decho</span><span class="Punctuation">(</span><span class="DecNumber">3</span><span class="Punctuation">)</span></pre>
 
 </dd>
+<dt id="hkexToYhoo"><a name="hkexToYhoo,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">hkexToYhoo</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">stc</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+<p>hkexToYhoo</p>
+<p>mainly used in conjunction with getHKEXcodes or getHKEXcodesFromFile</p>
+<p>converts a hkex stockcode like 00001 to 0001.HK only longer ones</p>
+<p>not starting with 0 need not be cut</p>
+<p>current yahoo historical data links for csv download need this format</p>
+
+
+</dd>
+<dt id="getHKEXcodes"><a name="getHKEXcodes,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getHKEXcodes</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
+<dd>
+<p>getHKEXcodes</p>
+<p>this proc scraps public data from <a class="reference external" href="http://www.hkex.com.hk">http://www.hkex.com.hk</a></p>
+<p>data returned are 3 seqs which hold stockcodes,companynames and boardlots</p>
+<p>of companies listed on the exchange mainboard .</p>
+<p>this allows to create custom portfolios,random portfolios</p>
+<p>the stock codes can be massaged into yahoo codes for further</p>
+<p>current or historical data downloads</p>
+<p>this routine was successfully tested in 2015-07</p>
+<p>it may take a few seconds as abt 1500 stocks are currently listed</p>
+<p>a facility to store this data locally will be added shortly</p>
+<p>ideally a database , but csv file may also be ok </p>
+
+
+</dd>
+<dt id="getHKEXcodesFromFile"><a name="getHKEXcodesFromFile,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getHKEXcodesFromFile</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">fname</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
+<dd>
+<p>getHKEXcodesFromFile</p>
+<p>read a csv file created with getHKEXcodes into three seqs</p>
+<p>stockcodes,companynames,boardlots</p>
+
+
+</dd>
 <dt id="presentValue"><a name="presentValue,T,T,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">presentValue</span><span class="Operator">*</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">FV</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">r</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">m</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">t</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span></pre></dt>
 <dd>
 <p>presentValue</p>
@@ -2015,6 +2071,46 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
 
 
 </dd>
+<dt id="withFile"><a name="withFile.t,expr,string,FileMode,stmt"></a><pre><span class="Keyword">template</span> <span class="Identifier">withFile</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Identifier">expr</span><span class="Other">;</span> <span class="Identifier">filename</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">mode</span><span class="Other">:</span> <span class="Identifier">FileMode</span><span class="Other">;</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">stmt</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">stmt</span> <span class="Other">{.</span>
+    <span class="Identifier">immediate</span><span class="Other">.}</span></pre></dt>
+<dd>
+<p>withFile</p>
+<p>file open close utility template</p>
+<p>Example 1</p>
+<pre><span class="Keyword">let</span> <span class="Identifier">curFile</span><span class="Operator">=</span><span class="StringLit">&quot;/data5/notes.txt&quot;</span>    <span class="Comment"># some file</span>
+<span class="Identifier">withFile</span><span class="Punctuation">(</span><span class="Identifier">txt</span><span class="Punctuation">,</span> <span class="Identifier">curFile</span><span class="Punctuation">,</span> <span class="Identifier">fmRead</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
+    <span class="Keyword">while</span> <span class="DecNumber">1</span> <span class="Operator">==</span> <span class="DecNumber">1</span><span class="Punctuation">:</span>
+        <span class="Keyword">try</span><span class="Punctuation">:</span>
+           <span class="Identifier">stdout</span><span class="Operator">.</span><span class="Identifier">writeln</span><span class="Punctuation">(</span><span class="Identifier">txt</span><span class="Operator">.</span><span class="Identifier">readLine</span><span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">)</span>   <span class="Comment"># do something with the lines</span>
+        <span class="Keyword">except</span><span class="Punctuation">:</span>
+           <span class="Keyword">break</span>
+<span class="Identifier">echo</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+<span class="Identifier">msgg</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Keyword">do</span> <span class="Punctuation">:</span> <span class="Identifier">rainbow</span><span class="Punctuation">(</span><span class="StringLit">&quot;Finished&quot;</span><span class="Punctuation">)</span>
+<span class="Identifier">echo</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre><p>Example 2</p>
+<pre><span class="Keyword">import</span> <span class="Identifier">private</span><span class="Punctuation">,</span><span class="Identifier">strutils</span><span class="Punctuation">,</span><span class="Identifier">strfmt</span>
+
+<span class="Keyword">let</span> <span class="Identifier">curFile</span><span class="Operator">=</span><span class="StringLit">&quot;/data5/notes.txt&quot;</span>
+<span class="Keyword">var</span> <span class="Identifier">lc</span> <span class="Operator">=</span> <span class="DecNumber">0</span>
+<span class="Keyword">var</span> <span class="Identifier">oc</span> <span class="Operator">=</span> <span class="DecNumber">0</span>
+<span class="Identifier">withFile</span><span class="Punctuation">(</span><span class="Identifier">txt</span><span class="Punctuation">,</span> <span class="Identifier">curFile</span><span class="Punctuation">,</span> <span class="Identifier">fmRead</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
+       <span class="Keyword">while</span> <span class="DecNumber">1</span> <span class="Operator">==</span> <span class="DecNumber">1</span><span class="Punctuation">:</span>
+           <span class="Keyword">try</span><span class="Punctuation">:</span>
+              <span class="Identifier">inc</span> <span class="Identifier">lc</span>
+              <span class="Keyword">var</span> <span class="Identifier">al</span> <span class="Operator">=</span> <span class="Operator">$</span><span class="Identifier">txt</span><span class="Operator">.</span><span class="Identifier">readline</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+              <span class="Keyword">var</span> <span class="Identifier">sw</span> <span class="Operator">=</span> <span class="StringLit">&quot;the&quot;</span>   <span class="Comment"># find all lines containing : the</span>
+              <span class="Keyword">if</span> <span class="Identifier">al</span><span class="Operator">.</span><span class="Identifier">contains</span><span class="Punctuation">(</span><span class="Identifier">sw</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">true</span><span class="Punctuation">:</span>
+                 <span class="Identifier">inc</span> <span class="Identifier">oc</span>
+                 <span class="Identifier">msgy</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Keyword">do</span><span class="Punctuation">:</span> <span class="Identifier">write</span><span class="Punctuation">(</span><span class="Identifier">stdout</span><span class="Punctuation">,</span><span class="StringLit">&quot;{:&lt;8}{:&gt;6} {:&lt;7}{:&gt;6}  &quot;</span><span class="Operator">.</span><span class="Identifier">fmt</span><span class="Punctuation">(</span><span class="StringLit">&quot;Line :&quot;</span><span class="Punctuation">,</span><span class="Identifier">lc</span><span class="Punctuation">,</span><span class="StringLit">&quot;Count :&quot;</span><span class="Punctuation">,</span><span class="Identifier">oc</span><span class="Punctuation">)</span><span class="Punctuation">)</span>
+                 <span class="Identifier">dhlecho</span><span class="Punctuation">(</span><span class="Identifier">al</span><span class="Punctuation">,</span><span class="Identifier">sw</span><span class="Punctuation">,</span><span class="Identifier">green</span><span class="Punctuation">)</span>
+                 <span class="Identifier">echo</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+           <span class="Keyword">except</span><span class="Punctuation">:</span>
+              <span class="Keyword">break</span>
+
+<span class="Identifier">echo</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+<span class="Identifier">msgg</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Keyword">do</span> <span class="Punctuation">:</span> <span class="Identifier">rainbow</span><span class="Punctuation">(</span><span class="StringLit">&quot;Finished&quot;</span><span class="Punctuation">)</span>
+<span class="Identifier">echo</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
+
+</dd>
 
 </dl></div>
 
@@ -2025,7 +2121,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-06-28 13:46:10 UTC</small>
+        <small>Made with Nim. Generated: 2015-07-07 10:27:36 UTC</small>
       </div>
     </div>
   </div>

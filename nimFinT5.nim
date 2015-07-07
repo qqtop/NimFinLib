@@ -424,7 +424,59 @@ PV = presentValueFV(FV,0.0625,10.0)
 echo PV
 
 
+echo ()
+msgy() do : echo "###############################################"
+msgy() do : echo "# Testing hkex related Procs                  #"
+msgy() do : echo "###############################################"
+echo ()
 
+# Test for getHKEXcodes and getHKEXcodesFromFile
+let fn = "hkex.csv"
+# check if file exists
+var hxc : seq[seq[string]]
+if fileExists(fn) == false:
+   # does not exist so scrap data
+   hxc =   getHKEXcodes()
+
+# file exists so read data in
+else:
+   hxc = getHKEXcodesFromFile(fn)
+# at this stage three lists are available for work in hxc
+if hxc.len > 0:
+  # # we can show all
+  # msgg() do : echo "Full List of Hongkong Stock Exchange MainBoard Listed Stocks" # show all
+  # for x in 0.. <hxc[0].len :
+  #   try:
+  #      echo "{:<5} {:<7} {:<22}  {:>6}".fmt(x + 1,hxc[0][x],hxc[1][x],hxc[2][x])
+  #   except:
+  #      echo "Problem with ",x
+
+  echo()
+  msgg() do : echo("Top 100  List of Hongkong Stock Exchange MainBoard Listed Stocks")
+  msgc() do : echo "{:<5} {:<7} {:<22}  {:<10}".fmt("No.","Code","Name","BoardLot")
+  for x in 0.. <100 :
+    try:
+       echo "{:<5} {:<7} {:<22}  {:>6}".fmt(x + 1,hxc[0][x],hxc[1][x],hxc[2][x])
+    except:
+       msgr() do : echo "Problem with item in hkex.csv",x
+
+  echo()
+  msgg() do : echo("Bottom 100  List of Hongkong Stock Exchange MainBoard Listed Stocks")
+  for x in hxc[0].len-100.. <hxc[0].len :
+     try:
+        echo "{:<5} {:<7} {:<22}  {:>6}".fmt(x + 1,hxc[0][x],hxc[1][x],hxc[2][x])
+     except:
+        msgr() do : echo "Problem with item in hkex.csv",x
+
+else:
+     # in case of parsing errors due to issues with the website we return some message
+     msgr() do : echo "An error has occured and no valid result set was returned"
+
+
+msgy() do : echo "Test for hkexToYhoo - show bottom 50 codes converted to yahoo format"
+if hxc.len > 1:
+   for x in hxc[0].len-50.. <hxc[0].len :
+         echo "{:<7} ==> {}".fmt(hxc[0][x],hkexToYhoo(hxc[0][x]))
 
 # how to see whats going on inside an object
 #echo repr(t1)

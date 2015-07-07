@@ -198,6 +198,92 @@ template hdx*(code:stmt):stmt {.immediate.}  =
    echo ""
 
 
+
+template withFile*(f: expr, filename: string, mode: FileMode,
+                    body: stmt): stmt {.immediate.} =
+    ## withFile
+    ##
+    ## file open close utility template
+    ##
+    ## Example 1
+    ##
+    ## .. code-block:: nim
+    ##    let curFile="/data5/notes.txt"    # some file
+    ##    withFile(txt, curFile, fmRead):
+    ##        while 1 == 1:
+    ##            try:
+    ##               stdout.writeln(txt.readLine())   # do something with the lines
+    ##            except:
+    ##               break
+    ##    echo()
+    ##    msgg() do : rainbow("Finished")
+    ##    echo()
+    ##
+    ##
+    ## Example 2
+    ##
+    ## .. code-block:: nim
+    ##    import private,strutils,strfmt
+    ##
+    ##    let curFile="/data5/notes.txt"
+    ##    var lc = 0
+    ##    var oc = 0
+    ##    withFile(txt, curFile, fmRead):
+    ##           while 1 == 1:
+    ##               try:
+    ##                  inc lc
+    ##                  var al = $txt.readline()
+    ##                  var sw = "the"   # find all lines containing : the
+    ##                  if al.contains(sw) == true:
+    ##                     inc oc
+    ##                     msgy() do: write(stdout,"{:<8}{:>6} {:<7}{:>6}  ".fmt("Line :",lc,"Count :",oc))
+    ##                     dhlecho(al,sw,green)
+    ##                     echo()
+    ##               except:
+    ##                  break
+    ##
+    ##    echo()
+    ##    msgg() do : rainbow("Finished")
+    ##    echo()
+    ##
+
+    let fn = filename
+    var f: File
+
+    if open(f, fn, mode):
+        try:
+          body
+        finally:
+          close(f)
+    else:
+        let msg = "Cannot open file"
+        echo ()
+        msgy() do : echo "Processing file " & fn & ", stopped . Reason: ", msg
+        quit()
+
+
+proc printTuple*(xs: tuple): string =
+    ## printTuple
+    ##
+    ## tuple printer , returns a string
+    ##
+    ## code ex nim forum
+    ##
+    ## .. code-block:: nim
+    ##    echo printTuple((1,2))         # prints (1, 2)
+    ##    echo printTuple((3,4))         # prints (3, 4)
+    ##    echo printTuple(("A","B","C")) # prints (A, B, C)
+
+    result = "("
+    for x in xs.fields:
+      if result.len > 1:
+          result.add(", ")
+      result.add($x)
+    result.add(")")
+
+
+
+
 proc timeSeries*[T](self:T,ty:string): Ts =
      ## timeseries
      ## returns a Ts type date and one data column based on ty selection
@@ -1364,6 +1450,178 @@ proc showCurrentForex*(curs : seq[string]) =
        msgg() do : echo "{:<8} {:<4} {}".fmt("Pair","Cur","Rate")
        for x in 0.. <cx.cu.len:
              echo "{:<8} {:<4} {}".fmt(curs[x],cx.cu[x],cx.ra[x])
+
+
+proc hkexToYhoo*(stc:string):string =
+   ## hkexToYhoo
+   ##
+   ## mainly used in conjunction with getHKEXcodes or getHKEXcodesFromFile
+   ##
+   ## converts a hkex stockcode like 00001 to 0001.HK only longer ones
+   ##
+   ## not starting with 0 need not be cut
+   ##
+   ## current yahoo historical data links for csv download need this format
+   ##
+   ##
+
+   var stc1 = stc
+   if stc1.len == 5 and stc.startswith("0"):
+           stc1 = stc[1..4] & ".HK"
+   else:
+           stc1 = stc & ".HK"
+   result = stc1
+
+
+proc getHKEXcodes*(): seq[seq[string]] =
+   ## getHKEXcodes
+   ##
+   ## this proc scraps public data from http://www.hkex.com.hk
+   ##
+   ## data returned are 3 seqs which hold stockcodes,companynames and boardlots
+   ##
+   ## of companies listed on the exchange mainboard .
+   ##
+   ## this allows to create custom portfolios,random portfolios
+   ##
+   ## the stock codes can be massaged into yahoo codes for further
+   ##
+   ## current or historical data downloads
+   ##
+   ## this routine was successfully tested in 2015-07
+   ##
+   ## it may take a few seconds as abt 1500 stocks are currently listed
+   ##
+   ## a facility to store this data locally will be added shortly
+   ##
+   ## ideally a database , but csv file may also be ok
+   ##
+
+   let hx ="http://www.hkex.com.hk/eng/market/sec_tradinfo/stockcode/eisdeqty_pf.htm"
+   let html = getContent(hx)
+   var stockcodes   = newSeq[string]()
+   var companynames = newSeq[string]()
+   var boardlots    = newSeq[string]()
+   var hxcode = ""
+   var coname = ""
+   var boardlot = ""
+   var compline = ""
+
+   for line in html.splitLines:
+
+       if line.contains("td class=\"verd_black12\" width=\"18%\">"):
+             var ls = line.split("<td class=\"verd_black12\" width=\"18%\">")
+             var ls1 = ls[1]
+             var ls2 = ls1.split("</td>")
+             hxcode = $ls2[0]
+             if hxcode != "<b>STOCK CODE</b>":
+                stockcodes.add(hxcode)
+
+       compline = "<td class=\"verd_black12\" width=\"42%\"><a href=\"../../../invest/company/profile_page_e.asp?WidCoID=$1&amp;WidCoAbbName=&amp;Month=&amp;langcode=e\" target=\"_parent\">" % hxcode
+       if line.contains(compline):
+            var cls = line.split(compline)
+            var cls1 = cls[1]
+            var cls2 = cls1.split("</a></td>")
+            coname = $cls2[0]
+            coname = replace(coname,"&amp;","&")
+            if coname != "<b>NAME OF LISTED SECURITIES</b>":
+                companynames.add(coname)
+       elif line.len < 125 and line.contains("<td class=\"verd_black12\" width=\"42%\">"):
+            # there are some code w/o a profile profile_page_e
+            var acls = line.split("<td class=\"verd_black12\" width=\"42%\">")
+            var acls1 = acls[1]
+            var acls2 = acls1.split("</td>")
+            coname = $acls2[0]
+            coname = replace(coname,"&amp;","&")
+            if coname != "<b>NAME OF LISTED SECURITIES</b>":
+               companynames.add(coname)
+
+       if line.contains("<td class=\"verd_black12\" width=\"19%\">"):
+            var bl = line.split("<td class=\"verd_black12\" width=\"19%\">")
+            var bl1 = bl[1]
+            var bl2 = bl1.split("</td>")
+            boardlot = $bl2[0]
+            if boardlot != "<b>BOARD LOT</b>":
+               # we need to remove a comma
+               boardlot = replace(boardlot,",","")
+               boardlots.add(boardlot)
+
+   # note that stockcodes are of form 00001
+   # and like so not suitable yet for yahoo ,google or quandl etc
+   # for massaging to yahoo format see hkexToYhoo
+
+   if (stockcodes.len == companynames.len) and (companynames.len == boardlots.len):
+          # save data, also overwrites any existing hkex.csv file
+
+          var hkx = "hkex.csv"
+          open(hkx, fmWrite).close()
+
+          withFile(f, hkx, fmWrite):
+             for x in 0.. <stockcodes.len:
+                 f.write(stockcodes[x])
+                 f.write(",")
+                 f.write(companynames[x])
+                 f.write(",")
+                 f.writeln(boardlots[x])
+
+          result = @[stockcodes,companynames,boardlots]
+   else:
+          result = @[]
+
+
+proc getHKEXcodesFromFile*(fname : string):seq[seq[string]] =
+      ## getHKEXcodesFromFile
+      ##
+      ## read a csv file created with getHKEXcodes into three seqs
+      ##
+      ## stockcodes,companynames,boardlots
+      ##
+      ##
+      # if no such file we just leave
+
+      if fileExists(fname) == false:
+        msgr() do : echo "File : ",fname," not found !"
+        result = @[]
+      else:
+          var stockcodes   = newSeq[string]()
+          var companynames = newSeq[string]()
+          var boardlots    = newSeq[string]()
+          var hxcode = ""
+          var coname = ""
+          var boardlot = ""
+          # another file check , maybe not necessary , but check if we can read fom stream
+          var s = newFileStream(fname, fmRead)
+          if s == nil:
+              msgr() do: echo ("Cannot open file : " & fname)
+              result = @[]
+          else:
+              var x: CsvParser
+              open(x, s, fname)
+              while readRow(x):
+                var c = 0
+                for val in items(x.row):
+                     case c
+                     of 0 : stockcodes.add(val)
+                     of 1 : companynames.add(val)
+                     of 2 : boardlots.add(val)
+                     else : discard
+                     inc c
+
+              close(x)
+
+              if (stockcodes.len == companynames.len) and (companynames.len == boardlots.len):
+                     result = @[stockcodes,companynames,boardlots]
+              else:
+                     # try to give some indication where the error occured
+                     msgr() do : echo("Error in hkex.csv data. Row count differs.")
+                     echo "Stockcodes Items   : ",stockcodes.len
+                     echo "CompanyNames Items : ",companynames.len
+                     echo "BoardLots Items    : ",boardlots.len
+                     msgr() do : echo aline
+                     # on error we return empty
+                     result = @[]
+
+
 
 
 

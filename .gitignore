@@ -3,3 +3,4 @@
 !*.* 
 nimcache/
 ratios.nim
+hkex.csv
