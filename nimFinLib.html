@@ -1501,7 +1501,7 @@ Cf type is a simple object to hold current currency data
 </dd>
 <dt id="showTimeSeries"><a name="showTimeSeries,Ts,string,string,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showTimeSeries</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">ats</span><span class="Other">:</span> <span class="Identifier">Ts</span><span class="Other">;</span> <span class="Identifier">header</span><span class="Other">,</span> <span class="Identifier">ty</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span></pre></dt>
 <dd>
-showTimeseries takes a Ts object as input as well as a header string for the data column , a string which can be one of head,tail,all and N for number of rows to display usage : showTimeseries(myTimeseries,myHeader,&quot;head|tail|all&quot;,rows)
+showTimeseries takes a Ts object as input as well as a header string for the data column , a string which can be one of head,tail,all and N for number of rows to display usage : showTimeseries(myTimeseries,myHeader,&quot;head|tail|all&quot;,rows) 
 
 </dd>
 <dt id="initPf"><a name="initPf,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initPf</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">PF</span></pre></dt>
@@ -2066,38 +2066,13 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
 <dd>
 <p>withFile</p>
 <p>file open close utility template</p>
-<p>Example 1</p>
-<pre><span class="Keyword">let</span> <span class="Identifier">curFile</span><span class="Operator">=</span><span class="StringLit">&quot;/data5/notes.txt&quot;</span>    <span class="Comment"># some file</span>
+<pre><span class="Keyword">let</span> <span class="Identifier">curFile</span><span class="Operator">=</span><span class="StringLit">&quot;notes.txt&quot;</span>    <span class="Comment"># some file</span>
 <span class="Identifier">withFile</span><span class="Punctuation">(</span><span class="Identifier">txt</span><span class="Punctuation">,</span> <span class="Identifier">curFile</span><span class="Punctuation">,</span> <span class="Identifier">fmRead</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
     <span class="Keyword">while</span> <span class="DecNumber">1</span> <span class="Operator">==</span> <span class="DecNumber">1</span><span class="Punctuation">:</span>
         <span class="Keyword">try</span><span class="Punctuation">:</span>
            <span class="Identifier">stdout</span><span class="Operator">.</span><span class="Identifier">writeln</span><span class="Punctuation">(</span><span class="Identifier">txt</span><span class="Operator">.</span><span class="Identifier">readLine</span><span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">)</span>   <span class="Comment"># do something with the lines</span>
         <span class="Keyword">except</span><span class="Punctuation">:</span>
            <span class="Keyword">break</span>
-<span class="Identifier">echo</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
-<span class="Identifier">msgg</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Keyword">do</span> <span class="Punctuation">:</span> <span class="Identifier">rainbow</span><span class="Punctuation">(</span><span class="StringLit">&quot;Finished&quot;</span><span class="Punctuation">)</span>
-<span class="Identifier">echo</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre><p>Example 2</p>
-<pre><span class="Keyword">import</span> <span class="Identifier">private</span><span class="Punctuation">,</span><span class="Identifier">strutils</span><span class="Punctuation">,</span><span class="Identifier">strfmt</span>
-
-<span class="Keyword">let</span> <span class="Identifier">curFile</span><span class="Operator">=</span><span class="StringLit">&quot;/data5/notes.txt&quot;</span>
-<span class="Keyword">var</span> <span class="Identifier">lc</span> <span class="Operator">=</span> <span class="DecNumber">0</span>
-<span class="Keyword">var</span> <span class="Identifier">oc</span> <span class="Operator">=</span> <span class="DecNumber">0</span>
-<span class="Identifier">withFile</span><span class="Punctuation">(</span><span class="Identifier">txt</span><span class="Punctuation">,</span> <span class="Identifier">curFile</span><span class="Punctuation">,</span> <span class="Identifier">fmRead</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
-       <span class="Keyword">while</span> <span class="DecNumber">1</span> <span class="Operator">==</span> <span class="DecNumber">1</span><span class="Punctuation">:</span>
-           <span class="Keyword">try</span><span class="Punctuation">:</span>
-              <span class="Identifier">inc</span> <span class="Identifier">lc</span>
-              <span class="Keyword">var</span> <span class="Identifier">al</span> <span class="Operator">=</span> <span class="Operator">$</span><span class="Identifier">txt</span><span class="Operator">.</span><span class="Identifier">readline</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
-              <span class="Keyword">var</span> <span class="Identifier">sw</span> <span class="Operator">=</span> <span class="StringLit">&quot;the&quot;</span>   <span class="Comment"># find all lines containing : the</span>
-              <span class="Keyword">if</span> <span class="Identifier">al</span><span class="Operator">.</span><span class="Identifier">contains</span><span class="Punctuation">(</span><span class="Identifier">sw</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">true</span><span class="Punctuation">:</span>
-                 <span class="Identifier">inc</span> <span class="Identifier">oc</span>
-                 <span class="Identifier">msgy</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Keyword">do</span><span class="Punctuation">:</span> <span class="Identifier">write</span><span class="Punctuation">(</span><span class="Identifier">stdout</span><span class="Punctuation">,</span><span class="StringLit">&quot;{:&lt;8}{:&gt;6} {:&lt;7}{:&gt;6}  &quot;</span><span class="Operator">.</span><span class="Identifier">fmt</span><span class="Punctuation">(</span><span class="StringLit">&quot;Line :&quot;</span><span class="Punctuation">,</span><span class="Identifier">lc</span><span class="Punctuation">,</span><span class="StringLit">&quot;Count :&quot;</span><span class="Punctuation">,</span><span class="Identifier">oc</span><span class="Punctuation">)</span><span class="Punctuation">)</span>
-                 <span class="Identifier">dhlecho</span><span class="Punctuation">(</span><span class="Identifier">al</span><span class="Punctuation">,</span><span class="Identifier">sw</span><span class="Punctuation">,</span><span class="Identifier">green</span><span class="Punctuation">)</span>
-                 <span class="Identifier">echo</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
-           <span class="Keyword">except</span><span class="Punctuation">:</span>
-              <span class="Keyword">break</span>
-
-<span class="Identifier">echo</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
-<span class="Identifier">msgg</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Keyword">do</span> <span class="Punctuation">:</span> <span class="Identifier">rainbow</span><span class="Punctuation">(</span><span class="StringLit">&quot;Finished&quot;</span><span class="Punctuation">)</span>
 <span class="Identifier">echo</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 
 </dd>
@@ -2111,7 +2086,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-07-07 10:33:38 UTC</small>
+        <small>Made with Nim. Generated: 2015-07-07 10:39:19 UTC</small>
       </div>
     </div>
   </div>

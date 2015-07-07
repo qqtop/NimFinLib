@@ -208,10 +208,8 @@ template withFile*(f: expr, filename: string, mode: FileMode,
     ##
     ## file open close utility template
     ##
-    ## Example 1
-    ##
     ## .. code-block:: nim
-    ##    let curFile="/data5/notes.txt"    # some file
+    ##    let curFile="notes.txt"    # some file
     ##    withFile(txt, curFile, fmRead):
     ##        while 1 == 1:
     ##            try:
@@ -219,36 +217,9 @@ template withFile*(f: expr, filename: string, mode: FileMode,
     ##            except:
     ##               break
     ##    echo()
-    ##    msgg() do : rainbow("Finished")
-    ##    echo()
     ##
-    ##
-    ## Example 2
-    ##
-    ## .. code-block:: nim
-    ##    import private,strutils,strfmt
-    ##
-    ##    let curFile="/data5/notes.txt"
-    ##    var lc = 0
-    ##    var oc = 0
-    ##    withFile(txt, curFile, fmRead):
-    ##           while 1 == 1:
-    ##               try:
-    ##                  inc lc
-    ##                  var al = $txt.readline()
-    ##                  var sw = "the"   # find all lines containing : the
-    ##                  if al.contains(sw) == true:
-    ##                     inc oc
-    ##                     msgy() do: write(stdout,"{:<8}{:>6} {:<7}{:>6}  ".fmt("Line :",lc,"Count :",oc))
-    ##                     dhlecho(al,sw,green)
-    ##                     echo()
-    ##               except:
-    ##                  break
-    ##
-    ##    echo()
-    ##    msgg() do : rainbow("Finished")
-    ##    echo()
-    ##
+
+
 
     let fn = filename
     var f: File
@@ -292,15 +263,13 @@ proc timeSeries*[T](self:T,ty:string): Ts =
      return ts
 
 
-
-
 proc showTimeSeries* (ats:Ts,header,ty:string,N:int)  =
    ## showTimeseries
    ## takes a Ts object as input as well as a header string
    ## for the data column , a string which can be one of
    ## head,tail,all and N for number of rows to display
    ## usage : showTimeseries(myTimeseries,myHeader,"head|tail|all",rows)
-
+   ##
 
    msgg() do : echo "{:<11} {:>11} ".fmt("Date",header)
    if ty == "all":
