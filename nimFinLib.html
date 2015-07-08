@@ -1323,6 +1323,12 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="getHKEXcodes*(): seq[seq[string]]"><wbr />get<wbr />HKEXcodes</a></li>
   <li><a class="reference" href="#getHKEXcodesFromFile,string"
     title="getHKEXcodesFromFile*(fname: string): seq[seq[string]]"><wbr />get<wbr />HKEXcodes<wbr />From<wbr />File</a></li>
+  <li><a class="reference" href="#initHKEX,"
+    title="initHKEX*(): seq[seq[string]]"><wbr />init<wbr />HKEX</a></li>
+  <li><a class="reference" href="#showQuoteTable,Nf,seq[int]"
+    title="showQuoteTable*(apfData: Nf; stockseq: seq[int])"><wbr />show<wbr />Quote<wbr />Table</a></li>
+  <li><a class="reference" href="#showDfTable,Nf"
+    title="showDfTable*(apfdata: Nf)"><wbr />show<wbr />Df<wbr />Table</a></li>
   <li><a class="reference" href="#presentValue,T,T,int,int"
     title="presentValue*[T](FV: T; r: T; m: int; t: int): float"><wbr />present<wbr />Value</a></li>
   <li><a class="reference" href="#presentValue,float,float,float,float"
@@ -1339,6 +1345,8 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="logisticf*(z: float): float"><wbr />logisticf</a></li>
   <li><a class="reference" href="#logisticf_derivative,float"
     title="logisticf_derivative*(z: float): float"><wbr />logisticf_<wbr />derivative</a></li>
+  <li><a class="reference" href="#doFinish,"
+    title="doFinish*()"><wbr />do<wbr />Finish</a></li>
 
   </ul>
 </li>
@@ -1409,7 +1417,7 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
 <dl class="item">
-<a class="reference external" href="os.html">os</a>, <a class="reference external" href="strutils.html">strutils</a>, <a class="reference external" href="parseutils.html">parseutils</a>, <a class="reference external" href="sequtils.html">sequtils</a>, <a class="reference external" href="httpclient.html">httpclient</a>, <a class="reference external" href="strfmt.html">strfmt</a>, <a class="reference external" href="terminal.html">terminal</a>, <a class="reference external" href="times.html">times</a>, <a class="reference external" href="tables.html">tables</a>, <a class="reference external" href="random.html">random</a>, <a class="reference external" href="parsecsv.html">parsecsv</a>, <a class="reference external" href="streams.html">streams</a>, <a class="reference external" href="algorithm.html">algorithm</a>, <a class="reference external" href="math.html">math</a>, <a class="reference external" href="unicode.html">unicode</a>
+<a class="reference external" href="os.html">os</a>, <a class="reference external" href="strutils.html">strutils</a>, <a class="reference external" href="parseutils.html">parseutils</a>, <a class="reference external" href="sequtils.html">sequtils</a>, <a class="reference external" href="httpclient.html">httpclient</a>, <a class="reference external" href="strfmt.html">strfmt</a>, <a class="reference external" href="terminal.html">terminal</a>, <a class="reference external" href="times.html">times</a>, <a class="reference external" href="tables.html">tables</a>, <a class="reference external" href="random.html">random</a>, <a class="reference external" href="parsecsv.html">parsecsv</a>, <a class="reference external" href="streams.html">streams</a>, <a class="reference external" href="algorithm.html">algorithm</a>, <a class="reference external" href="math.html">math</a>, <a class="reference external" href="unicode.html">unicode</a>, <a class="reference external" href="statistics.html">statistics</a>
 </dl></div>
 <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
@@ -1921,6 +1929,30 @@ head means oldest rows
 
 
 </dd>
+<dt id="initHKEX"><a name="initHKEX,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initHKEX</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
+<dd>
+<p>initHKEX</p>
+<p>convenience proc to load from web or read from file</p>
+<p>list of HK Stock Exchange mainboard listed stocks </p>
+
+
+</dd>
+<dt id="showQuoteTable"><a name="showQuoteTable,Nf,seq[int]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showQuoteTable</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apfData</span><span class="Other">:</span> <span class="Identifier">Nf</span><span class="Other">;</span> <span class="Identifier">stockseq</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<dd>
+<p>showQuoteTable</p>
+<p>a table with kurtosis, stdDev close ,ema22 , company name and latest quote from yahoo</p>
+<p>for usage example see nimFinT3 </p>
+
+
+</dd>
+<dt id="showDfTable"><a name="showDfTable,Nf"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showDfTable</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apfdata</span><span class="Other">:</span> <span class="Identifier">Nf</span><span class="Other">)</span></pre></dt>
+<dd>
+<p>showDfTable</p>
+<p>a convenience prog to display the data part of a Nf object</p>
+<p>for usage example see nimFinT3 </p>
+
+
+</dd>
 <dt id="presentValue"><a name="presentValue,T,T,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">presentValue</span><span class="Operator">*</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">FV</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">r</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">m</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">t</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span></pre></dt>
 <dd>
 <p>presentValue</p>
@@ -1990,7 +2022,7 @@ head means oldest rows
 <span class="Comment"># get the latest delayed quotes for your stock</span>
 <span class="Comment"># press ctrl-c to exit</span>
 <span class="Comment"># setControlCHook(handler)    # auto registered exit handler</span>
-<span class="Keyword">while</span> <span class="DecNumber">1</span> <span class="Operator">==</span> <span class="DecNumber">1</span> <span class="Punctuation">:</span>
+<span class="Keyword">while</span> <span class="Identifier">true</span> <span class="Punctuation">:</span>
    <span class="Identifier">showCurrentStocks</span><span class="Punctuation">(</span><span class="StringLit">&quot;IBM+AAPL+BP.L&quot;</span><span class="Punctuation">)</span>
    <span class="Identifier">sleepy</span><span class="Punctuation">(</span><span class="DecNumber">5</span><span class="Punctuation">)</span></pre>
 
@@ -2006,6 +2038,14 @@ head means oldest rows
 <dd>
 <p>logisticf_derivative</p>
 <p>returns derivative of logisticf for gradient solutions </p>
+
+
+</dd>
+<dt id="doFinish"><a name="doFinish,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">doFinish</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span></pre></dt>
+<dd>
+<p>doFinish</p>
+<p>a end of program routine which displays some information</p>
+<p>can be changed to anything desired </p>
 
 
 </dd>
@@ -2084,7 +2124,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
 <p>file open close utility template</p>
 <pre><span class="Keyword">let</span> <span class="Identifier">curFile</span><span class="Operator">=</span><span class="StringLit">&quot;notes.txt&quot;</span>    <span class="Comment"># some file</span>
 <span class="Identifier">withFile</span><span class="Punctuation">(</span><span class="Identifier">txt</span><span class="Punctuation">,</span> <span class="Identifier">curFile</span><span class="Punctuation">,</span> <span class="Identifier">fmRead</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
-    <span class="Keyword">while</span> <span class="DecNumber">1</span> <span class="Operator">==</span> <span class="DecNumber">1</span><span class="Punctuation">:</span>
+    <span class="Keyword">while</span> <span class="Identifier">true</span> <span class="Punctuation">:</span>
         <span class="Keyword">try</span><span class="Punctuation">:</span>
            <span class="Identifier">stdout</span><span class="Operator">.</span><span class="Identifier">writeln</span><span class="Punctuation">(</span><span class="Identifier">txt</span><span class="Operator">.</span><span class="Identifier">readLine</span><span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">)</span>   <span class="Comment"># do something with the lines</span>
         <span class="Keyword">except</span><span class="Punctuation">:</span>
@@ -2102,7 +2142,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-07-08 12:33:07 UTC</small>
+        <small>Made with Nim. Generated: 2015-07-08 22:52:46 UTC</small>
       </div>
     </div>
   </div>

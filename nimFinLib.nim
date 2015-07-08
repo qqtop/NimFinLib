@@ -56,8 +56,10 @@
 import os,strutils,parseutils,sequtils,httpclient,strfmt
 import terminal,times,tables,random
 import parsecsv,streams,algorithm,math,unicode
+import statistics
 
 let NIMFINLIBVERSION* = "0.2.1"
+let startnimfinlib = epochTime()
 
 type
 
@@ -218,7 +220,7 @@ template withFile*(f: expr, filename: string, mode: FileMode,
     ## .. code-block:: nim
     ##    let curFile="notes.txt"    # some file
     ##    withFile(txt, curFile, fmRead):
-    ##        while 1 == 1:
+    ##        while true :
     ##            try:
     ##               stdout.writeln(txt.readLine())   # do something with the lines
     ##            except:
@@ -1595,6 +1597,84 @@ proc getHKEXcodesFromFile*(fname : string):seq[seq[string]] =
 
 
 
+proc initHKEX*():seq[seq[string]]  =
+  ## initHKEX
+  ##
+  ## convenience proc to load from web or read from file
+  ##
+  ## list of HK Stock Exchange mainboard listed stocks
+  ##
+
+  let fn = "hkex.csv"
+  # check if file exists
+  var nhkexcodes : seq[seq[string]]
+  if fileExists(fn) == false:
+       # does not exist so scrap data
+       nhkexcodes = getHKEXcodes()
+  # file exists so read data in
+  else: nhkexcodes = getHKEXcodesFromFile(fn)
+
+  result = nhkexcodes
+
+
+
+proc showQuoteTable*(apfData:Nf,stockseq:seq[int]) =
+     ## showQuoteTable
+     ##
+     ## a table with kurtosis, stdDev close ,ema22 , company name and latest quote from yahoo
+     ##
+     ## for usage example see nimFinT3
+     ##
+     const
+        stockcodes   = 0
+        companynames = 1
+        boardlots    = 2
+
+     var stkdata = apfData.dx
+     var hkexcodes = initHKEX()
+
+     decho(2)
+     # header for the table
+     msgy() do : echo "Kurtosis , StdDev , EMA22 based on close price for ",apfdata.nx," Quote is latest info ex yahoo"
+     msgg() do : echo "{:<8}  {:>9}  {:>9}  {:>9}  {:>9}  {:>15} {:>9}".fmt("Stock","Kurtosis","StdDev","EMA22","Close","Company","Quote")
+     for x in 0.. <stkdata.len:
+        # to get ema we pass our data to the ema function
+        # we want 22 days so ..
+        # and we just want the newest ema data point which resides in tx[0]
+        # ema returns a time series object dx,tx ,but we only need the latest ema value
+        var emadata = ema(stkdata[x],22).tx[0]
+        # get the newest stddev of the close price
+        var stddev = stkdata[x].rc[0].standardDeviation
+        # get the company name
+        var compname = hkexcodes[companynames][stockseq[x]]
+        # get the latest quote for a stock
+        var cquote = getCurrentQuote(stkdata[x].stock)
+        # display the data rows
+        echo "{:<8}  {:>9.3f}  {:>9.3f}  {:>9.3f}  {:>9.3f}  {:>15} {:>10}".fmt(stkdata[x].stock , kurtosis(stkdata[x].close), stddev,emadata,last(stkdata[x].close),compname,cquote)
+
+
+proc showDfTable*(apfdata: Nf) =
+   ## showDfTable
+   ##
+   ## a convenience prog to display the data part of a Nf object
+   ##
+   ## for usage example see nimFinT3
+   ##
+
+   var astkdata = apfdata.dx
+
+   decho(2)
+   # header for the table
+   msgg() do : echo  "{:<8}{:>9}{:>9}{:>9}{:>9}{:>13}{:>9}{:>9}{:>9}{:>9}{:>9}".fmt("Code","Open","High","Low","Close","Volume","AdjClose","StDevHi","StDevLo","StDevCl","StDevClA")
+   for x in 0.. <astkdata.len:
+       var sx = astkdata[x] # just for less writing ...
+       # display the data rows
+       echo "{:<8}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>13}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}".fmt(sx.stock,sx.open.last,sx.high.last,sx.low.last,sx.close.last,sx.vol.last,sx.adjc.last,
+       sx.rh[0].standardDeviation,sx.rl[0].standardDeviation,sx.rc[0].standardDeviation,sx.rca[0].standardDeviation)
+
+   echo()
+   msgy() do : echo " NOTE : stdDevOpen and stdDevVol are not shown but available"
+   decho(2)
 
 
 # utility procs
@@ -1724,7 +1804,7 @@ proc handler*() {.noconv.} =
   ##    # get the latest delayed quotes for your stock
   ##    # press ctrl-c to exit
   ##    # setControlCHook(handler)    # auto registered exit handler
-  ##    while 1 == 1 :
+  ##    while true :
   ##       showCurrentStocks("IBM+AAPL+BP.L")
   ##       sleepy(5)
   ##
@@ -1764,6 +1844,26 @@ proc logisticf_derivative* (z:float): float =
      ## returns derivative of logisticf for gradient solutions
      ##
      result = logisticf(z) * (1 - logisticf(z))
+
+
+# finalizer
+
+
+proc doFinish*() =
+    ## doFinish
+    ##
+    ## a end of program routine which displays some information
+    ##
+    ## can be changed to anything desired
+    ##
+    echo ()
+    decho(2)
+    msgy() do : echo "{:<15}{}{}".fmt("Elapsed     : ",epochtime() - startnimfinlib," secs")
+    msgb() do : echo "{:<15}{} | {}{} | {}{} - {}".fmt("Application : ",getAppFilename(),"Nim : ",NimVersion,"  qqTop nimFinLib : ",NIMFINLIBVERSION,year(getDateStr()))
+    decho(2)
+    system.addQuitProc(resetAttributes)
+    quit 0
+
 
 #------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------

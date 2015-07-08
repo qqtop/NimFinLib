@@ -7,9 +7,7 @@ import statistics
 # compile with
 # nim c --deadcodeelim:on -d:release --opt:size -d:ssl nimFinT5
 
-
 var start = epochTime()
-
 
 # testing handler --> press ctrl-c
 setControlCHook(handler)
@@ -19,7 +17,6 @@ msgy() do : echo "###############################################"
 msgy() do : echo "# Testing nimFinLib                           #"
 msgy() do : echo "###############################################"
 echo ()
-
 
 # symbols holds a list of yahoo type stock codes
 var symbols1  = @["0386.HK","0880.HK","0555.HK"]
@@ -63,8 +60,8 @@ var
 # pools hold a list of symbols of interest , there can be any number of pools
 # like etfpool ,ukpool , uspool , etc here we have 2 pools
 
-var stockpool = initPool()             # holds all history data for each stock fetched
-var indexpool = initPool()             # holds index history data
+var stockpool = initPool()   # holds all history data for each stock fetched
+var indexpool = initPool()   # holds index history data
 
 # the pools are empty , so now load the pools with data based
 # on above provided symbol lists , of course this symbols can
