@@ -6,7 +6,7 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.0.1
+## Version     : 0.0.x
 ##
 ## Compiler    : nim 0.11.3
 ##
@@ -36,7 +36,7 @@
 ##
 ##               For comprehensive tests and usage see nimFinT3.nim
 ##
-##
+## 
 
 
 import os,strutils,parseutils,sequtils,httpclient,strfmt
@@ -87,10 +87,7 @@ proc getHKEXcodes*(): seq[seq[string]] =
    ##
    ## it may take a few seconds as abt 1500 stocks are currently listed
    ##
-   ## a facility to store this data locally will be added shortly
-   ##
-   ## ideally a database , but csv file may also be ok
-   ##
+
 
    let hx ="http://www.hkex.com.hk/eng/market/sec_tradinfo/stockcode/eisdeqty_pf.htm"
    let html = getContent(hx)
