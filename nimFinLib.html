@@ -1317,16 +1317,6 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="getCurrentForex*(curs: seq[string]): Cf"><wbr />get<wbr />Current<wbr />Forex</a></li>
   <li><a class="reference" href="#showCurrentForex,seq[string]"
     title="showCurrentForex*(curs: seq[string])"><wbr />show<wbr />Current<wbr />Forex</a></li>
-  <li><a class="reference" href="#hkexToYhoo,string"
-    title="hkexToYhoo*(stc: string): string"><wbr />hkex<wbr />To<wbr />Yhoo</a></li>
-  <li><a class="reference" href="#getHKEXcodes,"
-    title="getHKEXcodes*(): seq[seq[string]]"><wbr />get<wbr />HKEXcodes</a></li>
-  <li><a class="reference" href="#getHKEXcodesFromFile,string"
-    title="getHKEXcodesFromFile*(fname: string): seq[seq[string]]"><wbr />get<wbr />HKEXcodes<wbr />From<wbr />File</a></li>
-  <li><a class="reference" href="#initHKEX,"
-    title="initHKEX*(): seq[seq[string]]"><wbr />init<wbr />HKEX</a></li>
-  <li><a class="reference" href="#showQuoteTable,Nf,seq[int]"
-    title="showQuoteTable*(apfData: Nf; stockseq: seq[int])"><wbr />show<wbr />Quote<wbr />Table</a></li>
   <li><a class="reference" href="#showDfTable,Nf"
     title="showDfTable*(apfdata: Nf)"><wbr />show<wbr />Df<wbr />Table</a></li>
   <li><a class="reference" href="#presentValue,T,T,int,int"
@@ -1895,56 +1885,6 @@ head means oldest rows
 <span class="Identifier">decho</span><span class="Punctuation">(</span><span class="DecNumber">3</span><span class="Punctuation">)</span></pre>
 
 </dd>
-<dt id="hkexToYhoo"><a name="hkexToYhoo,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">hkexToYhoo</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">stc</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
-<dd>
-<p>hkexToYhoo</p>
-<p>mainly used in conjunction with getHKEXcodes or getHKEXcodesFromFile</p>
-<p>converts a hkex stockcode like 00001 to 0001.HK only longer ones</p>
-<p>not starting with 0 need not be cut</p>
-<p>current yahoo historical data links for csv download need this format</p>
-
-
-</dd>
-<dt id="getHKEXcodes"><a name="getHKEXcodes,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getHKEXcodes</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
-<dd>
-<p>getHKEXcodes</p>
-<p>this proc scraps public data from <a class="reference external" href="http://www.hkex.com.hk">http://www.hkex.com.hk</a></p>
-<p>data returned are 3 seqs which hold stockcodes,companynames and boardlots</p>
-<p>of companies listed on the exchange mainboard .</p>
-<p>this allows to create custom portfolios,random portfolios</p>
-<p>the stock codes can be massaged into yahoo codes for further</p>
-<p>current or historical data downloads</p>
-<p>this routine was successfully tested in 2015-07</p>
-<p>it may take a few seconds as abt 1500 stocks are currently listed</p>
-<p>a facility to store this data locally will be added shortly</p>
-<p>ideally a database , but csv file may also be ok </p>
-
-
-</dd>
-<dt id="getHKEXcodesFromFile"><a name="getHKEXcodesFromFile,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getHKEXcodesFromFile</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">fname</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
-<dd>
-<p>getHKEXcodesFromFile</p>
-<p>read a csv file created with getHKEXcodes into three seqs</p>
-<p>stockcodes,companynames,boardlots</p>
-
-
-</dd>
-<dt id="initHKEX"><a name="initHKEX,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initHKEX</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
-<dd>
-<p>initHKEX</p>
-<p>convenience proc to load from web or read from file</p>
-<p>list of HK Stock Exchange mainboard listed stocks </p>
-
-
-</dd>
-<dt id="showQuoteTable"><a name="showQuoteTable,Nf,seq[int]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showQuoteTable</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apfData</span><span class="Other">:</span> <span class="Identifier">Nf</span><span class="Other">;</span> <span class="Identifier">stockseq</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
-<dd>
-<p>showQuoteTable</p>
-<p>a table with kurtosis, stdDev close ,ema22 , company name and latest quote from yahoo</p>
-<p>for usage example see nimFinT3 </p>
-
-
-</dd>
 <dt id="showDfTable"><a name="showDfTable,Nf"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showDfTable</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apfdata</span><span class="Other">:</span> <span class="Identifier">Nf</span><span class="Other">)</span></pre></dt>
 <dd>
 <p>showDfTable</p>
@@ -2142,7 +2082,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-07-08 22:52:46 UTC</small>
+        <small>Made with Nim. Generated: 2015-07-09 19:50:40 UTC</small>
       </div>
     </div>
   </div>

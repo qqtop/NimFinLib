@@ -36,6 +36,10 @@ API Docs
 
 http://qqtop.github.io/nimFinLib.html
 
+for a library pertainig to Hongkong Stocks see
+
+http://qqtop.github.io/libFinHk.html
+
 
 nimFinTxx are test programs to show use of the library .
 
