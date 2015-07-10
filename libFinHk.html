@@ -1178,6 +1178,9 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="getHKEXseq*(stockslist: seq[string]; acode: string): int"><wbr />get<wbr />HKEXseq</a></li>
   <li><a class="reference" href="#showQuoteTableHk,Nf,seq[int]"
     title="showQuoteTableHk*(apfData: Nf; stockseq: seq[int])"><wbr />show<wbr />Quote<wbr />Table<wbr />Hk</a></li>
+  <li><a class="reference" href="#hkRandomPortfolio,int,string,string"
+    title="hkRandomPortfolio*(sz: int = 10; startdate: string = &quot;2014-01-01&quot;; 
+                   enddate: string = getDateStr()): (Nf, seq[int])"><wbr />hk<wbr />Random<wbr />Portfolio</a></li>
 
   </ul>
 </li>
@@ -1284,6 +1287,17 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
 
 
 </dd>
+<dt id="hkRandomPortfolio"><a name="hkRandomPortfolio,int,string,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">hkRandomPortfolio</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">sz</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">10</span><span class="Other">;</span> <span class="Identifier">startdate</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;2014-01-01&quot;</span><span class="Other">;</span> 
+                        <span class="Identifier">enddate</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Identifier">getDateStr</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">Nf</span><span class="Other">,</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<dd>
+<p>hkRandomPf</p>
+<p>a fast automated random Portfolio generator</p>
+<p>just pass in number of stocks and optionally start and enddate</p>
+<p>the portfolio is also returned as Nf object for further use as desired</p>
+<p>for example use see nimFinT4.nim </p>
+
+
+</dd>
 
 </dl></div>
 
@@ -1294,7 +1308,7 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-07-09 20:00:29 UTC</small>
+        <small>Made with Nim. Generated: 2015-07-10 14:42:52 UTC</small>
       </div>
     </div>
   </div>

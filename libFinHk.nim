@@ -36,7 +36,7 @@
 ##
 ##               For comprehensive tests and usage see nimFinT3.nim
 ##
-## 
+##
 
 
 import os,strutils,parseutils,sequtils,httpclient,strfmt
@@ -280,7 +280,7 @@ proc showQuoteTableHk*(apfData:Nf,stockseq:seq[int]) =
      decho(2)
      # header for the table
      msgy() do : echo "Kurtosis , StdDev , EMA22 based on close price for ",apfdata.nx," Quote is latest info ex yahoo"
-     msgg() do : echo "{:<8}  {:>9}  {:>9}  {:>9}  {:>9}  {:>15} {:>9}".fmt("Stock","Kurtosis","StdDev","EMA22","Close","Company","Quote")
+     msgg() do : echo "{:<8}  {:>9}  {:>9}  {:>9}  {:>9}  {:>15} {:>10} {:>9}".fmt("Stock","Kurtosis","StdDev","EMA22","Close","Company","Quote","BoardLot")
      for x in 0.. <stkdata.len:
         # to get ema we pass our data to the ema function
         # we want 22 days so ..
@@ -291,9 +291,52 @@ proc showQuoteTableHk*(apfData:Nf,stockseq:seq[int]) =
         var stddev = stkdata[x].rc[0].standardDeviation
         # get the company name
         var compname = hkexcodes[companynames][stockseq[x]]
+        # get boardlot
+        var blot = hkexcodes[boardlots][stockseq[x]]
         # get the latest quote for a stock
         var cquote = getCurrentQuote(stkdata[x].stock)
         # display the data rows
-        echo "{:<8}  {:>9.3f}  {:>9.3f}  {:>9.3f}  {:>9.3f}  {:>15} {:>10}".fmt(stkdata[x].stock , kurtosis(stkdata[x].close), stddev,emadata,last(stkdata[x].close),compname,cquote)
+
+        echo "{:<8}  {:>9.3f}  {:>9.3f}  {:>9.3f}  {:>9.3f}  {:>15} {:>10} {:>9}".fmt(stkdata[x].stock , kurtosis(stkdata[x].close), stddev,emadata,last(stkdata[x].close),compname,cquote,blot)
+
+
+
+proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:string = getDateStr()):(Nf, seq[int]) =
+  ## hkRandomPf
+  ##
+  ## a fast automated random Portfolio generator
+  ##
+  ## just pass in number of stocks and optionally start and enddate
+  ##
+  ## the portfolio is also returned as Nf object for further use as desired
+  ##
+  ## for example use see nimFinT4.nim
+  ##
+  var hkexcodes = initHKEX()
+  var hl = hkexcodes[0].len
+  var maxstocks = sz
+  if maxstocks > hl:
+     echo()
+     msgr() do : echo "Max Stocks Available : ",hl
+     echo()
+     maxstocks = hl
+
+  var rndpf = initOrderedTable[int,string]()
+  for x in 0.. <maxstocks:
+      var z = randomInt(0,hl)
+      discard rndpf.haskeyorput(z,$(hkexcodes[0][z]))
+
+  decho(2)
+  var pf1 = initNf()
+  pf1.nx = "RandomPortfolio - HK"
+  var pfpool = initPool()
+  var pfseq = newSeq[int]()
+  for key,val in rndpf:
+      var nval = hkexToYhoo(val)
+      pfpool.add(getSymbol2(nval,startdate,enddate))
+      pfseq.add(key)
+
+  pf1.dx = pfpool
+  result = (pf1,pfseq)
 
 # end of HK Stock Exchange specific procs
