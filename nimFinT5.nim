@@ -350,8 +350,8 @@ echo ()
 
 # we can pass a single stock code or multiple stockcodes like so IBM+BP.L+ORCL
 
-# we can pass some stocks
-showCurrentStocks("AAPL+IBM+BP.L")
+# we can pass some stocks from around the world
+showCurrentStocks("AAPL+IBM+BP.L+BAS.DE")
 
 # we also can pass all stocks in a portfolio and display the latest quotes
 # here we use the first portfolio in account
