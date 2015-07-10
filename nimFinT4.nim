@@ -1,5 +1,4 @@
-import os,terminal,strfmt,math,times,sequtils,random,tables
-from  statistics import kurtosis
+import os,terminal,strfmt,times
 import nimFinLib,libFinHk
 
 # nimFinT4.nim
