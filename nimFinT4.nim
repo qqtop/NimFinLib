@@ -15,21 +15,15 @@ msgy() do : echo "###############################################"
 msgy() do : echo "# Testing nimFinLib                  nimFinT4 #"
 msgy() do : echo "###############################################"
 echo ()
-
 # create a random HK stock portfolio with 5 stocks and default start,end dates
 var somePf = hkRandomPortfolio(5)
-
-# somePf now holds a Nf object and a seq[int]
-var myPf = somePf[0]
-var myseq = somePf[1]
-
-# see if the data tables display
 decho(2)
+# somePf now holds a Nf object and a seq[int],we only need the Nf object
+# anything else will be taken care of automatically
+var myPf = somePf[0]
 msgg() do: echo "Portfolio Name    : ",myPf.nx
-
-showQuoteTableHk(myPf,myseq)
+showQuoteTableHk(myPf)
 showDfTable(myPf)
-
 
 when isMainModule:
   # show time elapsed for this run

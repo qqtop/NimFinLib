@@ -432,20 +432,11 @@ when declared(libFinHk):
         msgy() do : echo "#################################################"
         echo ()
 
-        # Test for getHKEXcodes and getHKEXcodesFromFile
-        let fn = "hkex.csv"
-        # check if file exists
-        var hxc : seq[seq[string]]
-        if fileExists(fn) == false:
-           # does not exist so scrap data
-           hxc =   getHKEXcodes()
 
-        # file exists so read data in
-        else:
-           hxc = getHKEXcodesFromFile(fn)
+        var hxc = initHKEX()
         # at this stage three lists are available for work in hxc
         if hxc.len > 0:
-          # # we can show all 1500 plus too ..
+          # # we can show all 1500 stocks plus too ..
           # msgg() do : echo "Full List of Hongkong Stock Exchange MainBoard Listed Stocks" # show all
           # for x in 0.. <hxc[0].len :
           #   try:
@@ -463,8 +454,8 @@ when declared(libFinHk):
                msgr() do : echo "Problem with item in hkex.csv",x
 
           echo()
-          msgg() do : echo("Bottom 50  List of Hongkong Stock Exchange MainBoard Listed Stocks")
-          for x in hxc[0].len-50.. <hxc[0].len :
+          msgg() do : echo("Bottom 10  List of Hongkong Stock Exchange MainBoard Listed Stocks")
+          for x in hxc[0].len-10.. <hxc[0].len :
              try:
                 echo "{:<5} {:<7} {:<22}  {:>6}".fmt(x + 1,hxc[0][x],hxc[1][x],hxc[2][x])
              except:
@@ -475,9 +466,9 @@ when declared(libFinHk):
              msgr() do : echo "An error has occured and no valid result set was returned"
 
 
-        msgy() do : echo "Test for hkexToYhoo - show bottom 50 codes converted to yahoo format"
+        msgy() do : echo "Test for hkexToYhoo - show bottom 10 codes converted to yahoo format"
         if hxc.len > 1:
-           for x in hxc[0].len-50.. <hxc[0].len :
+           for x in hxc[0].len-10.. <hxc[0].len :
                  echo "{:<7} ==> {}".fmt(hxc[0][x],hkexToYhoo(hxc[0][x]))
 
 
@@ -489,7 +480,7 @@ when declared(libFinHk):
 
         # lets create a portfolio with 10 random hongkong stocks
         # get available stock codes
-        let hkexcodes = getHKEXcodesFromFile(fn)  # hkex.csv as defined above
+        let hkexcodes = initHKEX()
         # hkexcodes now holds three seqs namely : stockcodes,companynames,boardlots
         # for easier reading we can introduce constants
         const
@@ -500,14 +491,11 @@ when declared(libFinHk):
         # we need a place to put the random stocks to be selected from hkexcodes
         # call it randomstockpool
         var randomstockpool = initPool()
-        # lets also keep track of which random number has been generated
-        var rdnseq = newSeq[int]()
 
         for x in 0.. <10:
            # get a random number between 1 and max no of items in hkexcodes[0]
            var rdn = randomInt(1,hkexcodes[stockcodes].len)
-           rdnseq.add(rdn)
-           # pick the stock with item number rdn from hxc[stockcodes]
+           # pick the stock with index number rdn from hxc[stockcodes]
            # and convert to yahoo format then add it to a pool called randomstockpool
            var arandomstock = hkexToYhoo(hxc[stockcodes][rdn])
            var astartDate = "2014-01-01"
@@ -533,10 +521,10 @@ when declared(libFinHk):
         for stocksdata in randomstockpool:
                  rpf.dx.add(stocksdata)   # dx holds the historical data series
 
-        showQuoteTableHk(rpf,rdnseq)
+        showQuoteTableHk(rpf)
         showDfTable(rpf)
 
-        # for another example see nimFinT3.nim
+        # for another more automated example see nimFinT3.nim and nimFinT4.nim
 
 # That's it
 

@@ -34,7 +34,7 @@
 ##
 ##               and white text. Other color schemes may not show all output.
 ##
-##               For comprehensive tests and usage see nimFinT3.nim
+##               For comprehensive tests and usage see nimFinT3.nim & nimFinT4
 ##
 ##
 
@@ -45,7 +45,6 @@ import parsecsv,streams,algorithm,math,unicode
 import statistics,nimFinLib
 
 let LIBFINHKVERSION* = "0.0.5"
-
 
 proc hkexToYhoo*(stc:string):string =
    ## hkexToYhoo
@@ -66,6 +65,23 @@ proc hkexToYhoo*(stc:string):string =
    else:
            stc1 = stc & ".HK"
    result = stc1
+
+
+proc yhooToHKEX*(stc:string):string =
+    ## yhooToHKEX
+    ##
+    ## convert a yahoo code of type 0001.HK into a HKEX code
+    ##
+    ## of type 00001
+    ##
+
+    var rst = ""
+    if stc.endswith(".HK"):
+        rst = stc.split(".HK")[0]
+        while rst.len < 5:
+          rst = "0" & rst
+    result = rst
+
 
 
 proc getHKEXcodes*(): seq[seq[string]] =
@@ -255,14 +271,25 @@ proc getHKEXseq*(stockslist:seq[string],acode:string):int =
     var c = 0
     for x in stockslist:
         if x == acode:
-          result = c
-          break
+            result = c
+            break
         else:
-          result = -1
+            result = -1
         inc c
 
 
-proc showQuoteTableHk*(apfData:Nf,stockseq:seq[int]) =
+proc hkPfseq*(anf:Nf;hkexcodes):seq[int]=
+  ## hkPfseq
+  ##
+  ## hkPfseq returns the index seq of stocks in a Nf objects dx Stocks
+  ##
+  var pfseq = newSeq[int]()
+  for x in 0.. <anf.dx.len:
+      pfseq.add(getHKEXseq(hkexcodes[0],yhooToHKEX(anf.dx[x].stock)))
+  result = pfseq
+
+
+proc showQuoteTableHk*(apfData:Nf) =
      ## showQuoteTable
      ##
      ## a table with kurtosis, stdDev close ,ema22 , company name and latest quote from yahoo
@@ -276,6 +303,7 @@ proc showQuoteTableHk*(apfData:Nf,stockseq:seq[int]) =
 
      var stkdata = apfData.dx
      var hkexcodes = initHKEX()
+     var stockseq = hkPfseq(apfData,hkexcodes)
 
      decho(2)
      # header for the table
@@ -296,7 +324,6 @@ proc showQuoteTableHk*(apfData:Nf,stockseq:seq[int]) =
         # get the latest quote for a stock
         var cquote = getCurrentQuote(stkdata[x].stock)
         # display the data rows
-
         echo "{:<8}  {:>9.3f}  {:>9.3f}  {:>9.3f}  {:>9.3f}  {:>15} {:>10} {:>9}".fmt(stkdata[x].stock , kurtosis(stkdata[x].close), stddev,emadata,last(stkdata[x].close),compname,cquote,blot)
 
 
@@ -333,8 +360,14 @@ proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:stri
   var pfseq = newSeq[int]()
   for key,val in rndpf:
       var nval = hkexToYhoo(val)
-      pfpool.add(getSymbol2(nval,startdate,enddate))
-      pfseq.add(key)
+      try:
+         pfpool.add(getSymbol2(nval,startdate,enddate))
+         pfseq.add(key)
+      except:
+         # we may come here if yahoo has no data or other issues for the
+         # requested stock, currently we skip it
+         discard
+         echo()
 
   pf1.dx = pfpool
   result = (pf1,pfseq)
