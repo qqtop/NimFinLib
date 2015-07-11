@@ -15,9 +15,11 @@
 ##
 ##               Yahoo historical stock data
 ##
-##               Yahoo current quotes and forex rates
+##               Yahoo current stock quotes
+## 
+##               Tahoo forex rates
 ##
-##               Dataframe like structure for easy working with dataseries
+##               Dataframe like structure for easy working with historical data and dataseries
 ##
 ##               Returns calculations
 ##
@@ -35,7 +37,7 @@
 ##
 ## ProjectStart: 2015-06-05
 ##
-## ToDo        : Ratios , Covariance , Correlation
+## ToDo        : Ratios , Covariance , Correlation 
 ##
 ##
 ##
@@ -43,7 +45,7 @@
 ##
 ## Contributors: reactorMonk
 ##
-## Requires    : random module available on nimble
+## Requires    : statistics.nim and random module available on nimble
 ##
 ## Notes       : it is assumed that terminal color is black background
 ##
@@ -54,8 +56,7 @@
 
 
 import os,strutils,parseutils,sequtils,httpclient,strfmt
-import terminal,times,tables,random
-import parsecsv,streams,algorithm,math,unicode
+import terminal,times,tables,random, parsecsv,streams,algorithm,math,unicode
 import statistics
 
 let NIMFINLIBVERSION* = "0.2.1"
@@ -149,6 +150,7 @@ template msgy*(code: stmt): stmt {.immediate.} =
       code
       setforegroundcolor(fgWhite)
 
+
 template msgyb*(code: stmt): stmt {.immediate.} =
       setforegroundcolor(fgYellow,true)
       code
@@ -160,6 +162,7 @@ template msgr*(code: stmt): stmt {.immediate.} =
       code
       setforegroundcolor(fgWhite)
 
+
 template msgrb*(code: stmt): stmt {.immediate.} =
       setforegroundcolor(fgRed,true)
       code
@@ -169,6 +172,7 @@ template msgc*(code: stmt): stmt {.immediate.} =
       setforegroundcolor(fgCyan)
       code
       setforegroundcolor(fgWhite)
+
 
 template msgcb*(code: stmt): stmt {.immediate.} =
       setforegroundcolor(fgCyan,true)
@@ -180,6 +184,7 @@ template msgw*(code: stmt): stmt {.immediate.} =
       setforegroundcolor(fgWhite)
       code
       setforegroundcolor(fgWhite)
+
 
 template msgwb*(code: stmt): stmt {.immediate.} =
       setforegroundcolor(fgWhite,true)
@@ -208,7 +213,6 @@ template hdx*(code:stmt):stmt {.immediate.}  =
    setforegroundcolor(fgWhite)
    echo repeat("+",tw)
    echo ""
-
 
 
 template withFile*(f: expr, filename: string, mode: FileMode,
@@ -613,6 +617,7 @@ proc ymonth(aDate:string) : string =
   var asdm = $(parseInt(aDate.split("-")[1])-1)
   if len(asdm) < 2: asdm = "0" & asdm
   result = asdm
+
 
 proc month*(aDate:string) : string =
   ## month
@@ -1541,6 +1546,7 @@ proc rainbow* (astr : string) =
     ##
     ## .. code-block:: nim
     ##    rainbow("Sparkling string display !")
+    ##    decho(2)
     ##
 
     var c = 0
