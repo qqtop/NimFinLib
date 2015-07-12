@@ -4,7 +4,8 @@ import nimFinLib,libFinHk
 # nimFinT4.nim
 #
 # this example shows usage of function hkRandomPortfolio from libFinHk
-# every run creates a new portfolio .
+# every run creates a new portfolio . Errors may occure if stock
+# selected is very new and/or insufficient datapoints available from yahoo
 # Portfolios can be processed for further usage
 #
 # compile : nim c -r -d:release nimFinT4

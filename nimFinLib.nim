@@ -17,7 +17,7 @@
 ##
 ##               Yahoo current stock quotes
 ## 
-##               Tahoo forex rates
+##               Yahoo forex rates
 ##
 ##               Dataframe like structure for easy working with historical data and dataseries
 ##
@@ -53,6 +53,8 @@
 ##
 ##               For comprehensive tests and usage see nimFinT5.nim
 ##
+## Installation: git clone https://github.com/qqtop/NimFinLib.git
+## 
 
 
 import os,strutils,parseutils,sequtils,httpclient,strfmt
