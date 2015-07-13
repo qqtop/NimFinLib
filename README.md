@@ -12,6 +12,8 @@ Version.: 0.2.x
 
 Compiler: nim development branch (nim 0.11.3 or better)
 
+Os      : Linux  
+
 Description: A basic library for financial calculations with Nim
 
               Yahoo historical stock data
