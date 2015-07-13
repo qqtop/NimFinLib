@@ -32,6 +32,8 @@ removeFile("example1.nim")
 removeFile("example1")
 removeFile("testMe")
 removeFile("statistics.nim")
+removeDir("nimcache")
+
 
 echo()
 echo "Thank you for testing nimFinLib"
