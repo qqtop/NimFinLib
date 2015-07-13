@@ -83,6 +83,14 @@ decho(3)
 ```
 
 
+Want to try ? 
+
+  Get the file testMe.nim and put it into a new directory
+  
+  then execute this : nim c -r -d:ssl testMe
+
+
+
 NOTE : 
   
      Improvements may be made at any time.              
