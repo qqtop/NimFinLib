@@ -50,10 +50,16 @@ master.pf.add(hkportfolio)
 var bigMoney = initNf()
 bigMoney.nx = "bigMoneyPortfolio"
 
-var bigMSymbols = @["00386","00880","00005"]
+#var bigMSymbols  = @["00386","00880","00005"]         # HKEX style
+var bigMSymbolsY = @["0386.HK","0880.HK","0005.HK"]   # yahoo style
 
-for x in bigMSymbols:
-   var z = getSymbol2(hkexToYhoo(x),startDate,endDate)
+
+for x in bigMSymbolsY:
+   var z:Df
+   if x.endswith(".HK"):
+      z = getSymbol2(x,startDate,endDate)
+   else:
+      z = getSymbol2(hkexToYhoo(x),startDate,endDate)
    bigMoney.dx.add(z)
 
 master.pf.add(bigMoney)

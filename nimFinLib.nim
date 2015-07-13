@@ -607,7 +607,7 @@ proc day*(aDate:string) : string =
    aDate.split("-")[2]
 
 
-proc ymonth(aDate:string) : string =
+proc ymonth*(aDate:string) : string =
   ## ymonth
   ##
   ## yahoo month starts with 00 for jan
@@ -881,7 +881,7 @@ proc sleepy*(s:float) =
 proc getSymbol2*(symb,startDate,endDate : string) : Df =
     ## getSymbol2
     ##
-    ## the work horse proc for getting yahoo data in csv format
+    ## the work horse proc for getting yahoo data in csv format 
     ##
     ## and then to parse into a Df object
     ##
@@ -1039,6 +1039,8 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
     removeFile(acvsfile)
     # send astock back
     result = astock
+
+
 
 proc showHistData*(adf: Df,n:int) =
     ## showhistData

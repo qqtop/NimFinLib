@@ -278,7 +278,7 @@ proc getHKEXseq*(stockslist:seq[string],acode:string):int =
         inc c
 
 
-proc hkPfseq*(anf:Nf;hkexcodes):seq[int]=
+proc hkPfseq*(anf:Nf;hkexcodes:seq[seq[string]]):seq[int]=
   ## hkPfseq
   ##
   ## hkPfseq returns the index seq of stocks in a Nf objects dx Stocks
