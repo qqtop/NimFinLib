@@ -910,7 +910,7 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
     # feedbackline can be commented out if not desired
     #
     # check the dates if there are funny dates an empty Df object will be returned
-    # together wiuth an error message
+    # together with an error message
 
     if validdate(startDate) and validdate(enddate):
           
