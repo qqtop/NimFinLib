@@ -656,32 +656,24 @@ proc year*(aDate:string) : string = aDate.split("-")[0]
      ## Format yyyy
 
 
-proc validDate*(adate:string):bool =
-     ## validDate
-     ##
-     ## ensure that a date is in form yyyy-MM-dd (eg. 2015-03-20) and
-     ##
-     ## contains correct entries for year,month,day incl. leapyears
-     ##
-     ## date range allowed 1900-01-01  to  3000-12-31
-     ##
+proc validdate*(adate:string):bool =
      var m30 = @["04","06","09","11"]
      var m31 = @["01","03","05","07","08","10","12"]
-
+     
      var xdate = parseInt(aDate.replace("-",""))
-     # check if the date is between 1900 - 3000
-     if xdate > 19000101 and xdate < 30001231:
+     # check 1 is our date between 1900 - 3000
+     if xdate > 19000101 and xdate < 30001212:
         var spdate = aDate.split("-")
         if parseint(spdate[0]) >= 1900 and parseint(spdate[0]) <= 3000:
              if spdate[1] in m30:
-               # day max 30
+               # so day max 30
                 if parseInt(spdate[2]) > 0 and parseInt(spdate[2]) < 31:
                    result = true
                 else:
                    result = false
 
              elif spdate[1] in m31:
-               # day max 31
+               # so day max 30
                 if parseInt(spdate[2]) > 0 and parseInt(spdate[2]) < 32:
                    result = true
                 else:
@@ -702,26 +694,87 @@ proc validDate*(adate:string):bool =
                           else:
                             result = false
 
+proc intervalsecs*(startDate,endDate:string) : float =
+      ## interval procs returns time elapsed between two dates in secs,hours etc.
+      if validdate(startDate) and validdate(endDate):
+          var f     = "yyyy-MM-dd"
+          var ssecs = toSeconds(timeinfototime(startDate.parse(f)))
+          var esecs = toSeconds(timeinfototime(endDate.parse(f)))
+          var isecs = esecs - ssecs
+          result = isecs
+      else:
+          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
+          msgr() do : echo  "proc intervalsecs"
+          result = -0.0
+
+proc intervalmins*(startDate,endDate:string) : float =
+      if validdate(startDate) and validdate(endDate): 
+           var imins = intervalsecs(startDate,endDate) / 60
+           result = imins
+      else:
+          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
+          msgr() do : echo  "proc intervalmins"
+          result = -0.0
+
+
+proc intervalhours*(startDate,endDate:string) : float =
+     if validdate(startDate) and validdate(endDate):
+         var ihours = intervalsecs(startDate,endDate) / 3600
+         result = ihours
+     else:
+          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
+          msgr() do : echo  "proc intervalhours"
+          result = -0.0
+
+proc intervaldays*(startDate,endDate:string) : float =
+      if validdate(startDate) and validdate(endDate):
+          var idays = intervalsecs(startDate,endDate) / 3600 / 24
+          result = idays
+      else:
+          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
+          msgr() do : echo  "proc intervaldays"
+          result = -0.0
+
+proc intervalweeks*(startDate,endDate:string) : float =
+
+      if validdate(startDate) and validdate(endDate):
+          var iweeks = intervalsecs(startDate,endDate) / 3600 / 24 / 7
+          result = iweeks
+      else:
+          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
+          msgr() do : echo  "proc intervalweeks"
+          result = -0.0
+
+
+proc intervalmonths*(startDate,endDate:string) : float =
+     if validdate(startDate) and validdate(endDate): 
+          var imonths = intervalsecs(startDate,endDate) / 3600 / 24 / 365  * 12
+          result = imonths
+
+     else:
+          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
+          msgr() do : echo  "proc intervalmonths"
+          result = -0.0
+
+proc intervalyears*(startDate,endDate:string) : float =
+     if validdate(startDate) and validdate(endDate): 
+          var iyears = intervalsecs(startDate,endDate) / 3600 / 24 / 365
+          result = iyears
+     else:
+          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
+          msgr() do : echo  "proc intervalyears"
+          result = -0.0
 
 
 
 proc compareDates*(startDate,endDate:string) : int =
-     ## compareDates
-     ##
-     ## compare two dates of format yyyy-MM-dd
-     ##
-     ## results returned:
-     ##
-     ## startDate == endDate   ==> 0
-     ##
-     ## startDate >= endDate   ==> 1
-     ##
-     ## startDate <= endDate   ==> 2
-     ##
-     ## undefined , invalid startDate ==> -1
-     ##
-     ## undefined . invalid endDate and/or startDate  ==> -2
-     ##
+     # dates must be in form yyyy-MM-dd
+     # we want this to answer
+     # s == e   ==> 0
+     # s >= e   ==> 1
+     # s <= e   ==> 2
+     # -1 undefined , invalid s date
+     # -2 undefined . invalid e and or s date
      if validdate(startDate) and validdate(enddate):
 
         var std = startDate.replace("-","")
@@ -735,7 +788,21 @@ proc compareDates*(startDate,endDate:string) : int =
         else:
           result = -1
      else:
+         
+          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
+          msgr() do : echo  "proc comparedates"
           result = -2
+
+
+proc sleepy*[T:float|int](s:T) =
+    # s is in seconds
+    var ss = epochtime()
+    var ee = ss + s.float
+    var c = 0
+    while ee > epochtime():
+        inc c
+    # feedback line can be commented out
+    #msgr() do : echo "Loops during waiting for ",s,"secs : ",c
 
 
 proc plusDays*(aDate:string,days:int):string =
@@ -754,7 +821,6 @@ proc plusDays*(aDate:string,days:int):string =
         var tifo = parse(aDate,"yyyy-MM-dd") # this returns a TimeInfo type
         var mflag: bool = false
         tifo.year = parseInt(spdate[0])
-
         case parseInt(spdate[1])
         of 1 :  tifo.month = mJan
         of 2 :  tifo.month = mFeb
@@ -768,26 +834,22 @@ proc plusDays*(aDate:string,days:int):string =
         of 10:  tifo.month = mOct
         of 11:  tifo.month = mNov
         of 12 : tifo.month = mDec
-        else :
-          mflag = true
-
+        else  : mflag = true
         tifo.monthday = parseInt(spdate[2])
-
         if mflag == false:
             var myinterval = initInterval()
             myinterval.days = days
             var rx = tifo + myinterval
             rxs = rx.format("yyyy-MM-dd")
-
         else :
               msgr() do: echo "Date error. Wrong month : " &  spdate[1]
               rxs = ""
+
    else:
         msgr() do : echo  "Date error. Invalid date : " &  aDate,"  Format yyyy-MM-dd expected"
         rxs = ""
 
    result = rxs
-
 
 
 proc minusDays*(aDate:string,days:int):string =
@@ -802,12 +864,10 @@ proc minusDays*(aDate:string,days:int):string =
 
    var rxs = ""
    if validdate(adate) == true:
-
         var spdate = aDate.split("-")
         var tifo = parse(aDate,"yyyy-MM-dd")  # this returns a TimeInfo type
         var mflag: bool = false
         tifo.year = parseInt(spdate[0])
-
         case parseInt(spdate[1])
         of 1 :  tifo.month = mJan
         of 2 :  tifo.month = mFeb
@@ -821,11 +881,8 @@ proc minusDays*(aDate:string,days:int):string =
         of 10:  tifo.month = mOct
         of 11:  tifo.month = mNov
         of 12 : tifo.month = mDec
-        else :
-          mflag = true
-
+        else  : mflag = true
         tifo.monthday = parseInt(spdate[2])
-
         if mflag == false:
             var myinterval = initInterval()
             myinterval.days = days
@@ -840,57 +897,6 @@ proc minusDays*(aDate:string,days:int):string =
         rxs = ""
 
    result = rxs
-
-
-proc intervalsecs*(startDate,endDate:string) : float =
-      ## interval procs returns time elapsed between two dates in secs,hours etc.
-      ##
-      var f     = "yyyy-MM-dd"
-      var ssecs = toSeconds(timeinfototime(startDate.parse(f)))
-      var esecs = toSeconds(timeinfototime(endDate.parse(f)))
-      var isecs = esecs - ssecs
-      result = isecs
-
-proc intervalmins*(startDate,endDate:string) : float =
-      var imins = intervalsecs(startDate,endDate) / 60
-      result = imins
-
-proc intervalhours*(startDate,endDate:string) : float =
-      var ihours = intervalsecs(startDate,endDate) / 3600
-      result = ihours
-
-proc intervaldays*(startDate,endDate:string) : float =
-      var idays = intervalsecs(startDate,endDate) / 3600 / 24
-      result = idays
-
-proc intervalweeks*(startDate,endDate:string) : float =
-      var iweeks = intervalsecs(startDate,endDate) / 3600 / 24 / 7
-      result = iweeks
-
-proc intervalmonths*(startDate,endDate:string) : float =
-      var imonths = intervalsecs(startDate,endDate) / 3600 / 24 / 365  * 12
-      result = imonths
-
-proc intervalyears*(startDate,endDate:string) : float =
-      var iyears = intervalsecs(startDate,endDate) / 3600 / 24 / 365
-      result = iyears
-
-proc sleepy*(s:float) =
-      ## sleepy
-      ##
-      ## a sleep function to delay execution
-      ##
-      ## usefull if fetching hundreds of stock codes or quotes from yahoo
-      ##
-      ## in a loop in order not to hit the servers too hard.
-      ##
-
-      var ss = epochtime()
-      var ee = ss + s
-      var c = 0
-      while ee > epochtime():
-        inc c
-
 
 
 proc getSymbol2*(symb,startDate,endDate : string) : Df =
