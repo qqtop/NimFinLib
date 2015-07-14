@@ -1505,41 +1505,46 @@ Cf type is a simple object to hold current currency data
 <dd>
 <p>timeseries returns a Ts type date and one data column based on ty selection input usually is a Df object and a string , if a string is in ohlcva the relevant series will be extracted from the Df object</p>
 <p>usage exmple :</p>
-<pre><span class="Identifier">timeseries</span><span class="Punctuation">(</span><span class="Identifier">myDfObject</span><span class="Punctuation">,</span><span class="StringLit">&quot;o&quot;</span><span class="Punctuation">)</span></pre><p>this would return dates in dd and open prices in ts </p>
+<pre class = "listing"><span class="Identifier">timeseries</span><span class="Punctuation">(</span><span class="Identifier">myDfObject</span><span class="Punctuation">,</span><span class="StringLit">&quot;o&quot;</span><span class="Punctuation">)</span></pre><p>this would return dates in dd and open prices in ts </p>
 
 
 </dd>
 <dt id="showTimeSeries"><a name="showTimeSeries,Ts,string,string,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showTimeSeries</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">ats</span><span class="Other">:</span> <span class="Identifier">Ts</span><span class="Other">;</span> <span class="Identifier">header</span><span class="Other">,</span> <span class="Identifier">ty</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span></pre></dt>
 <dd>
-showTimeseries takes a Ts object as input as well as a header string for the data column , a string which can be one of head,tail,all and N for number of rows to display usage : showTimeseries(myTimeseries,myHeader,&quot;head|tail|all&quot;,rows) 
+showTimeseries takes a Ts object as input as well as a header string for the data column , a string which can be one of head,tail,all and N for number of rows to display usage :<pre class = "listing"><span class="Identifier">showTimeseries</span><span class="Punctuation">(</span><span class="Identifier">myTimeseries</span><span class="Punctuation">,</span><span class="Identifier">myHeader</span><span class="Punctuation">,</span><span class="StringLit">&quot;head|tail|all&quot;</span><span class="Punctuation">,</span><span class="Identifier">rows</span><span class="Punctuation">)</span></pre><pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">myD</span> <span class="Operator">=</span><span class="Identifier">initDf</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+<span class="Identifier">myD</span> <span class="Operator">=</span> <span class="Identifier">getSymbol2</span><span class="Punctuation">(</span><span class="StringLit">&quot;AAPL&quot;</span><span class="Punctuation">,</span><span class="Identifier">minusdays</span><span class="Punctuation">(</span><span class="Identifier">getDateStr</span><span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">,</span><span class="DecNumber">372</span><span class="Punctuation">)</span><span class="Punctuation">,</span><span class="Identifier">getDateStr</span><span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">)</span>
+<span class="Keyword">var</span> <span class="Identifier">mydT</span> <span class="Operator">=</span> <span class="Identifier">timeseries</span><span class="Punctuation">(</span><span class="Identifier">myD</span><span class="Punctuation">,</span><span class="StringLit">&quot;a&quot;</span><span class="Punctuation">)</span> <span class="Comment"># adjusted close</span>
+<span class="Identifier">echo</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+<span class="Identifier">showTimeSeries</span><span class="Punctuation">(</span><span class="Identifier">mydT</span><span class="Punctuation">,</span><span class="StringLit">&quot;AdjClose&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;head&quot;</span><span class="Punctuation">,</span><span class="DecNumber">5</span><span class="Punctuation">)</span>
+<span class="Identifier">showTimeSeries</span><span class="Punctuation">(</span><span class="Identifier">mydT</span><span class="Punctuation">,</span><span class="StringLit">&quot;AdjClose&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;tail&quot;</span><span class="Punctuation">,</span><span class="DecNumber">5</span><span class="Punctuation">)</span></pre>
 
 </dd>
 <dt id="initPf"><a name="initPf,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initPf</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">PF</span></pre></dt>
 <dd>
 <p>initPf</p>
 <p>init a new empty account object</p>
-<pre><span class="Keyword">var</span> <span class="Identifier">myAccount</span> <span class="Operator">=</span> <span class="Identifier">initPf</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
+<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">myAccount</span> <span class="Operator">=</span> <span class="Identifier">initPf</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 
 </dd>
 <dt id="initNf"><a name="initNf,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initNf</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Nf</span></pre></dt>
 <dd>
 <p>initNf</p>
 <p>init a new empty portfolio object</p>
-<pre><span class="Keyword">var</span> <span class="Identifier">myETFportfolio</span> <span class="Operator">=</span> <span class="Identifier">initNf</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
+<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">myETFportfolio</span> <span class="Operator">=</span> <span class="Identifier">initNf</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 
 </dd>
 <dt id="initDf"><a name="initDf,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initDf</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Df</span></pre></dt>
 <dd>
 <p>initDf</p>
 <p>init stock data object</p>
-<pre><span class="Keyword">var</span> <span class="Identifier">mystockData</span> <span class="Operator">=</span> <span class="Identifier">initDf</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
+<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">mystockData</span> <span class="Operator">=</span> <span class="Identifier">initDf</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 
 </dd>
 <dt id="initCf"><a name="initCf,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initCf</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Cf</span></pre></dt>
 <dd>
 <p>initCf</p>
 <p>init a Cf object to hold basic forex data</p>
-<pre><span class="Keyword">var</span> <span class="Identifier">myForex</span> <span class="Operator">=</span> <span class="Identifier">initCf</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
+<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">myForex</span> <span class="Operator">=</span> <span class="Identifier">initCf</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 
 </dd>
 <dt id="initTs"><a name="initTs,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initTs</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Ts</span></pre></dt>
@@ -1553,7 +1558,7 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 <dd>
 <p>initPool</p>
 <p>init pools , which are sequences of Df objects used in portfolio building</p>
-<pre><span class="Keyword">var</span> <span class="Identifier">mystockPool</span> <span class="Operator">=</span> <span class="Identifier">initPool</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
+<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">mystockPool</span> <span class="Operator">=</span> <span class="Identifier">initPool</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 
 </dd>
 <dt id="getTerminalWidth"><a name="getTerminalWidth,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getTerminalWidth</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
@@ -1562,9 +1567,9 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 <p>utility to easily draw correctly sized lines on linux terminals</p>
 <p>and get linux terminal width</p>
 <p>for windows this currently is set to terminalwidth 80</p>
-<pre><span class="Identifier">echo</span> <span class="StringLit">&quot;Terminalwidth : &quot;</span><span class="Punctuation">,</span><span class="Identifier">tw</span>
+<pre class = "listing"><span class="Identifier">echo</span> <span class="StringLit">&quot;Terminalwidth : &quot;</span><span class="Punctuation">,</span><span class="Identifier">tw</span>
 <span class="Identifier">echo</span> <span class="Identifier">aline</span></pre><p>tw and aline are exported but of course you also can do</p>
-<pre><span class="Keyword">var</span> <span class="Identifier">mytermwidth</span> <span class="Operator">=</span> <span class="Identifier">getTerminalWidth</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">mytermwidth</span> <span class="Operator">=</span> <span class="Identifier">getTerminalWidth</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
 <span class="Identifier">echo</span> <span class="Identifier">repeat</span><span class="Punctuation">(</span><span class="StringLit">&quot;*&quot;</span><span class="Punctuation">,</span><span class="Identifier">mytermwidth</span><span class="Punctuation">)</span></pre><p>in case you want to use another line building char </p>
 
 
@@ -1573,7 +1578,7 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 <dd>
 <p>decho</p>
 <p>blank lines creator</p>
-<pre><span class="Identifier">decho</span><span class="Punctuation">(</span><span class="DecNumber">10</span><span class="Punctuation">)</span></pre><p>to create 10 blank lines</p>
+<pre class = "listing"><span class="Identifier">decho</span><span class="Punctuation">(</span><span class="DecNumber">10</span><span class="Punctuation">)</span></pre><p>to create 10 blank lines</p>
 
 
 </dd>
@@ -1616,7 +1621,7 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 <dd>
 <p>showCurrentStocks</p>
 <p>callable display routine for currentStocks with Nf portfolio object passed in</p>
-<pre><span class="Identifier">showCurrentStocks</span><span class="Punctuation">(</span><span class="Identifier">myAccount</span><span class="Operator">.</span><span class="Identifier">Portfolio</span><span class="Punctuation">[</span><span class="DecNumber">0</span><span class="Punctuation">]</span><span class="Punctuation">)</span></pre><p>This means get all stock codes of the first portfolio in myAccount</p>
+<pre class = "listing"><span class="Identifier">showCurrentStocks</span><span class="Punctuation">(</span><span class="Identifier">myAccount</span><span class="Operator">.</span><span class="Identifier">Portfolio</span><span class="Punctuation">[</span><span class="DecNumber">0</span><span class="Punctuation">]</span><span class="Punctuation">)</span></pre><p>This means get all stock codes of the first portfolio in myAccount</p>
 <p>Note : Yahoo servers maybe down sometimes which will make this procs fail.</p>
 <p>Just wait a bit and try again. Stay calm ! Do not panic !</p>
 <p>for full example see nimFinT5.nim </p>
@@ -1627,7 +1632,7 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 <dd>
 <p>showCurrentStocks</p>
 <p>callable display routine for currentStocks with stockstring passed in</p>
-<pre><span class="Identifier">showCurrentStocks</span><span class="Punctuation">(</span><span class="StringLit">&quot;IBM+BP.L+0001.HK&quot;</span><span class="Punctuation">)</span>
+<pre class = "listing"><span class="Identifier">showCurrentStocks</span><span class="Punctuation">(</span><span class="StringLit">&quot;IBM+BP.L+0001.HK&quot;</span><span class="Punctuation">)</span>
 <span class="Identifier">decho</span><span class="Punctuation">(</span><span class="DecNumber">2</span><span class="Punctuation">)</span></pre><p>Note : Yahoo servers maybe down sometimes which will make this procs fail.</p>
 <p>Just wait a bit and try again. Stay calm ! Do not panic ! </p>
 
@@ -1887,7 +1892,7 @@ head means oldest rows
 <p>getCurrentForex</p>
 <p>get the latest yahoo exchange rate info for a currency pair</p>
 <p>e.g EURUSD , JPYUSD ,GBPHKD</p>
-<pre><span class="Keyword">var</span> <span class="Identifier">curs</span> <span class="Operator">=</span> <span class="Identifier">getCurrentForex</span><span class="Punctuation">(</span><span class="Operator">@</span><span class="Punctuation">[</span><span class="StringLit">&quot;EURUSD&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;EURHKD&quot;</span><span class="Punctuation">]</span><span class="Punctuation">)</span>
+<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">curs</span> <span class="Operator">=</span> <span class="Identifier">getCurrentForex</span><span class="Punctuation">(</span><span class="Operator">@</span><span class="Punctuation">[</span><span class="StringLit">&quot;EURUSD&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;EURHKD&quot;</span><span class="Punctuation">]</span><span class="Punctuation">)</span>
 <span class="Identifier">echo</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
 <span class="Identifier">echo</span> <span class="StringLit">&quot;Current EURUSD Rate : &quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;{:&lt;8}&quot;</span><span class="Operator">.</span><span class="Identifier">fmt</span><span class="Punctuation">(</span><span class="Identifier">curs</span><span class="Operator">.</span><span class="Identifier">ra</span><span class="Punctuation">[</span><span class="DecNumber">0</span><span class="Punctuation">]</span><span class="Punctuation">)</span>
 <span class="Identifier">echo</span> <span class="StringLit">&quot;Current EURHKD Rate : &quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;{:&lt;8}&quot;</span><span class="Operator">.</span><span class="Identifier">fmt</span><span class="Punctuation">(</span><span class="Identifier">curs</span><span class="Operator">.</span><span class="Identifier">ra</span><span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">]</span><span class="Punctuation">)</span>
@@ -1898,7 +1903,7 @@ head means oldest rows
 <dd>
 <p>showCurrentForex</p>
 <p>a convenience proc to display exchange rates</p>
-<pre><span class="Identifier">showCurrentForex</span><span class="Punctuation">(</span><span class="Operator">@</span><span class="Punctuation">[</span><span class="StringLit">&quot;EURUSD&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;GBPHKD&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;CADEUR&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;AUDNZD&quot;</span><span class="Punctuation">]</span><span class="Punctuation">)</span>
+<pre class = "listing"><span class="Identifier">showCurrentForex</span><span class="Punctuation">(</span><span class="Operator">@</span><span class="Punctuation">[</span><span class="StringLit">&quot;EURUSD&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;GBPHKD&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;CADEUR&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;AUDNZD&quot;</span><span class="Punctuation">]</span><span class="Punctuation">)</span>
 <span class="Identifier">decho</span><span class="Punctuation">(</span><span class="DecNumber">3</span><span class="Punctuation">)</span></pre>
 
 </dd>
@@ -1930,7 +1935,7 @@ head means oldest rows
 <dd>the calculated present value of your future value amount</dd>
 </dl>
 <p>From <a class="reference external" href="http://www.CalculatorSoup.com">http://www.CalculatorSoup.com</a> - Online Calculator Resource.</p>
-<pre><span class="Keyword">var</span> <span class="Identifier">FV</span> <span class="Punctuation">:</span> <span class="Identifier">float</span> <span class="Operator">=</span> <span class="DecNumber">10000</span>
+<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">FV</span> <span class="Punctuation">:</span> <span class="Identifier">float</span> <span class="Operator">=</span> <span class="DecNumber">10000</span>
 <span class="Keyword">var</span> <span class="Identifier">PV</span> <span class="Punctuation">:</span> <span class="Identifier">float</span> <span class="Operator">=</span> <span class="FloatNumber">0.0</span>
 <span class="Keyword">var</span> <span class="Identifier">r</span>  <span class="Punctuation">:</span> <span class="Identifier">float</span> <span class="Operator">=</span> <span class="FloatNumber">0.0625</span>
 <span class="Keyword">var</span> <span class="Identifier">m</span>  <span class="Punctuation">:</span> <span class="Identifier">int</span>   <span class="Operator">=</span> <span class="DecNumber">2</span>
@@ -1944,7 +1949,7 @@ head means oldest rows
 <dd>
 <p>presentValue</p>
 <p>Present Value Calculation for a Lump Sum Investment</p>
-<pre><span class="Identifier">PV</span> <span class="Operator">=</span> <span class="Identifier">presentValue</span><span class="Punctuation">(</span><span class="Identifier">FV</span><span class="Punctuation">,</span><span class="FloatNumber">0.0925</span><span class="Punctuation">,</span><span class="FloatNumber">2.0</span><span class="Punctuation">,</span><span class="FloatNumber">12.0</span><span class="Punctuation">)</span>
+<pre class = "listing"><span class="Identifier">PV</span> <span class="Operator">=</span> <span class="Identifier">presentValue</span><span class="Punctuation">(</span><span class="Identifier">FV</span><span class="Punctuation">,</span><span class="FloatNumber">0.0925</span><span class="Punctuation">,</span><span class="FloatNumber">2.0</span><span class="Punctuation">,</span><span class="FloatNumber">12.0</span><span class="Punctuation">)</span>
 <span class="Identifier">echo</span> <span class="Identifier">PV</span></pre>
 
 </dd>
@@ -1952,13 +1957,13 @@ head means oldest rows
 <dd>
 <p>presentValueFV</p>
 <p>the present value of a future sum at a periodic interest rate i where n is the number of periods in the future.</p>
-<pre><span class="Identifier">PV</span> <span class="Operator">=</span> <span class="Identifier">presentValueFV</span><span class="Punctuation">(</span><span class="Identifier">FV</span><span class="Punctuation">,</span><span class="FloatNumber">0.0625</span><span class="Punctuation">,</span><span class="DecNumber">10</span><span class="Punctuation">)</span>
+<pre class = "listing"><span class="Identifier">PV</span> <span class="Operator">=</span> <span class="Identifier">presentValueFV</span><span class="Punctuation">(</span><span class="Identifier">FV</span><span class="Punctuation">,</span><span class="FloatNumber">0.0625</span><span class="Punctuation">,</span><span class="DecNumber">10</span><span class="Punctuation">)</span>
 <span class="Identifier">echo</span> <span class="Identifier">PV</span></pre>
 
 </dd>
 <dt id="presentValueFV"><a name="presentValueFV,float,float,float"></a><pre><span class="Keyword">proc</span> <span class="Identifier">presentValueFV</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">FV</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">i</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">n</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span></pre></dt>
 <dd>
-<pre><span class="Identifier">PV</span> <span class="Operator">=</span> <span class="Identifier">presentValueFV</span><span class="Punctuation">(</span><span class="Identifier">FV</span><span class="Punctuation">,</span><span class="FloatNumber">0.0625</span><span class="Punctuation">,</span><span class="FloatNumber">20.5</span><span class="Punctuation">)</span>
+<pre class = "listing"><span class="Identifier">PV</span> <span class="Operator">=</span> <span class="Identifier">presentValueFV</span><span class="Punctuation">(</span><span class="Identifier">FV</span><span class="Punctuation">,</span><span class="FloatNumber">0.0625</span><span class="Punctuation">,</span><span class="FloatNumber">20.5</span><span class="Punctuation">)</span>
 <span class="Identifier">echo</span> <span class="Identifier">PV</span></pre>
 
 </dd>
@@ -1966,7 +1971,7 @@ head means oldest rows
 <dd>
 <p>rainbow</p>
 <p>random multi colored string</p>
-<pre><span class="Identifier">rainbow</span><span class="Punctuation">(</span><span class="StringLit">&quot;Sparkling string display !&quot;</span><span class="Punctuation">)</span>
+<pre class = "listing"><span class="Identifier">rainbow</span><span class="Punctuation">(</span><span class="StringLit">&quot;Sparkling string display !&quot;</span><span class="Punctuation">)</span>
 <span class="Identifier">decho</span><span class="Punctuation">(</span><span class="DecNumber">2</span><span class="Punctuation">)</span></pre>
 
 </dd>
@@ -1976,7 +1981,7 @@ head means oldest rows
 <p>experimental</p>
 <p>this runs if ctrl-c is pressed</p>
 <p>and provides some feedback upon exit</p>
-<pre><span class="Keyword">import</span> <span class="Identifier">nimFinLib</span>
+<pre class = "listing"><span class="Keyword">import</span> <span class="Identifier">nimFinLib</span>
 <span class="Comment"># get the latest delayed quotes for your stock</span>
 <span class="Comment"># press ctrl-c to exit</span>
 <span class="Comment"># setControlCHook(handler)    # auto registered exit handler</span>
@@ -2014,12 +2019,12 @@ head means oldest rows
 <dl class="item">
 <dt id="msgg"><a name="msgg.t,stmt"></a><pre><span class="Keyword">template</span> <span class="Identifier">msgg</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">stmt</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">stmt</span> <span class="Other">{.</span><span class="Identifier">immediate</span><span class="Other">.}</span></pre></dt>
 <dd>
-msgX templates convenience templates for colored text output the assumption is that the terminal is white text and black background naming of the templates is like msg+color so msgy =&gt; yellow msg+color+b turns on the bright flag<pre><span class="Identifier">msgg</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Keyword">do</span> <span class="Punctuation">:</span> <span class="Identifier">echo</span> <span class="StringLit">&quot;How nice, it's in green&quot;</span></pre>
+msgX templates convenience templates for colored text output the assumption is that the terminal is white text and black background naming of the templates is like msg+color so msgy =&gt; yellow msg+color+b turns on the bright flag<pre class = "listing"><span class="Identifier">msgg</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Keyword">do</span> <span class="Punctuation">:</span> <span class="Identifier">echo</span> <span class="StringLit">&quot;How nice, it's in green&quot;</span></pre>
 
 </dd>
 <dt id="msggb"><a name="msggb.t,stmt"></a><pre><span class="Keyword">template</span> <span class="Identifier">msggb</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">stmt</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">stmt</span> <span class="Other">{.</span><span class="Identifier">immediate</span><span class="Other">.}</span></pre></dt>
 <dd>
-msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Keyword">do</span> <span class="Punctuation">:</span> <span class="Identifier">echo</span> <span class="StringLit">&quot;How nice, it's in bright green&quot;</span></pre>
+msggb<pre class = "listing"><span class="Identifier">msggb</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Keyword">do</span> <span class="Punctuation">:</span> <span class="Identifier">echo</span> <span class="StringLit">&quot;How nice, it's in bright green&quot;</span></pre>
 
 </dd>
 <dt id="msgy"><a name="msgy.t,stmt"></a><pre><span class="Keyword">template</span> <span class="Identifier">msgy</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">stmt</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">stmt</span> <span class="Other">{.</span><span class="Identifier">immediate</span><span class="Other">.}</span></pre></dt>
@@ -2080,7 +2085,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
 <dd>
 <p>withFile</p>
 <p>file open close utility template</p>
-<pre><span class="Keyword">let</span> <span class="Identifier">curFile</span><span class="Operator">=</span><span class="StringLit">&quot;notes.txt&quot;</span>    <span class="Comment"># some file</span>
+<pre class = "listing"><span class="Keyword">let</span> <span class="Identifier">curFile</span><span class="Operator">=</span><span class="StringLit">&quot;notes.txt&quot;</span>    <span class="Comment"># some file</span>
 <span class="Identifier">withFile</span><span class="Punctuation">(</span><span class="Identifier">txt</span><span class="Punctuation">,</span> <span class="Identifier">curFile</span><span class="Punctuation">,</span> <span class="Identifier">fmRead</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
     <span class="Keyword">while</span> <span class="Identifier">true</span> <span class="Punctuation">:</span>
         <span class="Keyword">try</span><span class="Punctuation">:</span>
@@ -2100,7 +2105,7 @@ msggb<pre><span class="Identifier">msggb</span><span class="Punctuation">(</span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-07-13 17:37:46 UTC</small>
+        <small>Made with Nim. Generated: 2015-07-14 16:09:42 UTC</small>
       </div>
     </div>
   </div>

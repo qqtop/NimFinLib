@@ -283,8 +283,21 @@ proc showTimeSeries* (ats:Ts,header,ty:string,N:int)  =
    ## takes a Ts object as input as well as a header string
    ## for the data column , a string which can be one of
    ## head,tail,all and N for number of rows to display
-   ## usage : showTimeseries(myTimeseries,myHeader,"head|tail|all",rows)
+   ## usage :
+   ## 
+   ## .. code-block:: nim
+   ##     showTimeseries(myTimeseries,myHeader,"head|tail|all",rows)
    ##
+   ##
+   ## .. code-block:: nim
+   ##     var myD =initDf()
+   ##     myD = getSymbol2("AAPL",minusdays(getDateStr(),372),getDateStr())
+   ##     var mydT = timeseries(myD,"a") # adjusted close
+   ##     echo() 
+   ##     showTimeSeries(mydT,"AdjClose","head",5)
+   ##     showTimeSeries(mydT,"AdjClose","tail",5)
+   ## 
+
 
    msgg() do : echo "{:<11} {:>11} ".fmt("Date",header)
    if ty == "all":
