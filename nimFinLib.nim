@@ -288,8 +288,10 @@ proc showTimeSeries* (ats:Ts,header,ty:string,N:int)  =
    ## .. code-block:: nim
    ##     showTimeseries(myTimeseries,myHeader,"head|tail|all",rows)
    ##
+   ## Example
    ##
    ## .. code-block:: nim
+   ##     # show adj. close price , 5 rows head and tail 372 days apart
    ##     var myD =initDf()
    ##     myD = getSymbol2("AAPL",minusdays(getDateStr(),372),getDateStr())
    ##     var mydT = timeseries(myD,"a") # adjusted close
