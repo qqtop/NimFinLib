@@ -55,6 +55,7 @@
 ##
 ## Installation: git clone https://github.com/qqtop/NimFinLib.git
 ## 
+##
 
 
 import os,strutils,parseutils,sequtils,httpclient,strfmt
@@ -908,158 +909,168 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
     ##
     # feedbackline can be commented out if not desired
     #
-    stdout.write("{:<15}".fmt("Processing   : "))
-    msgg() do: stdout.write("{:<8} ".fmt(symb))
-    stdout.write("{:<11} {:<11}".fmt(startDate,endDate))
-    # end feedback line
+    # check the dates if there are funny dates an empty Df object will be returned
+    # together wiuth an error message
 
-    # set up dates for yahoo
-    var sdy = year(startDate)
-    var sdm = ymonth(startDate)
-    var sdd = day(startDate)
+    if validdate(startDate) and validdate(enddate):
+          
+          stdout.write("{:<15}".fmt("Processing   : "))
+          msgg() do: stdout.write("{:<8} ".fmt(symb))
+          stdout.write("{:<11} {:<11}".fmt(startDate,endDate))
+          # end feedback line
 
-    var edy = year(endDate)
-    var edm = ymonth(endDate)
-    var edd = day(endDate)
+          # set up dates for yahoo
+          var sdy = year(startDate)
+          var sdm = ymonth(startDate)
+          var sdd = day(startDate)
 
-    # set up df variables
-    var datx = ""
-    var datdf = newSeq[string]()
-    var opex = 0.0
-    var opedf = newSeq[float]()
-    var higx = 0.0
-    var higdf = newSeq[float]()
-    var lowx = 0.0
-    var lowdf = newSeq[float]()
-    var closx = 0.0
-    var closdf = newSeq[float]()
-    var volx = 0.0
-    var voldf = newSeq[float]()
-    var adjclosx = 0.0
-    var adjclosdf = newSeq[float]()
+          var edy = year(endDate)
+          var edm = ymonth(endDate)
+          var edd = day(endDate)
 
-    # add RunningStat capability all columns
-    var openRC  : Runningstat
-    var highRC : Runningstat
-    var lowRC  : Runningstat
-    var closeRC  : Runningstat
-    var volumeRC : Runningstat
-    var closeRCA : Runningstat
+          # set up df variables
+          var datx = ""
+          var datdf = newSeq[string]()
+          var opex = 0.0
+          var opedf = newSeq[float]()
+          var higx = 0.0
+          var higdf = newSeq[float]()
+          var lowx = 0.0
+          var lowdf = newSeq[float]()
+          var closx = 0.0
+          var closdf = newSeq[float]()
+          var volx = 0.0
+          var voldf = newSeq[float]()
+          var adjclosx = 0.0
+          var adjclosdf = newSeq[float]()
 
-    # note to dates for this yahoo url according to latest research
-    # a=04  means may  a=00 means jan start month
-    # b = start day
-    # c = start year
-    # d = end month  05 means jun
-    # e = end day
-    # f = end year
-    # we use the csv string , yahoo json format only returns limited data 1.5 years or less
-    var qurl = "http://real-chart.finance.yahoo.com/table.csv?s=$1&a=$2&b=$3&c=$4&d=$5&e=$6&f=$7&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
-    var headerset = [symb,"Date","Open","High","Low","Close","Volume","Adj Close"]
-    var c = 0
-    var hflag  : bool # used for testing maybe removed later
-    var astock = initDf()   # this will hold our result history data for one stock
+          # add RunningStat capability all columns
+          var openRC  : Runningstat
+          var highRC : Runningstat
+          var lowRC  : Runningstat
+          var closeRC  : Runningstat
+          var volumeRC : Runningstat
+          var closeRCA : Runningstat
 
-    # naming outputfile nimfintmp.csv as many stock symbols have dots like 0001.HK
-    # could also be done to be in memory like /shm/  this file will be auto removed.
+          # note to dates for this yahoo url according to latest research
+          # a=04  means may  a=00 means jan start month
+          # b = start day
+          # c = start year
+          # d = end month  05 means jun
+          # e = end day
+          # f = end year
+          # we use the csv string , yahoo json format only returns limited data 1.5 years or less
+          var qurl = "http://real-chart.finance.yahoo.com/table.csv?s=$1&a=$2&b=$3&c=$4&d=$5&e=$6&f=$7&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
+          var headerset = [symb,"Date","Open","High","Low","Close","Volume","Adj Close"]
+          var c = 0
+          var hflag  : bool # used for testing maybe removed later
+          var astock = initDf()   # this will hold our result history data for one stock
 
-    var acvsfile = "nimfintmp.csv"
-    downloadFile(qurl,acvsfile)
+          # naming outputfile nimfintmp.csv as many stock symbols have dots like 0001.HK
+          # could also be done to be in memory like /shm/  this file will be auto removed.
 
-    var s = newFileStream(acvsfile, fmRead)
-    if s == nil:
-       # in case of problems with the yahoo csv file we show a message
-       msgr() do : echo "Hello : Data file for $1 could not be opened " % symb
+          var acvsfile = "nimfintmp.csv"
+          downloadFile(qurl,acvsfile)
 
-    # now parse the csv file
-    var x: CsvParser
-    open(x, s , acvsfile, separator=',')
-    while readRow(x):
-      # a way to get the actual csv header , but here we use our custom headerset with more info
-      # if validIdentifier(x.row[0]):
-      #  header = x.row
-      c = 0 # counter to assign item to correct var
-      for val in items(x.row):
-        if val in headerset:
-              hflag = true
+          var s = newFileStream(acvsfile, fmRead)
+          if s == nil:
+             # in case of problems with the yahoo csv file we show a message
+             msgr() do : echo "Hello : Data file for $1 could not be opened " % symb
 
-        else:
-              c += 1
-              hflag = false
+          # now parse the csv file
+          var x: CsvParser
+          open(x, s , acvsfile, separator=',')
+          while readRow(x):
+            # a way to get the actual csv header , but here we use our custom headerset with more info
+            # if validIdentifier(x.row[0]):
+            #  header = x.row
+            c = 0 # counter to assign item to correct var
+            for val in items(x.row):
+              if val in headerset:
+                    hflag = true
 
-              case c
-              of 1:
-                    datx = val
-                    datdf.add(datx)
+              else:
+                    c += 1
+                    hflag = false
 
-              of 2:
-                    opex = parseFloat(val)
-                    openRC.push(opex)      ## RunningStat for open price
-                    opedf.add(opex)
+                    case c
+                    of 1:
+                          datx = val
+                          datdf.add(datx)
 
-              of 3:
-                    higx = parseFloat(val)
-                    highRC.push(higx)
-                    higdf.add(higx)
+                    of 2:
+                          opex = parseFloat(val)
+                          openRC.push(opex)      ## RunningStat for open price
+                          opedf.add(opex)
 
-              of 4:
-                    lowx = parseFloat(val)
-                    lowRC.push(lowx)
-                    lowdf.add(lowx)
+                    of 3:
+                          higx = parseFloat(val)
+                          highRC.push(higx)
+                          higdf.add(higx)
 
-              of 5:
-                    closx = parseFloat(val)
-                    closeRC.push(closx)     ## RunningStat for close price
-                    closdf.add(closx)
+                    of 4:
+                          lowx = parseFloat(val)
+                          lowRC.push(lowx)
+                          lowdf.add(lowx)
 
-              of 6:
-                    volx = parseFloat(val)
-                    volumeRC.push(volx)
-                    voldf.add(volx)
+                    of 5:
+                          closx = parseFloat(val)
+                          closeRC.push(closx)     ## RunningStat for close price
+                          closdf.add(closx)
 
-              of 7:
-                    adjclosx = parseFloat(val)
-                    closeRCA.push(adjclosx)  ## RunningStat for adj close price
-                    adjclosdf.add(adjclosx)
+                    of 6:
+                          volx = parseFloat(val)
+                          volumeRC.push(volx)
+                          voldf.add(volx)
 
-              else :
-                    msgr() do : echo "Csv Data in unexpected format for Stock :",symb
+                    of 7:
+                          adjclosx = parseFloat(val)
+                          closeRCA.push(adjclosx)  ## RunningStat for adj close price
+                          adjclosdf.add(adjclosx)
 
-    # feedbacklines can be commented out
-    msgc() do:
-              stdout.writeln(" --> Rows processed : ",processedRows(x))
+                    else :
+                          msgr() do : echo "Csv Data in unexpected format for Stock :",symb
+
+          # feedbacklines can be commented out
+          msgc() do:
+                    stdout.writeln(" --> Rows processed : ",processedRows(x))
 
 
-    # close CsvParser
-    close(x)
+          # close CsvParser
+          close(x)
 
-    # put the collected data into Df type
-    astock.stock = symb
-    astock.date  = datdf
-    astock.open  = opedf
-    astock.high  = higdf
-    astock.low   = lowdf
-    astock.close = closdf
-    astock.adjc  = adjclosdf
-    astock.vol   = voldf
-    astock.ro    = @[]
-    astock.rh    = @[]
-    astock.rl    = @[]
-    astock.rc    = @[]
-    astock.rv    = @[]
-    astock.rca   = @[]
+          # put the collected data into Df type
+          astock.stock = symb
+          astock.date  = datdf
+          astock.open  = opedf
+          astock.high  = higdf
+          astock.low   = lowdf
+          astock.close = closdf
+          astock.adjc  = adjclosdf
+          astock.vol   = voldf
+          astock.ro    = @[]
+          astock.rh    = @[]
+          astock.rl    = @[]
+          astock.rc    = @[]
+          astock.rv    = @[]
+          astock.rca   = @[]
 
-    astock.ro.add(openRC)
-    astock.rh.add(highRC)
-    astock.rl.add(lowRC)
-    astock.rc.add(closeRC)
-    astock.rv.add(volumeRC)
-    astock.rca.add(closeRCA)
+          astock.ro.add(openRC)
+          astock.rh.add(highRC)
+          astock.rl.add(lowRC)
+          astock.rc.add(closeRC)
+          astock.rv.add(volumeRC)
+          astock.rca.add(closeRCA)
 
-    # clean up
-    removeFile(acvsfile)
-    # send astock back
-    result = astock
+          # clean up
+          removeFile(acvsfile)
+          # send astock back
+          result = astock
+
+    else:
+          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
+          msgr() do : echo  "proc getSymbol2"
+          result = initDf() # return an empty df
 
 
 
