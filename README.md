@@ -3,16 +3,13 @@
 Financial Library for Nim language
 ==================================
 
-| Library    | Status      | Version | License        | OS     |
-|------------|-------------|---------|----------------|--------|
-| nimFinLib  | Development | 0.2.x   | MIT opensource | Linux  | 
+| Library    | Status      | Version | License        | OS     | Compiler       |
+|------------|-------------|---------|----------------|--------|----------------|
+| nimFinLib  | Development | 0.2.x   | MIT opensource | Linux  | Nim 0.11.3 up  |
 
-
-
-Compiler: nim development branch (nim 0.11.3 or better)
 
 Description: A basic library for financial calculations with Nim
-
+------------
               Yahoo historical stock data
               
               Yahoo current quotes and forex rates
