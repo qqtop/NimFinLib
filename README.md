@@ -8,8 +8,9 @@ Financial Library for Nim language
 | nimFinLib  | Development | 0.2.x   | MIT opensource | Linux  | Nim 0.11.3 up  |
 
 
-Description:  Financial calculations support library for Nim
-------------------------------------------------------------
+Financial data gathering and calculations support 
+-------------------------------------------------
+
               Yahoo historical stock data
               
               Yahoo current quotes and forex rates
