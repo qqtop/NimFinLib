@@ -912,7 +912,7 @@ proc getSymbol2*(symb,startDate,endDate : string) : Df =
     # check the dates if there are funny dates an empty Df object will be returned
     # together with an error message
 
-    if validdate(startDate) and validdate(enddate):
+    if validdate(startDate) and validdate(endDate):
           
           stdout.write("{:<15}".fmt("Processing   : "))
           msgg() do: stdout.write("{:<8} ".fmt(symb))

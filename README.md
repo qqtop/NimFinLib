@@ -1,18 +1,15 @@
 # NimFinLib
+
 Financial Library for Nim language
+==================================
+
+| Library    | Status      | Version | License        | OS     |
+|------------|-------------|---------|----------------|--------|
+| nimFinLib  | Development | 0.2.x   | MIT opensource | Linux  | 
 
 
-Program.: nimFinLib  
-
-Status..: Development
-
-License.: MIT opensource  
-
-Version.: 0.2.x
 
 Compiler: nim development branch (nim 0.11.3 or better)
-
-Os      : Linux  
 
 Description: A basic library for financial calculations with Nim
 
@@ -71,13 +68,13 @@ showdailyReturnsCl(ibm,5)
 decho(3)
 
 
-# show stock name and latest adjusted close
+# Show stock name and latest adjusted close
 msgg() do: echo "{:<8} {:<11} {:>15}".fmt("Code","Date","Adj.Close") 
 echo  "{:<8} {:<11} {:>15}".fmt(ibm.stock,ibm.date.last,ibm.adjc.last)
 decho(1)
 
 
-# show some forex data
+# Show some forex data
 
 showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"])
 decho(3)
