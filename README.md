@@ -41,6 +41,8 @@ http://qqtop.github.io/libFinHk.html
 
 nimFinTxx are test programs to show use of the library .
 
+strfmt and random can be installed with nimble, statistics is included .
+
 
 example1.nim 
 ------------
