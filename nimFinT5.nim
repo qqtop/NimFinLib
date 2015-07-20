@@ -365,6 +365,30 @@ showCurrentIndexes(idx)
 showCurrentIndexes(indexpool)
 
 
+
+
+echo ()
+msgy() do : echo "###############################################"
+msgy() do : echo "# Testing getSymbol3 - Additional stock info  #"
+msgy() do : echo "###############################################"
+echo ()
+
+var symb = "AAPL"
+var sx = getSymbol3(symb)
+
+echo symb,"   Market            : ",sx.market
+echo symb,"   Price             : ",sx.price
+echo symb,"   Volume            : ",sx.volume
+echo symb,"   Avg Daily Volume  : ",sx.avgdailyvol
+echo symb,"   52 week low       : ",sx.week52low
+echo symb,"   52 week high      : ",sx.week52high
+echo symb,"   200 day mov. avg. : ",sx.movingavg200day
+echo symb,"   Dividend /  share : ",sx.dividendpershare
+echo symb,"   P/E Ratio         : ",sx.priceearingratio
+echo symb,"   Ebitda            : ",sx.ebitda
+echo symb,"   MarketCap         : ",sx.marketCap
+echo symb,"   Short ratio       : ",sx.shortratio
+
 echo ()
 msgy() do : echo "###############################################"
 msgy() do : echo "# Tests for Forex rates                       #"
@@ -525,6 +549,12 @@ when declared(libFinHk):
         showDfTable(rpf)
 
         # for another more automated example see nimFinT3.nim and nimFinT4.nim
+
+
+
+
+
+
 
 # That's it
 

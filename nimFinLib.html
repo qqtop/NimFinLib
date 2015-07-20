@@ -1185,6 +1185,28 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   rc*: seq[Runningstat]        ## RunningStat for close price
   rv*: seq[Runningstat]        ## RunningStat for volume price
   rca*: seq[Runningstat]       ## RunningStat for adjusted close price"><wbr />Df</a></li>
+  <li><a class="reference" href="#Qf"
+    title="Qf* = object
+  price*: float
+  change*: float
+  volume*: float
+  avgdailyvol*: float
+  market*: string
+  marketcap*: string
+  bookvalue*: float
+  ebitda*: string
+  dividendpershare*: float
+  dividendperyield*: float
+  earningspershare*: float
+  week52high*: float
+  week52low*: float
+  movingavg50day*: float
+  movingavg200day*: float
+  priceearingratio*: float
+  priceearninggrowthratio*: float
+  pricesalesratio*: float
+  pricebookratio*: float
+  shortratio*: float"><wbr />Qf</a></li>
   <li><a class="reference" href="#Ts"
     title="Ts* = object
   dd*: seq[string]
@@ -1285,6 +1307,8 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="minusDays*(aDate: string; days: int): string"><wbr />minus<wbr />Days</a></li>
   <li><a class="reference" href="#getSymbol2,string,string,string"
     title="getSymbol2*(symb, startDate, endDate: string): Df"><wbr />get<wbr />Symbol2</a></li>
+  <li><a class="reference" href="#getSymbol3,string"
+    title="getSymbol3*(symb: string): Qf"><wbr />get<wbr />Symbol3</a></li>
   <li><a class="reference" href="#showHistData,Df,int"
     title="showHistData*(adf: Df; n: int)"><wbr />show<wbr />Hist<wbr />Data</a></li>
   <li><a class="reference" href="#showHistData,Df,string,string"
@@ -1453,6 +1477,32 @@ Nf type holds one portfolio with all relevant historic stocks data
   </pre></dt>
 <dd>
 Df type holds individual stocks history data and RunningStat for ohlcva columns even more items may be added like full company name etc in the future items are stock code, ohlcva, rc and rca .
+
+</dd>
+<dt id="Qf"><a name="Qf"></a><pre><span class="Identifier">Qf</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">price</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">change</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">volume</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">avgdailyvol</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">market</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">marketcap</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">bookvalue</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">ebitda</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">dividendpershare</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">dividendperyield</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">earningspershare</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">week52high</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">week52low</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">movingavg50day</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">movingavg200day</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">priceearingratio</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">priceearninggrowthratio</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">pricesalesratio</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">pricebookratio</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">shortratio</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+</pre></dt>
+<dd>
+Qf type holds additional stock data and statistics as currently available from yahoo 
 
 </dd>
 <dt id="Ts"><a name="Ts"></a><pre><span class="Identifier">Ts</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span>
@@ -1746,6 +1796,19 @@ interval procs returns time elapsed between two dates in secs,hours etc.
 <p>getSymbol2</p>
 <p>the work horse proc for getting yahoo data in csv format</p>
 <p>and then to parse into a Df object </p>
+
+
+</dd>
+<dt id="getSymbol3"><a name="getSymbol3,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getSymbol3</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">symb</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Qf</span></pre></dt>
+<dd>
+<p>getSymbol3</p>
+<p>additional data as provided by yahoo for a stock</p>
+<p>data returned is inside an Qf object with following fields and types</p>
+<p>the reason for string types in marketcap and ebitda is yahoo returning</p>
+<p>numbers shortened with B for billions etc.</p>
+<p>not all data may be available for stocks or even maybe incorrect.</p>
+<p>so use with care.</p>
+<blockquote><p>price*            : float change*           : float volume*           : float avgdailyvol*      : float market*           : string marketcap*        : string bookvalue*        : float ebitda*           : string dividendpershare* : float dividendperyield* : float earningspershare* : float week52high*       : float week52low*        : float movingavg50day*   : float movingavg200day*  : float priceearingratio* : float priceearninggrowthratio* : float pricesalesratio*  : float pricebookratio*   : float shortratio*       : float</p></blockquote>
 
 
 </dd>
@@ -2091,7 +2154,7 @@ msggb<pre class = "listing"><span class="Identifier">msggb</span><span class="Pu
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-07-14 21:11:28 UTC</small>
+        <small>Made with Nim. Generated: 2015-07-20 21:34:48 UTC</small>
       </div>
     </div>
   </div>
