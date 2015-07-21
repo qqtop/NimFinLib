@@ -1640,6 +1640,38 @@ proc showDfTable*(apfdata: Nf) =
    msgy() do : echo " NOTE : stdDevOpen and stdDevVol are not shown but available"
    decho(2)
 
+ 
+proc showQftable*(a:Qf) =
+     ## showQftable
+     ## 
+     ## shows all items of a Qf object
+     ## 
+
+     echo "{:<17} : {:>12}".fmt("Price",a.price)
+     echo "{:<17} : {:>12}".fmt("Change",a.change)
+     echo "{:<17} : {:>12}".fmt("Volume",a.volume)
+     echo "{:<17} : {:>12}".fmt("Avg.DailyVolume",a.avgdailyvol)
+     echo "{:<17} : {:>12}".fmt("Market",a.market)
+     echo "{:<17} : {:>12}".fmt("MarketCap",a.marketcap)
+     echo "{:<17} : {:>12}".fmt("BookValue",a.bookvalue)
+     echo "{:<17} : {:>12}".fmt("Ebitda",a.ebitda)
+     echo "{:<17} : {:>12}".fmt("DividendPerShare",a.dividendpershare)
+     echo "{:<17} : {:>12}".fmt("DividendPerYield",a.dividendperyield)
+     echo "{:<17} : {:>12}".fmt("EarningsPerShare",a.earningspershare)
+     echo "{:<17} : {:>12}".fmt("52 Week High",a.week52high)
+     echo "{:<17} : {:>12}".fmt("52 Week Low",a.week52low)
+     echo "{:<17} : {:>12}".fmt("50 Day Mov. Avg",a.movingavg50day)
+     echo "{:<17} : {:>12}".fmt("200 Day Mov. Avg",a.movingavg200day)
+     echo "{:<17} : {:>12}".fmt("P/E",a.priceearingratio)
+     echo "{:<17} : {:>12}".fmt("P/E Growth Ratio",a.priceearninggrowthratio)
+     echo "{:<17} : {:>12}".fmt("Price Sales Ratio",a.pricesalesratio)
+     echo "{:<17} : {:>12}".fmt("Price Book Ratio",a.pricebookratio)
+     echo "{:<17} : {:>12}".fmt("Price Short Ratio",a.shortratio)
+     decho(2)  
+
+
+
+
 
 # utility procs
 

@@ -375,19 +375,12 @@ echo ()
 
 var symb = "AAPL"
 var sx = getSymbol3(symb)
+decho(2)
+msgg() do : echo "Stock Code : ", symb
+echo aline
+showQftable(sx)
+decho(2)
 
-echo symb,"   Market            : ",sx.market
-echo symb,"   Price             : ",sx.price
-echo symb,"   Volume            : ",sx.volume
-echo symb,"   Avg Daily Volume  : ",sx.avgdailyvol
-echo symb,"   52 week low       : ",sx.week52low
-echo symb,"   52 week high      : ",sx.week52high
-echo symb,"   200 day mov. avg. : ",sx.movingavg200day
-echo symb,"   Dividend /  share : ",sx.dividendpershare
-echo symb,"   P/E Ratio         : ",sx.priceearingratio
-echo symb,"   Ebitda            : ",sx.ebitda
-echo symb,"   MarketCap         : ",sx.marketCap
-echo symb,"   Short ratio       : ",sx.shortratio
 
 echo ()
 msgy() do : echo "###############################################"
