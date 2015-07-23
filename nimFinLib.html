@@ -1416,12 +1416,14 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
 <p>Compiler    : nim 0.11.3</p>
 <p>Description : A basic library for financial calculations with Nim</p>
 <blockquote><p><p>Yahoo historical stock data</p>
+<p>Yahoo additional stock data</p>
 <p>Yahoo current stock quotes</p>
 <p>Yahoo forex rates</p>
 <p>Dataframe like structure for easy working with historical data and dataseries</p>
 <p>Returns calculations</p>
 <p>Ema calculation</p>
 <p>Date manipulations</p>
+<p>Data display procs</p>
 <p>Documention was created with : nim doc nimFinLib</p>
 </p></blockquote>
 <p>Project     : <a class="reference external" href="https://github.com/qqtop/NimFinLib">https://github.com/qqtop/NimFinLib</a></p>
@@ -1430,12 +1432,14 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
 <p>ToDo        : Ratios , Covariance , Correlation</p>
 <p>Programming : qqTop</p>
 <p>Contributors: reactorMonk</p>
-<p>Requires    : statistics.nim and random module available on nimble</p>
+<p>Requires    : strfmt,random modules and statistics.nim</p>
 <p>Notes       : it is assumed that terminal color is black background</p>
 <blockquote><p><p>and white text. Other color schemes may not show all output.</p>
 <p>For comprehensive tests and usage see nimFinT5.nim</p>
 </p></blockquote>
 <p>Installation: git clone <a class="reference external" href="https://github.com/qqtop/NimFinLib.git">https://github.com/qqtop/NimFinLib.git</a></p>
+<p>or</p>
+<p>nimble install nimFinLib</p>
 </p></blockquote>
 </p>
   <div class="section" id="6">
@@ -1810,7 +1814,27 @@ interval procs returns time elapsed between two dates in secs,hours etc.
 <p>numbers shortened with B for billions etc.</p>
 <p>not all data may be available for stocks or even maybe incorrect.</p>
 <p>so use with care.</p>
-<blockquote><p>price*            : float change*           : float volume*           : float avgdailyvol*      : float market*           : string marketcap*        : string bookvalue*        : float ebitda*           : string dividendpershare* : float dividendperyield* : float earningspershare* : float week52high*       : float week52low*        : float movingavg50day*   : float movingavg200day*  : float priceearingratio* : float priceearninggrowthratio* : float pricesalesratio*  : float pricebookratio*   : float shortratio*       : float</p></blockquote>
+<blockquote><p><p>price*            : float</p>
+<p>change*           : float</p>
+<p>volume*           : float</p>
+<p>avgdailyvol*      : float</p>
+<p>market*           : string</p>
+<p>marketcap*        : string</p>
+<p>bookvalue*        : float</p>
+<p>ebitda*           : string</p>
+<p>dividendpershare* : float</p>
+<p>dividendperyield* : float</p>
+<p>earningspershare* : float</p>
+<p>week52high*       : float</p>
+<p>week52low*        : float</p>
+<p>movingavg50day*   : float</p>
+<p>movingavg200day*  : float</p>
+<p>priceearingratio* : float</p>
+<p>priceearninggrowthratio* : float</p>
+<p>pricesalesratio*  : float</p>
+<p>pricebookratio*   : float</p>
+<p>shortratio*       : float</p>
+</p></blockquote>
 
 
 </dd>
@@ -2163,7 +2187,7 @@ msggb<pre class = "listing"><span class="Identifier">msggb</span><span class="Pu
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-07-21 10:55:11 UTC</small>
+        <small>Made with Nim. Generated: 2015-07-23 17:33:01 UTC</small>
       </div>
     </div>
   </div>

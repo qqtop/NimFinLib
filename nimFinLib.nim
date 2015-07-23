@@ -14,6 +14,8 @@
 ## Description : A basic library for financial calculations with Nim
 ##
 ##               Yahoo historical stock data
+##               
+##               Yahoo additional stock data
 ##
 ##               Yahoo current stock quotes
 ## 
@@ -26,6 +28,8 @@
 ##               Ema calculation
 ##
 ##               Date manipulations
+##               
+##               Data display procs
 ##
 ##
 ##               Documention was created with : nim doc nimFinLib
@@ -45,7 +49,7 @@
 ##
 ## Contributors: reactorMonk
 ##
-## Requires    : statistics.nim and random module available on nimble
+## Requires    : strfmt,random modules and statistics.nim 
 ##
 ## Notes       : it is assumed that terminal color is black background
 ##
@@ -55,6 +59,10 @@
 ##
 ## Installation: git clone https://github.com/qqtop/NimFinLib.git
 ## 
+## or
+## 
+## nimble install nimFinLib
+##
 ##
 
 
@@ -1114,24 +1122,43 @@ proc getSymbol3*(symb:string):Qf =
      ##  
      ## 
      ##     price*            : float
+     ##     
      ##     change*           : float
+     ##     
      ##     volume*           : float
+     ##     
      ##     avgdailyvol*      : float
+     ##     
      ##     market*           : string
+     ##     
      ##     marketcap*        : string
+     ##     
      ##     bookvalue*        : float
+     ##     
      ##     ebitda*           : string
+     ##     
      ##     dividendpershare* : float
+     ##     
      ##     dividendperyield* : float
+     ##     
      ##     earningspershare* : float
+     ##     
      ##     week52high*       : float
+     ##     
      ##     week52low*        : float
+     ##     
      ##     movingavg50day*   : float
+     ##     
      ##     movingavg200day*  : float
+     ##     
      ##     priceearingratio* : float
+     ##     
      ##     priceearninggrowthratio* : float
+     ##     
      ##     pricesalesratio*  : float
+     ##     
      ##     pricebookratio*   : float
+     ##     
      ##     shortratio*       : float
      ## 
 

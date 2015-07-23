@@ -544,11 +544,6 @@ when declared(libFinHk):
         # for another more automated example see nimFinT3.nim and nimFinT4.nim
 
 
-
-
-
-
-
 # That's it
 
 when isMainModule:
