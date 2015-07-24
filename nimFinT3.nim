@@ -20,9 +20,9 @@ msgy() do : echo "# Testing nimFinLib                  nimFinT3 #"
 msgy() do : echo "###############################################"
 echo ()
 
-var hkpool    = initPool()
-var master    = initPf()
-var hkportfolio = initNf()
+var hkpool      = initPool()
+var master      = initAccount()
+var hkportfolio = initPortfolio()
 #lets use 500 days of historic data
 var startDate = minusDays(getDateStr(),500)
 var endDate   = getDateStr()
@@ -47,7 +47,7 @@ for stocksdata in hkpool:
 master.pf.add(hkportfolio)
 
 # now we add a second portfolio of some HK stockcodes
-var bigMoney = initNf()
+var bigMoney = initPortfolio()
 bigMoney.nx = "bigMoneyPortfolio"
 
 #var bigMSymbols  = @["00386","00880","00005"]         # HKEX style
@@ -55,7 +55,7 @@ var bigMSymbolsY = @["0386.HK","0880.HK","0005.HK"]   # yahoo style
 
 
 for x in bigMSymbolsY:
-   var z:Df
+   var z: Stocks
    if x.endswith(".HK"):
       z = getSymbol2(x,startDate,endDate)
    else:
@@ -69,7 +69,7 @@ master.pf.add(bigMoney)
 
 for x in 0.. <master.pf.len:
       showQuoteTableHk(master.pf[x])
-      showDfTable(master.pf[x])
+      showStocksTable(master.pf[x])
 
 # so with these few lines of code we have a setup to any number of
 # portfolios for which we can show stats,quote,names and historic data

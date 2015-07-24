@@ -4,12 +4,12 @@ import nimFinLib,times
 
 
 decho(2)
-var z = initDf()
+var z = initStocks()
 var symb = "EWG"
 z = getsymbol2(symb,"2010-01-01",getDateStr())
 
 var days = 100
-hdx() do : echo "EMA-" & $days & " for " & symb 
+hdx() do : echo "EMA-" & $days & " for " & symb
 showEma(ema(z,days),5)
 
 hdx() do : echo "Historical Data for " & symb
@@ -27,7 +27,7 @@ decho(1)
 hdx() do : echo "Latest Forex"
 showCurrentForex(@["EURUSD","GBPEUR","EURCNY","AUDHKD"])
 
-decho(2)  
+decho(2)
 
-  
-quit 0   
+
+quit 0

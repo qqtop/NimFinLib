@@ -10,4 +10,4 @@ else:
               echo "Usage :"
               echo "example2  IBM+BP.L+AAPL"
               echo()
-quit 0              
+quit 0

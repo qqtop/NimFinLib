@@ -82,11 +82,11 @@ for symbx in indexes:
 echo()
 
 # setup a new account structure
-var account     = initPf()
-var portfolio   = initNf()
-var stockdata   = initDf()
+var account     = initAccount()
+var portfolio   = initPortfolio()
+var stockdata   = initStocks()
 
-# stockdata holds a Df object that has all historical data of a single stock
+# stockdata holds a Stocks object that has all historical data of a single stock
 # we can use the first stock in stockpool like so:
 # stockdata = stockpool[0]
 
@@ -103,7 +103,7 @@ account.pf.add(portfolio)
 # now all is set and data can be used
 echo ()
 msgy() do : echo "###############################################"
-msgy() do : echo "# Tests for Pf , Nf ,Df types                 #"
+msgy() do : echo "# Tests for Account , Portfolio ,Stocks types                 #"
 msgy() do : echo "###############################################"
 echo ()
 
@@ -245,7 +245,7 @@ showEma(ema22,5)
 
 echo ()
 msgy() do : echo "###############################################"
-msgy() do : echo "# Tests for statistics on Df type             #"
+msgy() do : echo "# Tests for statistics on Stocks type             #"
 msgy() do : echo "###############################################"
 echo ()
 
@@ -361,9 +361,8 @@ showCurrentStocks(account.pf[0])
 var idx : string = indexpool[0].stock
 showCurrentIndexes(idx)
 
-# here passing in our indexpool a  seq[Df] type
+# here passing in our indexpool a  seq[Stocks] type
 showCurrentIndexes(indexpool)
-
 
 
 
@@ -378,7 +377,7 @@ var sx = getSymbol3(symb)
 decho(2)
 msgg() do : echo "Stock Code : ", symb
 echo aline
-showQftable(sx)
+showStockdatatable(sx)
 decho(2)
 
 
@@ -528,7 +527,7 @@ when declared(libFinHk):
 
         # at this stage the historic data is ready to be used
         # create a portfolio named rpf and call it RandomTestPortfolio
-        var rpf = initNF()
+        var rpf = initPortfolio()
         # rpf.nx holds the relevant portfolio name
         rpf.nx = "RandomTestPortfolio"
         # rpf.dx holds the relevant historic data for all stocks
@@ -539,7 +538,7 @@ when declared(libFinHk):
                  rpf.dx.add(stocksdata)   # dx holds the historical data series
 
         showQuoteTableHk(rpf)
-        showDfTable(rpf)
+        showStocksTable(rpf)
 
         # for another more automated example see nimFinT3.nim and nimFinT4.nim
 

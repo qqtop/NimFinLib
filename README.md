@@ -55,7 +55,7 @@ showCurrentStocks("IBM+BP.L+0001.HK")
 decho(2)
 
 # get latest historic data for a stock
-var ibm = initDf()
+var ibm = initStocks()
 ibm = getsymbol2("IBM","2000-01-01",getDateStr())
 
 # show recent 5 historical data rows

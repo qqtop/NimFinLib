@@ -1182,13 +1182,13 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="initHKEX*(): seq[seq[string]]"><wbr />init<wbr />HKEX</a></li>
   <li><a class="reference" href="#getHKEXseq,seq[string],string"
     title="getHKEXseq*(stockslist: seq[string]; acode: string): int"><wbr />get<wbr />HKEXseq</a></li>
-  <li><a class="reference" href="#hkPfseq,Nf,seq[seq[string]]"
-    title="hkPfseq*(anf: Nf; hkexcodes: seq[seq[string]]): seq[int]"><wbr />hk<wbr />Pfseq</a></li>
-  <li><a class="reference" href="#showQuoteTableHk,Nf"
-    title="showQuoteTableHk*(apfData: Nf)"><wbr />show<wbr />Quote<wbr />Table<wbr />Hk</a></li>
+  <li><a class="reference" href="#hkPfseq,Portfolio,seq[seq[string]]"
+    title="hkPfseq*(anf: Portfolio; hkexcodes: seq[seq[string]]): seq[int]"><wbr />hk<wbr />Pfseq</a></li>
+  <li><a class="reference" href="#showQuoteTableHk,Portfolio"
+    title="showQuoteTableHk*(apfData: Portfolio)"><wbr />show<wbr />Quote<wbr />Table<wbr />Hk</a></li>
   <li><a class="reference" href="#hkRandomPortfolio,int,string,string"
     title="hkRandomPortfolio*(sz: int = 10; startdate: string = &quot;2014-01-01&quot;;
-                   enddate: string = getDateStr()): (Nf, seq[int])"><wbr />hk<wbr />Random<wbr />Portfolio</a></li>
+                   enddate: string = getDateStr()): (Portfolio, seq[int])"><wbr />hk<wbr />Random<wbr />Portfolio</a></li>
 
   </ul>
 </li>
@@ -1295,14 +1295,14 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
 
 
 </dd>
-<dt id="hkPfseq"><a name="hkPfseq,Nf,seq[seq[string]]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">hkPfseq</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">anf</span><span class="Other">:</span> <span class="Identifier">Nf</span><span class="Other">;</span> <span class="Identifier">hkexcodes</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span></pre></dt>
+<dt id="hkPfseq"><a name="hkPfseq,Portfolio,seq[seq[string]]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">hkPfseq</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">anf</span><span class="Other">:</span> <span class="Identifier">Portfolio</span><span class="Other">;</span> <span class="Identifier">hkexcodes</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span></pre></dt>
 <dd>
 <p>hkPfseq</p>
-<p>hkPfseq returns the index seq of stocks in a Nf objects dx Stocks </p>
+<p>hkPfseq returns the index seq of stocks in a Portfolio objects dx Stocks </p>
 
 
 </dd>
-<dt id="showQuoteTableHk"><a name="showQuoteTableHk,Nf"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showQuoteTableHk</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apfData</span><span class="Other">:</span> <span class="Identifier">Nf</span><span class="Other">)</span></pre></dt>
+<dt id="showQuoteTableHk"><a name="showQuoteTableHk,Portfolio"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showQuoteTableHk</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apfData</span><span class="Other">:</span> <span class="Identifier">Portfolio</span><span class="Other">)</span></pre></dt>
 <dd>
 <p>showQuoteTable</p>
 <p>a table with kurtosis, stdDev close ,ema22 , company name and latest quote from yahoo</p>
@@ -1311,12 +1311,12 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
 
 </dd>
 <dt id="hkRandomPortfolio"><a name="hkRandomPortfolio,int,string,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">hkRandomPortfolio</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">sz</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">10</span><span class="Other">;</span> <span class="Identifier">startdate</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;2014-01-01&quot;</span><span class="Other">;</span>
-                       <span class="Identifier">enddate</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Identifier">getDateStr</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">Nf</span><span class="Other">,</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+                       <span class="Identifier">enddate</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Identifier">getDateStr</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">Portfolio</span><span class="Other">,</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
 <dd>
 <p>hkRandomPf</p>
 <p>a fast automated random Portfolio generator</p>
 <p>just pass in number of stocks and optionally start and enddate</p>
-<p>the portfolio is also returned as Nf object for further use as desired</p>
+<p>the portfolio is also returned as Portfolio object for further use as desired</p>
 <p>for example use see nimFinT4.nim </p>
 
 
@@ -1331,7 +1331,7 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-07-23 17:33:01 UTC</small>
+        <small>Made with Nim. Generated: 2015-07-24 23:03:28 UTC</small>
       </div>
     </div>
   </div>

@@ -37,8 +37,6 @@
 ##               For comprehensive tests and usage see nimFinT3.nim & nimFinT4
 ##
 ##
-
-
 import os,strutils,parseutils,sequtils,httpclient,strfmt
 import terminal,times,tables,random
 import parsecsv,streams,algorithm,math,unicode
@@ -278,10 +276,10 @@ proc getHKEXseq*(stockslist:seq[string],acode:string):int =
         inc c
 
 
-proc hkPfseq*(anf:Nf;hkexcodes:seq[seq[string]]):seq[int]=
+proc hkPfseq*(anf: Portfolio;hkexcodes:seq[seq[string]]):seq[int]=
   ## hkPfseq
   ##
-  ## hkPfseq returns the index seq of stocks in a Nf objects dx Stocks
+  ## hkPfseq returns the index seq of stocks in a Portfolio objects dx Stocks
   ##
   var pfseq = newSeq[int]()
   for x in 0.. <anf.dx.len:
@@ -289,7 +287,7 @@ proc hkPfseq*(anf:Nf;hkexcodes:seq[seq[string]]):seq[int]=
   result = pfseq
 
 
-proc showQuoteTableHk*(apfData:Nf) =
+proc showQuoteTableHk*(apfData: Portfolio) =
      ## showQuoteTable
      ##
      ## a table with kurtosis, stdDev close ,ema22 , company name and latest quote from yahoo
@@ -328,14 +326,14 @@ proc showQuoteTableHk*(apfData:Nf) =
 
 
 
-proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:string = getDateStr()):(Nf, seq[int]) =
+proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:string = getDateStr()):(Portfolio, seq[int]) =
   ## hkRandomPf
   ##
   ## a fast automated random Portfolio generator
   ##
   ## just pass in number of stocks and optionally start and enddate
   ##
-  ## the portfolio is also returned as Nf object for further use as desired
+  ## the portfolio is also returned as Portfolio object for further use as desired
   ##
   ## for example use see nimFinT4.nim
   ##
@@ -354,7 +352,7 @@ proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:stri
       discard rndpf.haskeyorput(z,$(hkexcodes[0][z]))
 
   decho(2)
-  var pf1 = initNf()
+  var pf1 = initPortfolio()
   pf1.nx = "RandomPortfolio - HK"
   var pfpool = initPool()
   var pfseq = newSeq[int]()

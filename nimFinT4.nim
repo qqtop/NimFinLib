@@ -24,7 +24,7 @@ decho(2)
 var myPf = somePf[0]
 msgg() do: echo "Portfolio Name    : ",myPf.nx
 showQuoteTableHk(myPf)
-showDfTable(myPf)
+showStocksTable(myPf)
 
 when isMainModule:
   # show time elapsed for this run
