@@ -1162,15 +1162,15 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
 <li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#Pf"
-    title="Pf* = object
-  pf*: seq[Nf]                 ## pf holds all Nf type portfolios for an account"><wbr />Pf</a></li>
-  <li><a class="reference" href="#Nf"
-    title="Nf* = object
+      <li><a class="reference" href="#Account"
+    title="Account* = object
+  pf*: seq[Portfolio]          ## pf holds all Portfolio type portfolios for an account"><wbr />Account</a></li>
+  <li><a class="reference" href="#Portfolio"
+    title="Portfolio* = object
   nx*: string                  ## nx  holds portfolio name  e.g. MyGetRichPortfolio
-  dx*: seq[Df]                 ## dx  holds all stocks with historical data"><wbr />Nf</a></li>
-  <li><a class="reference" href="#Df"
-    title="Df* = object of Nf
+  dx*: seq[Stocks]             ## dx  holds all stocks with historical data"><wbr />Portfolio</a></li>
+  <li><a class="reference" href="#Stocks"
+    title="Stocks* = object of Portfolio
   stock*: string               ## yahoo style stock code
   date*: seq[string]
   open*: seq[float]
@@ -1184,9 +1184,9 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   rl*: seq[Runningstat]        ## RunningStat for low price
   rc*: seq[Runningstat]        ## RunningStat for close price
   rv*: seq[Runningstat]        ## RunningStat for volume price
-  rca*: seq[Runningstat]       ## RunningStat for adjusted close price"><wbr />Df</a></li>
-  <li><a class="reference" href="#Qf"
-    title="Qf* = object
+  rca*: seq[Runningstat]       ## RunningStat for adjusted close price"><wbr />Stocks</a></li>
+  <li><a class="reference" href="#Stockdata"
+    title="Stockdata* = object
   price*: float
   change*: float
   volume*: float
@@ -1206,15 +1206,15 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   priceearninggrowthratio*: float
   pricesalesratio*: float
   pricebookratio*: float
-  shortratio*: float"><wbr />Qf</a></li>
+  shortratio*: float"><wbr />Stockdata</a></li>
   <li><a class="reference" href="#Ts"
     title="Ts* = object
   dd*: seq[string]
   tx*: seq[float]"><wbr />Ts</a></li>
-  <li><a class="reference" href="#Cf"
-    title="Cf* = object
+  <li><a class="reference" href="#Currencies"
+    title="Currencies* = object
   cu*: seq[string]
-  ra*: seq[float]"><wbr />Cf</a></li>
+  ra*: seq[float]"><wbr />Currencies</a></li>
 
   </ul>
 </li>
@@ -1232,7 +1232,7 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   <a class="reference reference-toplevel" href="#9" id="59">Lets</a>
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#NIMFINLIBVERSION"
-    title="NIMFINLIBVERSION* = &quot;0.2.1&quot;"><wbr />NIMFINLIBVERSION</a></li>
+    title="NIMFINLIBVERSION* = &quot;0.2.2&quot;"><wbr />NIMFINLIBVERSION</a></li>
 
   </ul>
 </li>
@@ -1243,34 +1243,34 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="timeSeries*[T](self: T; ty: string): Ts"><wbr />time<wbr />Series</a></li>
   <li><a class="reference" href="#showTimeSeries,Ts,string,string,int"
     title="showTimeSeries*(ats: Ts; header, ty: string; N: int)"><wbr />show<wbr />Time<wbr />Series</a></li>
-  <li><a class="reference" href="#initPf,"
-    title="initPf*(): PF"><wbr />init<wbr />Pf</a></li>
-  <li><a class="reference" href="#initNf,"
-    title="initNf*(): Nf"><wbr />init<wbr />Nf</a></li>
-  <li><a class="reference" href="#initDf,"
-    title="initDf*(): Df"><wbr />init<wbr />Df</a></li>
-  <li><a class="reference" href="#initCf,"
-    title="initCf*(): Cf"><wbr />init<wbr />Cf</a></li>
+  <li><a class="reference" href="#initAccount,"
+    title="initAccount*(): Account"><wbr />init<wbr />Account</a></li>
+  <li><a class="reference" href="#initPortfolio,"
+    title="initPortfolio*(): Portfolio"><wbr />init<wbr />Portfolio</a></li>
+  <li><a class="reference" href="#initStocks,"
+    title="initStocks*(): Stocks"><wbr />init<wbr />Stocks</a></li>
+  <li><a class="reference" href="#initCurrencies,"
+    title="initCurrencies*(): Currencies"><wbr />init<wbr />Currencies</a></li>
   <li><a class="reference" href="#initTs,"
     title="initTs*(): Ts"><wbr />init<wbr />Ts</a></li>
   <li><a class="reference" href="#initPool,"
-    title="initPool*(): seq[Df]"><wbr />init<wbr />Pool</a></li>
+    title="initPool*(): seq[Stocks]"><wbr />init<wbr />Pool</a></li>
   <li><a class="reference" href="#getTerminalWidth,"
     title="getTerminalWidth*(): int"><wbr />get<wbr />Terminal<wbr />Width</a></li>
   <li><a class="reference" href="#decho,int"
     title="decho*(z: int)"><wbr />decho</a></li>
   <li><a class="reference" href="#getCurrentQuote,string"
     title="getCurrentQuote*(stcks: string): string"><wbr />get<wbr />Current<wbr />Quote</a></li>
-  <li><a class="reference" href="#buildStockString,Nf"
-    title="buildStockString*(apf: Nf): string"><wbr />build<wbr />Stock<wbr />String</a></li>
-  <li><a class="reference" href="#buildStockString,seq[Df]"
-    title="buildStockString*(adf: seq[Df]): string"><wbr />build<wbr />Stock<wbr />String</a></li>
+  <li><a class="reference" href="#buildStockString,Portfolio"
+    title="buildStockString*(apf: Portfolio): string"><wbr />build<wbr />Stock<wbr />String</a></li>
+  <li><a class="reference" href="#buildStockString,seq[Stocks]"
+    title="buildStockString*(adf: seq[Stocks]): string"><wbr />build<wbr />Stock<wbr />String</a></li>
   <li><a class="reference" href="#showCurrentIndexes,string"
     title="showCurrentIndexes*(idxs: string)"><wbr />show<wbr />Current<wbr />Indexes</a></li>
-  <li><a class="reference" href="#showCurrentIndexes,seq[Df]"
-    title="showCurrentIndexes*(adf: seq[Df])"><wbr />show<wbr />Current<wbr />Indexes</a></li>
-  <li><a class="reference" href="#showCurrentStocks,Nf"
-    title="showCurrentStocks*(apf: Nf)"><wbr />show<wbr />Current<wbr />Stocks</a></li>
+  <li><a class="reference" href="#showCurrentIndexes,seq[Stocks]"
+    title="showCurrentIndexes*(adf: seq[Stocks])"><wbr />show<wbr />Current<wbr />Indexes</a></li>
+  <li><a class="reference" href="#showCurrentStocks,Portfolio"
+    title="showCurrentStocks*(apf: Portfolio)"><wbr />show<wbr />Current<wbr />Stocks</a></li>
   <li><a class="reference" href="#showCurrentStocks,string"
     title="showCurrentStocks*(stcks: string)"><wbr />show<wbr />Current<wbr />Stocks</a></li>
   <li><a class="reference" href="#day,string"
@@ -1306,13 +1306,13 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   <li><a class="reference" href="#minusDays,string,int"
     title="minusDays*(aDate: string; days: int): string"><wbr />minus<wbr />Days</a></li>
   <li><a class="reference" href="#getSymbol2,string,string,string"
-    title="getSymbol2*(symb, startDate, endDate: string): Df"><wbr />get<wbr />Symbol2</a></li>
+    title="getSymbol2*(symb, startDate, endDate: string): Stocks"><wbr />get<wbr />Symbol2</a></li>
   <li><a class="reference" href="#getSymbol3,string"
-    title="getSymbol3*(symb: string): Qf"><wbr />get<wbr />Symbol3</a></li>
-  <li><a class="reference" href="#showHistData,Df,int"
-    title="showHistData*(adf: Df; n: int)"><wbr />show<wbr />Hist<wbr />Data</a></li>
-  <li><a class="reference" href="#showHistData,Df,string,string"
-    title="showHistData*(adf: Df; s: string; e: string)"><wbr />show<wbr />Hist<wbr />Data</a></li>
+    title="getSymbol3*(symb: string): Stockdata"><wbr />get<wbr />Symbol3</a></li>
+  <li><a class="reference" href="#showHistData,Stocks,int"
+    title="showHistData*(adf: Stocks; n: int)"><wbr />show<wbr />Hist<wbr />Data</a></li>
+  <li><a class="reference" href="#showHistData,Stocks,string,string"
+    title="showHistData*(adf: Stocks; s: string; e: string)"><wbr />show<wbr />Hist<wbr />Data</a></li>
   <li><a class="reference" href="#last,seq[T]"
     title="last*[T](self: seq[T]): T"><wbr />last</a></li>
   <li><a class="reference" href="#first,seq[T]"
@@ -1325,32 +1325,32 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="lagger*[T](self: T; days: int): T"><wbr />lagger</a></li>
   <li><a class="reference" href="#dailyReturns,seq[float]"
     title="dailyReturns*(self: seq[float]): seq"><wbr />daily<wbr />Returns</a></li>
-  <li><a class="reference" href="#showDailyReturnsCl,Df,int"
-    title="showDailyReturnsCl*(self: Df; N: int)"><wbr />show<wbr />Daily<wbr />Returns<wbr />Cl</a></li>
-  <li><a class="reference" href="#showDailyReturnsAdCl,Df,int"
-    title="showDailyReturnsAdCl*(self: Df; N: int)"><wbr />show<wbr />Daily<wbr />Returns<wbr />Ad<wbr />Cl</a></li>
-  <li><a class="reference" href="#sumDailyReturnsCl,Df"
-    title="sumDailyReturnsCl*(self: Df): float"><wbr />sum<wbr />Daily<wbr />Returns<wbr />Cl</a></li>
-  <li><a class="reference" href="#sumDailyReturnsAdCl,Df"
-    title="sumDailyReturnsAdCl*(self: Df): float"><wbr />sum<wbr />Daily<wbr />Returns<wbr />Ad<wbr />Cl</a></li>
+  <li><a class="reference" href="#showDailyReturnsCl,Stocks,int"
+    title="showDailyReturnsCl*(self: Stocks; N: int)"><wbr />show<wbr />Daily<wbr />Returns<wbr />Cl</a></li>
+  <li><a class="reference" href="#showDailyReturnsAdCl,Stocks,int"
+    title="showDailyReturnsAdCl*(self: Stocks; N: int)"><wbr />show<wbr />Daily<wbr />Returns<wbr />Ad<wbr />Cl</a></li>
+  <li><a class="reference" href="#sumDailyReturnsCl,Stocks"
+    title="sumDailyReturnsCl*(self: Stocks): float"><wbr />sum<wbr />Daily<wbr />Returns<wbr />Cl</a></li>
+  <li><a class="reference" href="#sumDailyReturnsAdCl,Stocks"
+    title="sumDailyReturnsAdCl*(self: Stocks): float"><wbr />sum<wbr />Daily<wbr />Returns<wbr />Ad<wbr />Cl</a></li>
   <li><a class="reference" href="#statistics,Runningstat"
     title="statistics*(x: Runningstat)"><wbr />statistics</a></li>
-  <li><a class="reference" href="#showStatistics,Df"
-    title="showStatistics*(z: Df)"><wbr />show<wbr />Statistics</a></li>
-  <li><a class="reference" href="#showStatisticsT,Df"
-    title="showStatisticsT*(z: Df)"><wbr />show<wbr />Statistics<wbr />T</a></li>
-  <li><a class="reference" href="#ema,Df,int"
-    title="ema*(dx: Df; N: int): Ts"><wbr />ema</a></li>
+  <li><a class="reference" href="#showStatistics,Stocks"
+    title="showStatistics*(z: Stocks)"><wbr />show<wbr />Statistics</a></li>
+  <li><a class="reference" href="#showStatisticsT,Stocks"
+    title="showStatisticsT*(z: Stocks)"><wbr />show<wbr />Statistics<wbr />T</a></li>
+  <li><a class="reference" href="#ema,Stocks,int"
+    title="ema*(dx: Stocks; N: int): Ts"><wbr />ema</a></li>
   <li><a class="reference" href="#showEma,Ts,int"
     title="showEma*(emx: Ts; N: int)"><wbr />show<wbr />Ema</a></li>
   <li><a class="reference" href="#getCurrentForex,seq[string]"
-    title="getCurrentForex*(curs: seq[string]): Cf"><wbr />get<wbr />Current<wbr />Forex</a></li>
+    title="getCurrentForex*(curs: seq[string]): Currencies"><wbr />get<wbr />Current<wbr />Forex</a></li>
   <li><a class="reference" href="#showCurrentForex,seq[string]"
     title="showCurrentForex*(curs: seq[string])"><wbr />show<wbr />Current<wbr />Forex</a></li>
-  <li><a class="reference" href="#showDfTable,Nf"
-    title="showDfTable*(apfdata: Nf)"><wbr />show<wbr />Df<wbr />Table</a></li>
-  <li><a class="reference" href="#showQftable,Qf"
-    title="showQftable*(a: Qf)"><wbr />show<wbr />Qftable</a></li>
+  <li><a class="reference" href="#showStocksTable,Portfolio"
+    title="showStocksTable*(apfdata: Portfolio)"><wbr />show<wbr />Stocks<wbr />Table</a></li>
+  <li><a class="reference" href="#showStockdataTable,Stockdata"
+    title="showStockdataTable*(a: Stockdata)"><wbr />show<wbr />Stockdata<wbr />Table</a></li>
   <li><a class="reference" href="#presentValue,T,T,int,int"
     title="presentValue*[T](FV: T; r: T; m: int; t: int): float"><wbr />present<wbr />Value</a></li>
   <li><a class="reference" href="#presentValue,float,float,float,float"
@@ -1450,22 +1450,22 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
 <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
-<dt id="Pf"><a name="Pf"></a><pre><span class="Identifier">Pf</span><span class="Operator">*</span> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">pf</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Nf</span><span class="Other">]</span>                 <span class="Comment">## pf holds all Nf type portfolios for an account</span>
+<dt id="Account"><a name="Account"></a><pre><span class="Identifier">Account</span><span class="Operator">*</span> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">pf</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Portfolio</span><span class="Other">]</span>          <span class="Comment">## pf holds all Portfolio type portfolios for an account</span>
   </pre></dt>
 <dd>
-Pf type holds all portfolios similar to a master account portfolios are Nf objects
+Account type holds all portfolios similar to a master account portfolios are Portfolio objects
 
 </dd>
-<dt id="Nf"><a name="Nf"></a><pre><span class="Identifier">Nf</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span>
+<dt id="Portfolio"><a name="Portfolio"></a><pre><span class="Identifier">Portfolio</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span>
   <span class="Identifier">nx</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>                  <span class="Comment">## nx  holds portfolio name  e.g. MyGetRichPortfolio</span>
-  <span class="Identifier">dx</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Df</span><span class="Other">]</span>                 <span class="Comment">## dx  holds all stocks with historical data</span>
+  <span class="Identifier">dx</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Stocks</span><span class="Other">]</span>             <span class="Comment">## dx  holds all stocks with historical data</span>
   </pre></dt>
 <dd>
-Nf type holds one portfolio with all relevant historic stocks data
+Portfolio type holds one portfolio with all relevant historic stocks data
 
 </dd>
-<dt id="Df"><a name="Df"></a><pre><span class="Identifier">Df</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Nf</span>
+<dt id="Stocks"><a name="Stocks"></a><pre><span class="Identifier">Stocks</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Portfolio</span>
   <span class="Identifier">stock</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>               <span class="Comment">## yahoo style stock code</span>
   <span class="Identifier">date</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
   <span class="Identifier">open</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">float</span><span class="Other">]</span>
@@ -1482,10 +1482,10 @@ Nf type holds one portfolio with all relevant historic stocks data
   <span class="Identifier">rca</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Runningstat</span><span class="Other">]</span>       <span class="Comment">## RunningStat for adjusted close price</span>
   </pre></dt>
 <dd>
-Df type holds individual stocks history data and RunningStat for ohlcva columns even more items may be added like full company name etc in the future items are stock code, ohlcva, rc and rca .
+Stocks type holds individual stocks history data and RunningStat for ohlcva columns even more items may be added like full company name etc in the future items are stock code, ohlcva, rc and rca .
 
 </dd>
-<dt id="Qf"><a name="Qf"></a><pre><span class="Identifier">Qf</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span>
+<dt id="Stockdata"><a name="Stockdata"></a><pre><span class="Identifier">Stockdata</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span>
   <span class="Identifier">price</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
   <span class="Identifier">change</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
   <span class="Identifier">volume</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
@@ -1508,7 +1508,7 @@ Df type holds individual stocks history data and RunningStat for ohlcva columns 
   <span class="Identifier">shortratio</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
 </pre></dt>
 <dd>
-Qf type holds additional stock data and statistics as currently available from yahoo 
+Stockdata type holds additional stock data and statistics as currently available from yahoo 
 
 </dd>
 <dt id="Ts"><a name="Ts"></a><pre><span class="Identifier">Ts</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span>
@@ -1519,12 +1519,12 @@ Qf type holds additional stock data and statistics as currently available from y
 Ts type is a simple timeseries object which can hold one column of any OHLCVA data
 
 </dd>
-<dt id="Cf"><a name="Cf"></a><pre><span class="Identifier">Cf</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span>
+<dt id="Currencies"><a name="Currencies"></a><pre><span class="Identifier">Currencies</span><span class="Operator">*</span> <span class="Other">{.</span><span class="Identifier">inheritable</span><span class="Other">.}</span> <span class="Other">=</span> <span class="Keyword">object</span>
   <span class="Identifier">cu</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
   <span class="Identifier">ra</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">float</span><span class="Other">]</span>
 </pre></dt>
 <dd>
-Cf type is a simple object to hold current currency data
+Currencies type is a simple object to hold current currency data
 
 </dd>
 
@@ -1547,7 +1547,7 @@ Cf type is a simple object to hold current currency data
 <div class="section" id="9">
 <h1><a class="toc-backref" href="#9">Lets</a></h1>
 <dl class="item">
-<dt id="NIMFINLIBVERSION"><a name="NIMFINLIBVERSION"></a><pre><span class="Identifier">NIMFINLIBVERSION</span><span class="Operator">*</span> <span class="Other">=</span> <span class="StringLit">&quot;0.2.1&quot;</span></pre></dt>
+<dt id="NIMFINLIBVERSION"><a name="NIMFINLIBVERSION"></a><pre><span class="Identifier">NIMFINLIBVERSION</span><span class="Operator">*</span> <span class="Other">=</span> <span class="StringLit">&quot;0.2.2&quot;</span></pre></dt>
 <dd>
 
 
@@ -1559,9 +1559,9 @@ Cf type is a simple object to hold current currency data
 <dl class="item">
 <dt id="timeSeries"><a name="timeSeries,T,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">timeSeries</span><span class="Operator">*</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">ty</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Ts</span></pre></dt>
 <dd>
-<p>timeseries returns a Ts type date and one data column based on ty selection input usually is a Df object and a string , if a string is in ohlcva the relevant series will be extracted from the Df object</p>
+<p>timeseries returns a Ts type date and one data column based on ty selection input usually is a Stocks object and a string , if a string is in ohlcva the relevant series will be extracted from the Stocks object</p>
 <p>usage exmple :</p>
-<pre class = "listing"><span class="Identifier">timeseries</span><span class="Punctuation">(</span><span class="Identifier">myDfObject</span><span class="Punctuation">,</span><span class="StringLit">&quot;o&quot;</span><span class="Punctuation">)</span></pre><p>this would return dates in dd and open prices in ts </p>
+<pre class = "listing"><span class="Identifier">timeseries</span><span class="Punctuation">(</span><span class="Identifier">myStocksObject</span><span class="Punctuation">,</span><span class="StringLit">&quot;o&quot;</span><span class="Punctuation">)</span></pre><p>this would return dates in dd and open prices in ts </p>
 
 
 </dd>
@@ -1569,7 +1569,7 @@ Cf type is a simple object to hold current currency data
 <dd>
 showTimeseries takes a Ts object as input as well as a header string for the data column , a string which can be one of head,tail,all and N for number of rows to display usage :<pre class = "listing"><span class="Identifier">showTimeseries</span><span class="Punctuation">(</span><span class="Identifier">myTimeseries</span><span class="Punctuation">,</span><span class="Identifier">myHeader</span><span class="Punctuation">,</span><span class="StringLit">&quot;head|tail|all&quot;</span><span class="Punctuation">,</span><span class="Identifier">rows</span><span class="Punctuation">)</span></pre><p>Example</p>
 <pre class = "listing"><span class="Comment"># show adj. close price , 5 rows head and tail 372 days apart</span>
-<span class="Keyword">var</span> <span class="Identifier">myD</span> <span class="Operator">=</span><span class="Identifier">initDf</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+<span class="Keyword">var</span> <span class="Identifier">myD</span> <span class="Operator">=</span><span class="Identifier">initStocks</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
 <span class="Identifier">myD</span> <span class="Operator">=</span> <span class="Identifier">getSymbol2</span><span class="Punctuation">(</span><span class="StringLit">&quot;AAPL&quot;</span><span class="Punctuation">,</span><span class="Identifier">minusdays</span><span class="Punctuation">(</span><span class="Identifier">getDateStr</span><span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">,</span><span class="DecNumber">372</span><span class="Punctuation">)</span><span class="Punctuation">,</span><span class="Identifier">getDateStr</span><span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">)</span>
 <span class="Keyword">var</span> <span class="Identifier">mydT</span> <span class="Operator">=</span> <span class="Identifier">timeseries</span><span class="Punctuation">(</span><span class="Identifier">myD</span><span class="Punctuation">,</span><span class="StringLit">&quot;a&quot;</span><span class="Punctuation">)</span> <span class="Comment"># adjusted close</span>
 <span class="Identifier">echo</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
@@ -1577,32 +1577,32 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 <span class="Identifier">showTimeSeries</span><span class="Punctuation">(</span><span class="Identifier">mydT</span><span class="Punctuation">,</span><span class="StringLit">&quot;AdjClose&quot;</span><span class="Punctuation">,</span><span class="StringLit">&quot;tail&quot;</span><span class="Punctuation">,</span><span class="DecNumber">5</span><span class="Punctuation">)</span></pre>
 
 </dd>
-<dt id="initPf"><a name="initPf,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initPf</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">PF</span></pre></dt>
+<dt id="initAccount"><a name="initAccount,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initAccount</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Account</span></pre></dt>
 <dd>
-<p>initPf</p>
+<p>initAccount</p>
 <p>init a new empty account object</p>
-<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">myAccount</span> <span class="Operator">=</span> <span class="Identifier">initPf</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
+<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">myAccount</span> <span class="Operator">=</span> <span class="Identifier">initAccount</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 
 </dd>
-<dt id="initNf"><a name="initNf,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initNf</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Nf</span></pre></dt>
+<dt id="initPortfolio"><a name="initPortfolio,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initPortfolio</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Portfolio</span></pre></dt>
 <dd>
-<p>initNf</p>
+<p>initPortfolio</p>
 <p>init a new empty portfolio object</p>
-<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">myETFportfolio</span> <span class="Operator">=</span> <span class="Identifier">initNf</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
+<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">myETFportfolio</span> <span class="Operator">=</span> <span class="Identifier">initPortfolio</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 
 </dd>
-<dt id="initDf"><a name="initDf,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initDf</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Df</span></pre></dt>
+<dt id="initStocks"><a name="initStocks,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initStocks</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Stocks</span></pre></dt>
 <dd>
-<p>initDf</p>
+<p>initStocks</p>
 <p>init stock data object</p>
-<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">mystockData</span> <span class="Operator">=</span> <span class="Identifier">initDf</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
+<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">mystockData</span> <span class="Operator">=</span> <span class="Identifier">initStocks</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 
 </dd>
-<dt id="initCf"><a name="initCf,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initCf</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Cf</span></pre></dt>
+<dt id="initCurrencies"><a name="initCurrencies,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initCurrencies</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Currencies</span></pre></dt>
 <dd>
-<p>initCf</p>
-<p>init a Cf object to hold basic forex data</p>
-<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">myForex</span> <span class="Operator">=</span> <span class="Identifier">initCf</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
+<p>initCurrencies</p>
+<p>init a Currencies object to hold basic forex data</p>
+<pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">myForex</span> <span class="Operator">=</span> <span class="Identifier">initCurrencies</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 
 </dd>
 <dt id="initTs"><a name="initTs,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initTs</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Ts</span></pre></dt>
@@ -1612,10 +1612,10 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 
 
 </dd>
-<dt id="initPool"><a name="initPool,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initPool</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Df</span><span class="Other">]</span></pre></dt>
+<dt id="initPool"><a name="initPool,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initPool</span><span class="Operator">*</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Stocks</span><span class="Other">]</span></pre></dt>
 <dd>
 <p>initPool</p>
-<p>init pools , which are sequences of Df objects used in portfolio building</p>
+<p>init pools , which are sequences of Stocks objects used in portfolio building</p>
 <pre class = "listing"><span class="Keyword">var</span> <span class="Identifier">mystockPool</span> <span class="Operator">=</span> <span class="Identifier">initPool</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 
 </dd>
@@ -1647,17 +1647,17 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 
 
 </dd>
-<dt id="buildStockString"><a name="buildStockString,Nf"></a><pre><span class="Keyword">proc</span> <span class="Identifier">buildStockString</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apf</span><span class="Other">:</span> <span class="Identifier">Nf</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dt id="buildStockString"><a name="buildStockString,Portfolio"></a><pre><span class="Keyword">proc</span> <span class="Identifier">buildStockString</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apf</span><span class="Other">:</span> <span class="Identifier">Portfolio</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
-<p>buildStockString</p>
-<p>Produce a string of one or more stock codes coming from a Nf object</p>
+<p>buildStocksString</p>
+<p>Produce a string of one or more stock codes coming from a Portfolio object</p>
 
 
 </dd>
-<dt id="buildStockString"><a name="buildStockString,seq[Df]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">buildStockString</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adf</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Df</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dt id="buildStockString"><a name="buildStockString,seq[Stocks]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">buildStockString</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adf</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Stocks</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
-<p>buildStockString</p>
-<p>Produce a string of one or more stock codes coming from a pool Df object</p>
+<p>buildStocksString</p>
+<p>Produce a string of one or more stock codes coming from a pool Stocks object</p>
 
 
 </dd>
@@ -1668,18 +1668,18 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 
 
 </dd>
-<dt id="showCurrentIndexes"><a name="showCurrentIndexes,seq[Df]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showCurrentIndexes</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adf</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Df</span><span class="Other">]</span><span class="Other">)</span> <span class="Other">{.</span><span class="Identifier">discardable</span><span class="Other">.}</span></pre></dt>
+<dt id="showCurrentIndexes"><a name="showCurrentIndexes,seq[Stocks]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showCurrentIndexes</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adf</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Stocks</span><span class="Other">]</span><span class="Other">)</span> <span class="Other">{.</span><span class="Identifier">discardable</span><span class="Other">.}</span></pre></dt>
 <dd>
 <p>showCurrentIndexes</p>
 <p>callable display routine for currentIndexes with a pool object passed in </p>
 
 
 </dd>
-<dt id="showCurrentStocks"><a name="showCurrentStocks,Nf"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showCurrentStocks</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apf</span><span class="Other">:</span> <span class="Identifier">Nf</span><span class="Other">)</span> <span class="Other">{.</span><span class="Identifier">discardable</span><span class="Other">.}</span></pre></dt>
+<dt id="showCurrentStocks"><a name="showCurrentStocks,Portfolio"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showCurrentStocks</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apf</span><span class="Other">:</span> <span class="Identifier">Portfolio</span><span class="Other">)</span> <span class="Other">{.</span><span class="Identifier">discardable</span><span class="Other">.}</span></pre></dt>
 <dd>
 <p>showCurrentStocks</p>
-<p>callable display routine for currentStocks with Nf portfolio object passed in</p>
-<pre class = "listing"><span class="Identifier">showCurrentStocks</span><span class="Punctuation">(</span><span class="Identifier">myAccount</span><span class="Operator">.</span><span class="Identifier">Portfolio</span><span class="Punctuation">[</span><span class="DecNumber">0</span><span class="Punctuation">]</span><span class="Punctuation">)</span></pre><p>This means get all stock codes of the first portfolio in myAccount</p>
+<p>callable display routine for currentStocks with Portfolio object passed in</p>
+<pre class = "listing"><span class="Identifier">showCurrentStocks</span><span class="Punctuation">(</span><span class="Identifier">myAccount</span><span class="Operator">.</span><span class="Identifier">pf</span><span class="Punctuation">[</span><span class="DecNumber">0</span><span class="Punctuation">]</span><span class="Punctuation">)</span></pre><p>This means get all stock codes of the first portfolio in myAccount</p>
 <p>Note : Yahoo servers maybe down sometimes which will make this procs fail.</p>
 <p>Just wait a bit and try again. Stay calm ! Do not panic !</p>
 <p>for full example see nimFinT5.nim </p>
@@ -1797,19 +1797,19 @@ interval procs returns time elapsed between two dates in secs,hours etc.
 
 
 </dd>
-<dt id="getSymbol2"><a name="getSymbol2,string,string,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getSymbol2</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">symb</span><span class="Other">,</span> <span class="Identifier">startDate</span><span class="Other">,</span> <span class="Identifier">endDate</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Df</span></pre></dt>
+<dt id="getSymbol2"><a name="getSymbol2,string,string,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getSymbol2</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">symb</span><span class="Other">,</span> <span class="Identifier">startDate</span><span class="Other">,</span> <span class="Identifier">endDate</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Stocks</span></pre></dt>
 <dd>
 <p>getSymbol2</p>
 <p>the work horse proc for getting yahoo data in csv format</p>
-<p>and then to parse into a Df object </p>
+<p>and then to parse into a Stocks object </p>
 
 
 </dd>
-<dt id="getSymbol3"><a name="getSymbol3,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getSymbol3</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">symb</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Qf</span></pre></dt>
+<dt id="getSymbol3"><a name="getSymbol3,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getSymbol3</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">symb</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Stockdata</span></pre></dt>
 <dd>
 <p>getSymbol3</p>
 <p>additional data as provided by yahoo for a stock</p>
-<p>data returned is inside an Qf object with following fields and types</p>
+<p>data returned is inside an Stockdata object with following fields and types</p>
 <p>the reason for string types in marketcap and ebitda is yahoo returning</p>
 <p>numbers shortened with B for billions etc.</p>
 <p>not all data may be available for stocks or even maybe incorrect.</p>
@@ -1838,14 +1838,14 @@ interval procs returns time elapsed between two dates in secs,hours etc.
 
 
 </dd>
-<dt id="showHistData"><a name="showHistData,Df,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showHistData</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adf</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">;</span> <span class="Identifier">n</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span></pre></dt>
+<dt id="showHistData"><a name="showHistData,Stocks,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showHistData</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adf</span><span class="Other">:</span> <span class="Identifier">Stocks</span><span class="Other">;</span> <span class="Identifier">n</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span></pre></dt>
 <dd>
 <p>showhistData</p>
 <p>Show n recent rows historical stock data</p>
 
 
 </dd>
-<dt id="showHistData"><a name="showHistData,Df,string,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showHistData</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adf</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">;</span> <span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">e</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span></pre></dt>
+<dt id="showHistData"><a name="showHistData,Stocks,string,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showHistData</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adf</span><span class="Other">:</span> <span class="Identifier">Stocks</span><span class="Other">;</span> <span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">e</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span></pre></dt>
 <dd>
 <p>showhistData</p>
 <p>show historical stock data between 2 dates</p>
@@ -1891,7 +1891,7 @@ head means oldest rows
 
 
 </dd>
-<dt id="showDailyReturnsCl"><a name="showDailyReturnsCl,Df,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showDailyReturnsCl</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span></pre></dt>
+<dt id="showDailyReturnsCl"><a name="showDailyReturnsCl,Stocks,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showDailyReturnsCl</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">Stocks</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span></pre></dt>
 <dd>
 <p>showdailyReturnsCl</p>
 <p>display returns based on close price</p>
@@ -1899,7 +1899,7 @@ head means oldest rows
 
 
 </dd>
-<dt id="showDailyReturnsAdCl"><a name="showDailyReturnsAdCl,Df,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showDailyReturnsAdCl</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span></pre></dt>
+<dt id="showDailyReturnsAdCl"><a name="showDailyReturnsAdCl,Stocks,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showDailyReturnsAdCl</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">Stocks</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span></pre></dt>
 <dd>
 <p>showdailyReturnsAdCl</p>
 <p>returns based on adjusted close price</p>
@@ -1907,14 +1907,14 @@ head means oldest rows
 
 
 </dd>
-<dt id="sumDailyReturnsCl"><a name="sumDailyReturnsCl,Df"></a><pre><span class="Keyword">proc</span> <span class="Identifier">sumDailyReturnsCl</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span></pre></dt>
+<dt id="sumDailyReturnsCl"><a name="sumDailyReturnsCl,Stocks"></a><pre><span class="Keyword">proc</span> <span class="Identifier">sumDailyReturnsCl</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">Stocks</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span></pre></dt>
 <dd>
 <p>sumdailyReturnsCl</p>
 <p>returns sum based on close price </p>
 
 
 </dd>
-<dt id="sumDailyReturnsAdCl"><a name="sumDailyReturnsAdCl,Df"></a><pre><span class="Keyword">proc</span> <span class="Identifier">sumDailyReturnsAdCl</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span></pre></dt>
+<dt id="sumDailyReturnsAdCl"><a name="sumDailyReturnsAdCl,Stocks"></a><pre><span class="Keyword">proc</span> <span class="Identifier">sumDailyReturnsAdCl</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">Stocks</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span></pre></dt>
 <dd>
 <p>sumdailyReturnsAdCl</p>
 <p>returns sum based on adjc </p>
@@ -1928,27 +1928,27 @@ head means oldest rows
 
 
 </dd>
-<dt id="showStatistics"><a name="showStatistics,Df"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showStatistics</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">z</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">)</span></pre></dt>
+<dt id="showStatistics"><a name="showStatistics,Stocks"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showStatistics</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">z</span><span class="Other">:</span> <span class="Identifier">Stocks</span><span class="Other">)</span></pre></dt>
 <dd>
 <p>showStatistics</p>
-<p>shows all statistics from a Df objects ohlcva columns </p>
+<p>shows all statistics from a Stocks objects ohlcva columns </p>
 
 
 </dd>
-<dt id="showStatisticsT"><a name="showStatisticsT,Df"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showStatisticsT</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">z</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">)</span></pre></dt>
+<dt id="showStatisticsT"><a name="showStatisticsT,Stocks"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showStatisticsT</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">z</span><span class="Other">:</span> <span class="Identifier">Stocks</span><span class="Other">)</span></pre></dt>
 <dd>
 <p>showStatisticsT</p>
-<p>shows all statistics from a Df objects ohlcva columns</p>
+<p>shows all statistics from a Stocks objects ohlcva columns</p>
 <p>transposed display  , needs full terminal width </p>
 
 
 </dd>
-<dt id="ema"><a name="ema,Df,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">ema</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">dx</span><span class="Other">:</span> <span class="Identifier">Df</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Ts</span></pre></dt>
+<dt id="ema"><a name="ema,Stocks,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">ema</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">dx</span><span class="Other">:</span> <span class="Identifier">Stocks</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Ts</span></pre></dt>
 <dd>
 <p>ema</p>
 <p>exponential moving average based on close price</p>
 <p>returns a Ts object loaded with date,ema pairs</p>
-<p>calling with Df object and number of days for moving average</p>
+<p>calling with Stocks object and number of days for moving average</p>
 <p>results match R quantmod/TTR </p>
 
 
@@ -1962,7 +1962,7 @@ head means oldest rows
 
 
 </dd>
-<dt id="getCurrentForex"><a name="getCurrentForex,seq[string]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getCurrentForex</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">curs</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Cf</span></pre></dt>
+<dt id="getCurrentForex"><a name="getCurrentForex,seq[string]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getCurrentForex</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">curs</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Currencies</span></pre></dt>
 <dd>
 <p>getCurrentForex</p>
 <p>get the latest yahoo exchange rate info for a currency pair</p>
@@ -1982,18 +1982,18 @@ head means oldest rows
 <span class="Identifier">decho</span><span class="Punctuation">(</span><span class="DecNumber">3</span><span class="Punctuation">)</span></pre>
 
 </dd>
-<dt id="showDfTable"><a name="showDfTable,Nf"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showDfTable</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apfdata</span><span class="Other">:</span> <span class="Identifier">Nf</span><span class="Other">)</span></pre></dt>
+<dt id="showStocksTable"><a name="showStocksTable,Portfolio"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showStocksTable</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">apfdata</span><span class="Other">:</span> <span class="Identifier">Portfolio</span><span class="Other">)</span></pre></dt>
 <dd>
-<p>showDfTable</p>
-<p>a convenience prog to display the data part of a Nf object</p>
+<p>showStocksTable</p>
+<p>a convenience prog to display the data part of a Portfolio object</p>
 <p>for usage example see nimFinT3 </p>
 
 
 </dd>
-<dt id="showQftable"><a name="showQftable,Qf"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showQftable</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">Qf</span><span class="Other">)</span></pre></dt>
+<dt id="showStockdataTable"><a name="showStockdataTable,Stockdata"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showStockdataTable</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">Stockdata</span><span class="Other">)</span></pre></dt>
 <dd>
-<p>showQftable</p>
-<p>shows all items of a Qf object </p>
+<p>showStockdatatable</p>
+<p>shows all items of a Stockdata object </p>
 
 
 </dd>
@@ -2187,7 +2187,7 @@ msggb<pre class = "listing"><span class="Identifier">msggb</span><span class="Pu
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-07-23 17:33:01 UTC</small>
+        <small>Made with Nim. Generated: 2015-07-24 23:08:18 UTC</small>
       </div>
     </div>
   </div>
