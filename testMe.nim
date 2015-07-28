@@ -8,6 +8,14 @@ import os,httpclient,osproc
 ##
 ## hence here comes testMe.
 ## 
+## if you have not done so install strfmt and random beforehand
+## 
+## nimble install strfmt
+##
+## nimble install random
+## 
+## then 
+## 
 ## get this file only and compile it like so :
 ## 
 ## nim c -r -d:ssl testMe 
