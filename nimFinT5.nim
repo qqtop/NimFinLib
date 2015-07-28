@@ -338,7 +338,7 @@ var a = 5
 echo "{:>15} {:>15} {:>15}".fmt("Value","logisticf","logistic_derivative")
 for x in -a.. a:
   var xx = random.random() * 1.8
-  echo "{:>15.f14} {:>15.f14} {:>15.f14}".fmt(xx,logisticf(xx),logisticf_derivative(xx))
+  echo "{:>15.14f} {:>15.14f} {:>15.14f}".fmt(xx,logisticf(xx),logisticf_derivative(xx))
 
 
 

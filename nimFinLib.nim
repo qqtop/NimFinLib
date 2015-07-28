@@ -156,7 +156,7 @@ type
        ra* : seq[float]   # relevant rate  e.g 1.354
 
 
-template msgg*(code: stmt): stmt {.immediate.} =
+template msgg*(code: stmt): stmt =
       ## msgX templates
       ## convenience templates for colored text output
       ## the assumption is that the terminal is white text and black background
@@ -170,7 +170,7 @@ template msgg*(code: stmt): stmt {.immediate.} =
       code
       setforegroundcolor(fgWhite)
 
-template msggb*(code: stmt): stmt {.immediate.} =
+template msggb*(code: stmt): stmt =
       ## msggb
       ##
       ## .. code-block:: nim
@@ -182,60 +182,60 @@ template msggb*(code: stmt): stmt {.immediate.} =
       setforegroundcolor(fgWhite)
 
 
-template msgy*(code: stmt): stmt {.immediate.} =
+template msgy*(code: stmt): stmt =
       setforegroundcolor(fgYellow)
       code
       setforegroundcolor(fgWhite)
 
 
-template msgyb*(code: stmt): stmt {.immediate.} =
+template msgyb*(code: stmt): stmt =
       setforegroundcolor(fgYellow,true)
       code
       setforegroundcolor(fgWhite)
 
 
-template msgr*(code: stmt): stmt {.immediate.} =
+template msgr*(code: stmt): stmt =
       setforegroundcolor(fgRed)
       code
       setforegroundcolor(fgWhite)
 
 
-template msgrb*(code: stmt): stmt {.immediate.} =
+template msgrb*(code: stmt): stmt =
       setforegroundcolor(fgRed,true)
       code
       setforegroundcolor(fgWhite)
 
-template msgc*(code: stmt): stmt {.immediate.} =
+template msgc*(code: stmt): stmt =
       setforegroundcolor(fgCyan)
       code
       setforegroundcolor(fgWhite)
 
 
-template msgcb*(code: stmt): stmt {.immediate.} =
+template msgcb*(code: stmt): stmt =
       setforegroundcolor(fgCyan,true)
       code
       setforegroundcolor(fgWhite)
 
 
-template msgw*(code: stmt): stmt {.immediate.} =
+template msgw*(code: stmt): stmt =
       setforegroundcolor(fgWhite)
       code
       setforegroundcolor(fgWhite)
 
 
-template msgwb*(code: stmt): stmt {.immediate.} =
+template msgwb*(code: stmt): stmt =
       setforegroundcolor(fgWhite,true)
       code
       setforegroundcolor(fgWhite)
 
 
-template msgb*(code: stmt): stmt {.immediate.} =
+template msgb*(code: stmt): stmt =
       setforegroundcolor(fgBlack,true)
       code
       setforegroundcolor(fgWhite)
 
 
-template hdx*(code:stmt):stmt {.immediate.}  =
+template hdx*(code:stmt):stmt  =
    ## hdx
    ##
    ## hdx is used for headers to make them stand out
