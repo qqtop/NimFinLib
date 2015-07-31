@@ -474,9 +474,10 @@ when defined(Linux):
     var tw* = getTerminalWidth()
     var aline* = repeat("-",tw)
 
-# will change this once windows gets a real terminal or shell
+# currently hardcoded for windows 
 when defined(Windows):
-   tw = repeat("-",80)
+     var tw* = 80
+     var aline* = repeat("-",tw)
 
 proc decho*(z:int)  =
     ## decho
