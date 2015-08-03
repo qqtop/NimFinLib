@@ -839,6 +839,10 @@ proc sleepy*[T:float|int](s:T) =
     #msgr() do : echo "Loops during waiting for ",s,"secs : ",c
 
 
+
+proc fx(nx:TimeInfo):string =
+        result = nx.format("yyyy-MM-dd")
+
 proc plusDays*(aDate:string,days:int):string =
    ## plusDays
    ##
@@ -848,43 +852,16 @@ proc plusDays*(aDate:string,days:int):string =
    ##
    ## the passed in date string must be a valid date or an error message will be returned
    ##
-   var rxs = ""
-   if validdate(adate) == true:
-
-        var spdate = aDate.split("-")
-        var tifo = parse(aDate,"yyyy-MM-dd") # this returns a TimeInfo type
-        var mflag: bool = false
-        tifo.year = parseInt(spdate[0])
-        case parseInt(spdate[1])
-        of 1 :  tifo.month = mJan
-        of 2 :  tifo.month = mFeb
-        of 3 :  tifo.month = mMar
-        of 4 :  tifo.month = mApr
-        of 5 :  tifo.month = mMay
-        of 6 :  tifo.month = mJun
-        of 7 :  tifo.month = mJul
-        of 8 :  tifo.month = mAug
-        of 9 :  tifo.month = mSep
-        of 10:  tifo.month = mOct
-        of 11:  tifo.month = mNov
-        of 12 : tifo.month = mDec
-        else  : mflag = true
-        tifo.monthday = parseInt(spdate[2])
-        if mflag == false:
-            var myinterval = initInterval()
-            myinterval.days = days
-            var rx = tifo + myinterval
-            rxs = rx.format("yyyy-MM-dd")
-        else :
-              msgr() do: echo "Date error. Wrong month : " &  spdate[1]
-              rxs = ""
-
+   if validdate(aDate) == true:
+      var rxs = ""
+      var tifo = parse(aDate,"yyyy-MM-dd") # this returns a TimeInfo type
+      var myinterval = initInterval()   
+      myinterval.days = days
+      rxs = fx(tifo + myinterval)
+      result = rxs
    else:
-        msgr() do : echo  "Date error. Invalid date : " &  aDate,"  Format yyyy-MM-dd expected"
-        rxs = ""
-
-   result = rxs
-
+      msgr() do : echo "Date error : ",aDate
+      result = "Error"
 
 proc minusDays*(aDate:string,days:int):string =
    ## minusDays
@@ -896,41 +873,17 @@ proc minusDays*(aDate:string,days:int):string =
    ## the passed in date string must be a valid date or an error message will be returned
    ##
 
-   var rxs = ""
-   if validdate(adate) == true:
-        var spdate = aDate.split("-")
-        var tifo = parse(aDate,"yyyy-MM-dd")  # this returns a TimeInfo type
-        var mflag: bool = false
-        tifo.year = parseInt(spdate[0])
-        case parseInt(spdate[1])
-        of 1 :  tifo.month = mJan
-        of 2 :  tifo.month = mFeb
-        of 3 :  tifo.month = mMar
-        of 4 :  tifo.month = mApr
-        of 5 :  tifo.month = mMay
-        of 6 :  tifo.month = mJun
-        of 7 :  tifo.month = mJul
-        of 8 :  tifo.month = mAug
-        of 9 :  tifo.month = mSep
-        of 10:  tifo.month = mOct
-        of 11:  tifo.month = mNov
-        of 12 : tifo.month = mDec
-        else  : mflag = true
-        tifo.monthday = parseInt(spdate[2])
-        if mflag == false:
-            var myinterval = initInterval()
-            myinterval.days = days
-            var rx = tifo - myinterval
-            rxs = rx.format("yyyy-MM-dd")
-
-        else :
-              msgr() do: echo "Date error. Wrong month : " &  spdate[1]
-              rxs = ""
+   if validdate(aDate) == true:
+      var rxs = ""
+      var tifo = parse(aDate,"yyyy-MM-dd") # this returns a TimeInfo type
+      var myinterval = initInterval()   
+      myinterval.days = days
+      rxs = fx(tifo - myinterval)
+      result = rxs
    else:
-        msgr() do : echo  "Date error. Invalid date : " &  aDate ,"  Format yyyy-MM-dd expected"
-        rxs = ""
+      msgr() do : echo "Date error : ",aDate
+      result = "Error"
 
-   result = rxs
 
 
 proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
