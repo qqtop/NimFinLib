@@ -474,7 +474,7 @@ when defined(Linux):
     var tw* = getTerminalWidth()
     var aline* = repeat("-",tw)
 
-# currently hardcoded for windows 
+# currently hardcoded for windows
 when defined(Windows):
      var tw* = 80
      var aline* = repeat("-",tw)
@@ -691,6 +691,13 @@ proc year*(aDate:string) : string = aDate.split("-")[0]
 
 
 proc validdate*(adate:string):bool =
+     ## validdate
+     ##
+     ## the purpose of this function is to strictly enforce correct dates
+     ##
+     ## input in format yyyy-MM-dd with correct year,month,day ranges
+     ##
+
      var m30 = @["04","06","09","11"]
      var m31 = @["01","03","05","07","08","10","12"]
 
@@ -855,7 +862,7 @@ proc plusDays*(aDate:string,days:int):string =
    if validdate(aDate) == true:
       var rxs = ""
       var tifo = parse(aDate,"yyyy-MM-dd") # this returns a TimeInfo type
-      var myinterval = initInterval()   
+      var myinterval = initInterval()
       myinterval.days = days
       rxs = fx(tifo + myinterval)
       result = rxs
@@ -876,7 +883,7 @@ proc minusDays*(aDate:string,days:int):string =
    if validdate(aDate) == true:
       var rxs = ""
       var tifo = parse(aDate,"yyyy-MM-dd") # this returns a TimeInfo type
-      var myinterval = initInterval()   
+      var myinterval = initInterval()
       myinterval.days = days
       rxs = fx(tifo - myinterval)
       result = rxs
@@ -931,9 +938,9 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
           var adjclosdf = newSeq[float]()
 
           # add RunningStat capability all columns
-          var openRC  : Runningstat
-          var highRC : Runningstat
-          var lowRC  : Runningstat
+          var openRC   : Runningstat
+          var highRC   : Runningstat
+          var lowRC    : Runningstat
           var closeRC  : Runningstat
           var volumeRC : Runningstat
           var closeRCA : Runningstat
@@ -1453,14 +1460,14 @@ proc calculateEMA(todaysPrice : float , numberOfDays: int , EMAYesterday : float
    var ce = (todaysPrice * k) + (EMAYesterday * (1.0 - k))
    result = ce
 
-proc ema* (dx : Stocks , N: int) : Ts =
+proc ema* (dx : Stocks , N: int = 14) : Ts =
     ## ema
     ##
     ## exponential moving average based on close price
     ##
     ## returns a Ts object loaded with date,ema pairs
     ##
-    ## calling with Stocks object and number of days for moving average
+    ## calling with Stocks object and number of days for moving average default = 14
     ##
     ## results match R quantmod/TTR
     ##
@@ -1506,15 +1513,15 @@ proc ema* (dx : Stocks , N: int) : Ts =
           yesterdayEMA = aema
 
 
-    result = m_emaSeries
+    result = m_emaSeries 
 
 
-proc showEma* (emx:Ts , N:int) =
+proc showEma* (emx:Ts , N:int = 5) =
    ## showEma
    ##
    ## convenience proc to display ema series with dates
    ##
-   ## input is a ema series Ts object and rows to display
+   ## input is a ema series Ts object and rows to display and N number of rows to display default = 5
    ##
    ## latest data is on top
    ##
@@ -1753,18 +1760,18 @@ proc rainbow* (astr : string) =
     for x in 0.. <astr.len:
        c = a[randomInt(a.len)]
        case c
-        of 1  : msgg() do  : write(stdout,astr[x])
-        of 2  : msgr() do  : write(stdout,astr[x])
-        of 3  : msgc() do  : write(stdout,astr[x])
-        of 4  : msgy() do  : write(stdout,astr[x])
+        of 1  : msgg()  do : write(stdout,astr[x])
+        of 2  : msgr()  do : write(stdout,astr[x])
+        of 3  : msgc()  do : write(stdout,astr[x])
+        of 4  : msgy()  do : write(stdout,astr[x])
         of 5  : msggb() do : write(stdout,astr[x])
-        of 6  : msgr() do  : write(stdout,astr[x])
+        of 6  : msgr()  do : write(stdout,astr[x])
         of 7  : msgwb() do : write(stdout,astr[x])
-        of 8  : msgc() do  : write(stdout,astr[x])
+        of 8  : msgc()  do : write(stdout,astr[x])
         of 9  : msgyb() do : write(stdout,astr[x])
         of 10 : msggb() do : write(stdout,astr[x])
         of 11 : msgcb() do : write(stdout,astr[x])
-        else  : msgw() do  : write(stdout,astr[x])
+        else  : msgw()  do : write(stdout,astr[x])
 
 
 
