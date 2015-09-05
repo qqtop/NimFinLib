@@ -1344,9 +1344,9 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   <li><a class="reference" href="#showStatisticsT,Stocks"
     title="showStatisticsT*(z: Stocks)"><wbr />show<wbr />Statistics<wbr />T</a></li>
   <li><a class="reference" href="#ema,Stocks,int"
-    title="ema*(dx: Stocks; N: int): Ts"><wbr />ema</a></li>
+    title="ema*(dx: Stocks; N: int = 14): Ts"><wbr />ema</a></li>
   <li><a class="reference" href="#showEma,Ts,int"
-    title="showEma*(emx: Ts; N: int)"><wbr />show<wbr />Ema</a></li>
+    title="showEma*(emx: Ts; N: int = 5)"><wbr />show<wbr />Ema</a></li>
   <li><a class="reference" href="#getCurrentForex,seq[string]"
     title="getCurrentForex*(curs: seq[string]): Currencies"><wbr />get<wbr />Current<wbr />Forex</a></li>
   <li><a class="reference" href="#showCurrentForex,seq[string]"
@@ -1745,6 +1745,9 @@ showTimeseries takes a Ts object as input as well as a header string for the dat
 </dd>
 <dt id="validdate"><a name="validdate,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">validdate</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">adate</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
 <dd>
+<p>validdate</p>
+<p>the purpose of this function is to strictly enforce correct dates</p>
+<p>input in format yyyy-MM-dd with correct year,month,day ranges </p>
 
 
 </dd>
@@ -1957,21 +1960,21 @@ head means oldest rows
 
 
 </dd>
-<dt id="ema"><a name="ema,Stocks,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">ema</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">dx</span><span class="Other">:</span> <span class="Identifier">Stocks</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Ts</span></pre></dt>
+<dt id="ema"><a name="ema,Stocks,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">ema</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">dx</span><span class="Other">:</span> <span class="Identifier">Stocks</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">14</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Ts</span></pre></dt>
 <dd>
 <p>ema</p>
 <p>exponential moving average based on close price</p>
 <p>returns a Ts object loaded with date,ema pairs</p>
-<p>calling with Stocks object and number of days for moving average</p>
+<p>calling with Stocks object and number of days for moving average default = 14</p>
 <p>results match R quantmod/TTR </p>
 
 
 </dd>
-<dt id="showEma"><a name="showEma,Ts,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showEma</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">emx</span><span class="Other">:</span> <span class="Identifier">Ts</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span></pre></dt>
+<dt id="showEma"><a name="showEma,Ts,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showEma</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">emx</span><span class="Other">:</span> <span class="Identifier">Ts</span><span class="Other">;</span> <span class="Identifier">N</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">5</span><span class="Other">)</span></pre></dt>
 <dd>
 <p>showEma</p>
 <p>convenience proc to display ema series with dates</p>
-<p>input is a ema series Ts object and rows to display</p>
+<p>input is a ema series Ts object and rows to display and N number of rows to display default = 5</p>
 <p>latest data is on top </p>
 
 
@@ -2201,7 +2204,7 @@ msggb<pre class = "listing"><span class="Identifier">msggb</span><span class="Pu
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small>Made with Nim. Generated: 2015-08-03 22:25:25 UTC</small>
+        <small>Made with Nim. Generated: 2015-09-05 20:40:59 UTC</small>
       </div>
     </div>
   </div>

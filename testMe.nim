@@ -42,7 +42,7 @@ proc janitation() =
     removeDir("nimcache")
 
 source()
-var exitCode = execCmd("nim -d:release -d:speed --hints:off --verbosity:0 -w:off c -r " & "example1.nim") 
+var exitCode = execCmd("nim -d:release --opt:speed --hints:off --verbosity:0 -w:off c -r " & "example1.nim") 
 janitation()
 
 echo()

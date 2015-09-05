@@ -1839,7 +1839,7 @@ proc doFinish*() =
     ##
     ## can be changed to anything desired
     ##
-    msgb() do : echo "{:<15}{} | {}{} | {}{} - {}".fmt("Application : ",getAppFilename(),"Nim : ",NimVersion,"  qqTop nimFinLib : ",NIMFINLIBVERSION,year(getDateStr()))
+    msgb() do : echo "{:<15}{} | {}{} | {}{} - {} | {}".fmt("Application : ",extractFileName(getAppFilename()),"Nim : ",NimVersion," nimFinLib : ",NIMFINLIBVERSION,year(getDateStr()),"qqTop")
     msgy() do : echo "{:<15}{}{}".fmt("Elapsed     : ",epochtime() - startnimfinlib," secs")
     decho(2)
     system.addQuitProc(resetAttributes)
