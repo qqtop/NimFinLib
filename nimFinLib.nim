@@ -73,6 +73,19 @@ import statistics
 let NIMFINLIBVERSION* = "0.2.2"
 let startnimfinlib = epochTime()
 
+const
+       red*    = "red"
+       green*  = "green"
+       cyan*   = "cyan"
+       yellow* = "yellow"
+       white*  = "white"
+       black*  = "black"
+       brightred*    = "brightred"
+       brightgreen*  = "brightgreen"
+       brightcyan*   = "brightcyan"
+       brightyellow* = "brightyellow"
+       brightwhite*  = "brightwhite"
+      
 type
 
   Account*  = object
@@ -240,7 +253,7 @@ template hdx*(code:stmt):stmt  =
    ##
    ## hdx is used for headers to make them stand out
    ##
-   ## it puts the text between 2 horizontal lines
+   ## it puts the text between 2 horizontal "+" lines
    ##
 
    echo ""
@@ -282,6 +295,42 @@ template withFile*(f: expr, filename: string, mode: FileMode,
         echo ()
         msgy() do : echo "Processing file " & fn & ", stopped . Reason: ", msg
         quit()
+
+
+
+proc printHl*(sen:string,astr:string,col:string) =
+      ## printHl
+      ##
+      ## print and highlight all appearances of a char or substring of a string
+      ##
+      ## with a certain color
+      ##
+      ## .. code-block:: nim
+      ##    printHl("HELLO THIS IS A TEST","T",green)
+      ##
+      ## this would highlight all T in green
+      ##
+      ## available colors : green,yellow,cyan,red,white,black,brightgreen,brightwhite
+      ## 
+      ##                    brightred,brightcyan,brightyellow
+ 
+      var rx = sen.split(astr)
+      for x in rx.low.. rx.high:
+          writestyled(rx[x],{})
+          if x != rx.high:
+              case col
+              of green  : msgg() do  : write(stdout,astr)
+              of red    : msgr() do  : write(stdout,astr)
+              of cyan   : msgc() do  : write(stdout,astr)
+              of yellow : msgy() do  : write(stdout,astr)
+              of white  : msgw() do  : write(stdout,astr)
+              of black  : msgb() do  : write(stdout,astr)
+              of brightgreen : msggb() do : write(stdout,astr)
+              of brightwhite : msgwb() do : write(stdout,astr)
+              of brightyellow: msgyb() do : write(stdout,astr)
+              of brightcyan  : msgcb() do : write(stdout,astr)
+              of brightred   : msgrb() do : write(stdout,astr)
+              else  : msgw() do  : write(stdout,astr)
 
 
 proc timeSeries*[T](self:T,ty:string): Ts =
@@ -1831,6 +1880,19 @@ proc logisticf_derivative* (z:float): float =
      result = logisticf(z) * (1 - logisticf(z))
 
 
+
+proc qqTop*() =
+  ## qqTop
+  ##
+  ## prints qqTop logo in custom color
+  ## 
+  printHl("qq","qq",cyan)
+  printHl("T","T",brightgreen)
+  printHl("o","o",brightred)
+  printHl("p","p",cyan)
+  
+
+
 # finalizer
 proc doFinish*() =
     ## doFinish
@@ -1839,8 +1901,10 @@ proc doFinish*() =
     ##
     ## can be changed to anything desired
     ##
-    msgb() do : echo "{:<15}{} | {}{} | {}{} - {} | {}".fmt("Application : ",extractFileName(getAppFilename()),"Nim : ",NimVersion," nimFinLib : ",NIMFINLIBVERSION,year(getDateStr()),"qqTop")
-    msgy() do : echo "{:<15}{}{}".fmt("Elapsed     : ",epochtime() - startnimfinlib," secs")
+    msgb() do : write(stdout,"{:<15}{} | {}{} | {}{} - {} | ".fmt("Application : ",extractFileName(getAppFilename()),"Nim : ",NimVersion," nimFinLib : ",NIMFINLIBVERSION,year(getDateStr()))) 
+    qqTop()
+    echo()
+    msgy() do : write(stdout,"{:<15}{}{}".fmt("Elapsed     : ",epochtime() - startnimfinlib," secs"))
     decho(2)
     system.addQuitProc(resetAttributes)
     quit 0
