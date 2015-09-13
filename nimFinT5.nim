@@ -3,6 +3,8 @@ from statistics import kurtosis,quantile,skewness
 import nimFinLib
 # comment next line if tests concerning libFinHk not required
 import libFinHk
+# uncomment next line for compilation with nimprofiler
+#import nimProf
 
 # nimFinT5.nim
 #
@@ -11,6 +13,9 @@ import libFinHk
 # compile with
 # nim c --deadcodeelim:on -d:release --opt:size -d:ssl nimFinT5
 #
+# compile with profiler  --> uncomment import nimprof line above
+# nim c -d:ssl --profiler:on --stackTrace:on nimFinT5
+# then run prog and check file: profile_results.txt
 
 var start = epochTime()
 
