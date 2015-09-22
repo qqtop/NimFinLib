@@ -2,7 +2,9 @@ import os,terminal,sequtils,strutils,times,math,unicode,tables,strfmt,random
 from statistics import kurtosis,quantile,skewness
 import nimFinLib
 # comment next line if tests concerning libFinHk not required
-import libFinHk
+#import libFinHk
+
+#from /data4/NimStuff/private import superHeader
 # uncomment next line for compilation with nimprofiler
 #import nimProf
 
@@ -28,8 +30,9 @@ msgy() do : echo "# Testing nimFinLib                           #"
 msgy() do : echo "###############################################"
 echo ()
 
+
 # symbols holds a list of yahoo type stock codes
-var symbols1  = @["0386.HK","0880.HK","0555.HK"]
+var symbols1  = @["0001.HK","0386.HK","0880.HK","0555.HK"]
 # some more symbol sets for testing always use symbols
 var symbols2 = @["0386.HK","0005.HK","0880.HK","3311.HK","3688.HK","2727.HK","3337.HK","3968.HK"]  # some stock code
 var symbols3 = @["1766.HK","0386.HK","0880.HK","0555.HK"]
@@ -49,7 +52,7 @@ var symbols5 = @["AFK", "ASHR", "ECH", "EGPT",
              "VNM", "TLT"]
 
 # select one of the lists or use your own
-var symbols = symbols1
+var symbols = symbols4
 
 # make sure the list is unique
 symbols = deduplicate(symbols)
@@ -298,23 +301,24 @@ msgy() do : echo "# Tests for date and logistic helper procs    #"
 msgy() do : echo "###############################################"
 echo ()
 
-var s = ts.dd.min  # note we use the date series from the timeseries test above
-var e = ts.dd.max
+if ts.dd.len > 0:
+    var s = ts.dd.min  # note we use the date series from the timeseries test above
+    var e = ts.dd.max
 
-msgy() do: echo "\nInterval Information\n"
-echo s,"  -  ",e
-echo "Years      : ", intervalyears(s,e)
-echo "Months     : ", intervalmonths(s,e)
-echo "Weeks      : ", intervalweeks(s,e)
-echo "Days       : ", intervaldays(s,e)
-echo "Hours      : ", intervalhours(s,e)
-echo "Mins       : ", intervalmins(s,e)
-echo "Secs       : ", intervalsecs(s,e)
+    msgy() do: echo "\nInterval Information\n"
+    echo s,"  -  ",e
+    echo "Years      : ", intervalyears(s,e)
+    echo "Months     : ", intervalmonths(s,e)
+    echo "Weeks      : ", intervalweeks(s,e)
+    echo "Days       : ", intervaldays(s,e)
+    echo "Hours      : ", intervalhours(s,e)
+    echo "Mins       : ", intervalmins(s,e)
+    echo "Secs       : ", intervalsecs(s,e)
 
-echo ()
-echo "Extract items from date string ",s
-echo s.year," ",s.month," ",s.day
-decho(2)
+    echo ()
+    echo "Extract items from date string ",s
+    echo s.year," ",s.month," ",s.day
+    decho(2)
 
 
 echo "Test validDate proc"

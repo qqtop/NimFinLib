@@ -42,6 +42,11 @@
 ## ProjectStart: 2015-06-05
 ##
 ## ToDo        : Ratios , Covariance , Correlation
+##               improve exception handling if yahoo data fails to be retrieved 
+##               or is temporary unavailable for certain markets
+##               currently programs may crash occasionally if
+##               nil data is returned by Yahoo.
+##               
 ##
 ##
 ##
@@ -384,19 +389,20 @@ proc showTimeSeries* (ats:Ts,header,ty:string,N:int)  =
 
 
    msgg() do : echo "{:<11} {:>11} ".fmt("Date",header)
-   if ty == "all":
-      for x in 0.. <ats.tx.len:
-          echo "{:<11} {:>11} ".fmt(ats.dd[x],ats.tx[x])
-   elif ty == "tail":
-      for x in ats.tx.len-N.. <ats.tx.len:
-          echo "{:<11} {:>11} ".fmt(ats.dd[x],ats.tx[x])
-   elif ty == "head":
-      for x in 0.. <N:
-          echo "{:<11} {:>11} ".fmt(ats.dd[x],ats.tx[x])
-   else:
-      ## head is the default in case an empty ty string was passed in
-      for x in 0.. <N:
-          echo "{:<11} {:>11} ".fmt(ats.dd[x],ats.tx[x])
+   if ats.dd.len > 0:
+        if ty == "all":
+            for x in 0.. <ats.tx.len:
+                echo "{:<11} {:>11} ".fmt(ats.dd[x],ats.tx[x])
+        elif ty == "tail":
+            for x in ats.tx.len-N.. <ats.tx.len:
+                echo "{:<11} {:>11} ".fmt(ats.dd[x],ats.tx[x])
+        elif ty == "head":
+            for x in 0.. <N:
+                echo "{:<11} {:>11} ".fmt(ats.dd[x],ats.tx[x])
+        else:
+            ## head is the default in case an empty ty string was passed in
+            for x in 0.. <N:
+                echo "{:<11} {:>11} ".fmt(ats.dd[x],ats.tx[x])
 
 
 proc initAccount*():Account =
@@ -1003,6 +1009,11 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
           # f = end year
           # we use the csv string , yahoo json format only returns limited data 1.5 years or less
           var qurl = "http://real-chart.finance.yahoo.com/table.csv?s=$1&a=$2&b=$3&c=$4&d=$5&e=$6&f=$7&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
+          # testing for 0386.HK as sometimes yahoo data fails to appear 
+          #echo()
+          #msgg() do : echo qurl
+          #msgy() do : echo "http://real-chart.finance.yahoo.com/table.csv?s=0386.HK&a=0&b=1&c=2014&d=8&e=22&f=2015&g=d&ignore=.csv"
+          #echo()  
           var headerset = [symb,"Date","Open","High","Low","Close","Volume","Adj Close"]
           var c = 0
           var hflag  : bool # used for testing maybe removed later
@@ -1012,7 +1023,11 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
           # could also be done to be in memory like /shm/  this file will be auto removed.
 
           var acvsfile = "nimfintmp.csv"
-          downloadFile(qurl,acvsfile)
+          try:  
+            downloadFile(qurl,acvsfile)
+          except HttpRequestError:
+            echo()
+            msgr() do : echo "Error : Yahoo currently does not provide historical data for " & symb
 
           var s = newFileStream(acvsfile, fmRead)
           if s == nil:
@@ -1304,30 +1319,43 @@ proc last*[T](self : seq[T]): T =
     ##
     ## last means most recent row
     ##
-    result = self[self.low]
+    try:
+      result = self[self.low]
+    except IndexError:
+      discard
 
 
 proc first*[T](self : seq[T]): T =
     ## first means oldest row
     ##
-    result = self[self.high]
+    try:
+      result = self[self.high]
+    except IndexError:
+      discard
 
 proc tail*[T](self : seq[T] , n: int) : seq[T] =
     ## tail means most recent rows
     ##
-    if len(self) >= n:
-        result = self[0.. <n]
-    else:
-        result = self[0.. <len(self)]
+    try:
+        if len(self) >= n:
+            result = self[0.. <n]
+        else:
+            result = self[0.. <len(self)]
+    except RangeError:
+       discard
+
 
 proc head*[T](self : seq[T] , n: int) : seq[T] =
     ## head means oldest rows
     ##
     var self2 = reversed(self)
-    if len(self2) >= n:
-        result = self2[0.. <n].tail(n)
-    else:
-        result = self2[0.. <len(self2)].tail(n)
+    try:
+        if len(self2) >= n:
+            result = self2[0.. <n].tail(n)
+        else:
+            result = self2[0.. <len(self2)].tail(n)
+    except RangeError:
+       discard
 
 
 proc lagger*[T](self:T , days : int) : T =
@@ -1337,8 +1365,11 @@ proc lagger*[T](self:T , days : int) : T =
      ##
      ## this functions provides this
      ##
-     var lgx = self[days.. <self.len]
-     result = lgx
+     try:
+       var lgx = self[days.. <self.len]
+       result = lgx
+     except RangeError:
+       discard
 
 
 proc dailyReturns*(self:seq[float]):seq =
@@ -1361,19 +1392,23 @@ proc showDailyReturnsCl*(self:Stocks , N:int) =
       ## formated output to show date and returns columns
       ##
       var dfr = self.close.dailyReturns    # note the first in seq corresponds to date closest to now
+
       # we also need to lag the dates
       var dfd = self.date.lagger(1)
-      # now show it with symbol , date and close columns
-      echo ""
-      msgg() do: echo "{:<8} {:<11} {:>14}".fmt("Code","Date","Returns")
-      # show limited rows output if c<>0
-      if N == 0:
-        for  x in 0.. <dfr.len:
-             echo "{:<8}{:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
-      else:
-        for  x in 0.. <N:
-             echo "{:<8}{:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
-
+      if dfd.len > 0:
+          # now show it with symbol , date and close columns
+          echo ""
+          msgg() do: echo "{:<8} {:<11} {:>14}".fmt("Code","Date","Returns")
+          # show limited rows output if c<>0
+          if N == 0:
+              for  x in 0.. <dfr.len:
+                      echo "{:<8}{:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
+                  
+              
+          else:
+              for  x in 0.. <N:
+                      echo "{:<8}{:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
+                  
 
 proc showDailyReturnsAdCl*(self:Stocks , N:int) =
       ## showdailyReturnsAdCl
@@ -1385,16 +1420,17 @@ proc showDailyReturnsAdCl*(self:Stocks , N:int) =
       var dfr = self.adjc.dailyReturns    # note the first in seq corresponds to date closest to now
       # we also need to lag the dates
       var dfd = self.date.lagger(1)
-      # now show it with symbol , date and close columns
-      echo ""
-      msgg() do: echo "{:<8} {:<11} {:>14}".fmt("Code","Date","Returns")
-      # show limited output if c<>0
-      if N == 0:
-        for  x in 0.. <dfr.len:
-             echo "{:<8} {:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
-      else:
-        for  x in 0.. <N:
-             echo "{:<8} {:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
+      if dfd.len > 0:
+            # now show it with symbol , date and close columns
+            echo ""
+            msgg() do: echo "{:<8} {:<11} {:>14}".fmt("Code","Date","Returns")
+            # show limited output if c<>0
+            if N == 0:
+              for  x in 0.. <dfr.len:
+                  echo "{:<8} {:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
+            else:
+              for  x in 0.. <N:
+                  echo "{:<8} {:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
 
 
 proc sumDailyReturnsCl*(self:Stocks) : float =
@@ -1576,7 +1612,8 @@ proc showEma* (emx:Ts , N:int = 5) =
    ##
    echo()
    msgg() do : echo "{:<11} {:>11} ".fmt("Date","EMA")
-   for x in countdown(emx.dd.len-1,emx.dd.len-N,1) :
+   if emx.dd.len > 0:
+       for x in countdown(emx.dd.len-1,emx.dd.len-N,1) :
           echo "{:<11} {:>11} ".fmt(emx.dd[x],emx.tx[x])
 
 

@@ -307,23 +307,25 @@ proc showQuoteTableHk*(apfData: Portfolio) =
      # header for the table
      msgy() do : echo "Kurtosis , StdDev , EMA22 based on close price for ",apfdata.nx," Quote is latest info ex yahoo"
      msgg() do : echo "{:<8}  {:>9}  {:>9}  {:>9}  {:>9}  {:>15} {:>10} {:>9}".fmt("Stock","Kurtosis","StdDev","EMA22","Close","Company","Quote","BoardLot")
-     for x in 0.. <stkdata.len:
-        # to get ema we pass our data to the ema function
-        # we want 22 days so ..
-        # and we just want the newest ema data point which resides in tx[0]
-        # ema returns a time series object dx,tx ,but we only need the latest ema value
-        var emadata = ema(stkdata[x],22).tx[0]
-        # get the newest stddev of the close price
-        var stddev = stkdata[x].rc[0].standardDeviation
-        # get the company name
-        var compname = hkexcodes[companynames][stockseq[x]]
-        # get boardlot
-        var blot = hkexcodes[boardlots][stockseq[x]]
-        # get the latest quote for a stock
-        var cquote = getCurrentQuote(stkdata[x].stock)
-        # display the data rows
-        echo "{:<8}  {:>9.3f}  {:>9.3f}  {:>9.3f}  {:>9.3f}  {:>15} {:>10} {:>9}".fmt(stkdata[x].stock , kurtosis(stkdata[x].close), stddev,emadata,last(stkdata[x].close),compname,cquote,blot)
-
+     try:
+        for x in 0.. <stkdata.len:
+            # to get ema we pass our data to the ema function
+            # we want 22 days so ..
+            # and we just want the newest ema data point which resides in tx[0]
+            # ema returns a time series object dx,tx ,but we only need the latest ema value
+            var emadata = ema(stkdata[x],22).tx[0]
+            # get the newest stddev of the close price
+            var stddev = stkdata[x].rc[0].standardDeviation
+            # get the company name
+            var compname = hkexcodes[companynames][stockseq[x]]
+            # get boardlot
+            var blot = hkexcodes[boardlots][stockseq[x]]
+            # get the latest quote for a stock
+            var cquote = getCurrentQuote(stkdata[x].stock)
+            # display the data rows
+            echo "{:<8}  {:>9.3f}  {:>9.3f}  {:>9.3f}  {:>9.3f}  {:>15} {:>10} {:>9}".fmt(stkdata[x].stock , kurtosis(stkdata[x].close), stddev,emadata,last(stkdata[x].close),compname,cquote,blot)
+     except IndexError:
+         msgr() do: echo "Calculation failed . Insufficient Historical Data"
 
 
 proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:string = getDateStr()):(Portfolio, seq[int]) =
