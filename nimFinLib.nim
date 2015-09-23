@@ -44,11 +44,6 @@
 ## ToDo        : Ratios , Covariance , Correlation
 ##               improve exception handling if yahoo data fails to be retrieved 
 ##               or is temporary unavailable for certain markets
-##               currently programs may crash occasionally if
-##               nil data is returned by Yahoo.
-##               
-##
-##
 ##
 ## Programming : qqTop
 ##
