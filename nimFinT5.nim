@@ -2,7 +2,7 @@ import os,terminal,sequtils,strutils,times,math,unicode,tables,strfmt,random
 from statistics import kurtosis,quantile,skewness
 import nimFinLib
 # comment next line if tests concerning libFinHk not required
-#import libFinHk
+import libFinHk
 
 #from /data4/NimStuff/private import superHeader
 # uncomment next line for compilation with nimprofiler

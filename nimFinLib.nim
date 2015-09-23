@@ -75,7 +75,7 @@ import os,strutils,parseutils,sequtils,httpclient,strfmt
 import terminal,times,tables,random, parsecsv,streams,algorithm,math,unicode
 import statistics
 
-let NIMFINLIBVERSION* = "0.2.2"
+let NIMFINLIBVERSION* = "0.2.5"
 let startnimfinlib = epochTime()
 
 const
@@ -1008,12 +1008,11 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
           # e = end day
           # f = end year
           # we use the csv string , yahoo json format only returns limited data 1.5 years or less
-          var qurl = "http://real-chart.finance.yahoo.com/table.csv?s=$1&a=$2&b=$3&c=$4&d=$5&e=$6&f=$7&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
-          # testing for 0386.HK as sometimes yahoo data fails to appear 
-          #echo()
-          #msgg() do : echo qurl
-          #msgy() do : echo "http://real-chart.finance.yahoo.com/table.csv?s=0386.HK&a=0&b=1&c=2014&d=8&e=22&f=2015&g=d&ignore=.csv"
-          #echo()  
+          # this url worked until 2015-09-21
+          #var qurl = "http://real-chart.finance.yahoo.com/table.csv?s=$1&a=$2&b=$3&c=$4&d=$5&e=$6&f=$7&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
+          # current historical data url          
+          var qurl = "http://ichart.finance.yahoo.com/table.csv?s=$1&a=$2&b=$3&c=$4&d=$5&e=$6&f=$7&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
+                    
           var headerset = [symb,"Date","Open","High","Low","Close","Volume","Adj Close"]
           var c = 0
           var hflag  : bool # used for testing maybe removed later
