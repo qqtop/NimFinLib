@@ -567,7 +567,8 @@ proc currentStocks(aurl:string) =
 
   var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
   try:
-    for line in getContent(aurl).splitLines:
+    var ci = getContent(aurl)
+    for line in ci.splitLines:
       var data = line[1..line.high].split(",")
       # even if yahoo servers are down our data.len is still 1 so
       if data.len > 1:
@@ -583,7 +584,7 @@ proc currentStocks(aurl:string) =
                 sflag = true
   except HttpRequestError:
       msgr() do : echo "Yahoo current data could not be retrieved . Try again ."
-
+      echo()
 
 proc currentIndexes(aurl:string) {.discardable.} =
   ## currentIndexes
@@ -612,7 +613,7 @@ proc currentIndexes(aurl:string) {.discardable.} =
                  sflag = true
   except HttpRequestError:
       msgr() do : echo "Yahoo current data could not be retrieved . Try again ."
-      
+      echo()
 
 proc buildStockString*(apf:Portfolio):string =
   ## buildStocksString
