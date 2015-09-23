@@ -42,7 +42,7 @@
 ## ProjectStart: 2015-06-05
 ##
 ## ToDo        : Ratios , Covariance , Correlation
-##               improve exception handling if yahoo data fails to be retrieved 
+##               improve timeout exception handling if yahoo data fails to be retrieved
 ##               or is temporary unavailable for certain markets
 ##
 ## Programming : qqTop
@@ -85,7 +85,7 @@ const
        brightcyan*   = "brightcyan"
        brightyellow* = "brightyellow"
        brightwhite*  = "brightwhite"
-      
+
 type
 
   Account*  = object
@@ -264,7 +264,6 @@ template hdx*(code:stmt):stmt  =
    echo repeat("+",tw)
    echo ""
 
-
 template withFile*(f: expr, filename: string, mode: FileMode,
                     body: stmt): stmt {.immediate.} =
     ## withFile
@@ -311,9 +310,9 @@ proc printHl*(sen:string,astr:string,col:string) =
       ## this would highlight all T in green
       ##
       ## available colors : green,yellow,cyan,red,white,black,brightgreen,brightwhite
-      ## 
+      ##
       ##                    brightred,brightcyan,brightyellow
- 
+
       var rx = sen.split(astr)
       for x in rx.low.. rx.high:
           writestyled(rx[x],{})
@@ -1014,9 +1013,9 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
           # we use the csv string , yahoo json format only returns limited data 1.5 years or less
           # this url worked until 2015-09-21
           #var qurl = "http://real-chart.finance.yahoo.com/table.csv?s=$1&a=$2&b=$3&c=$4&d=$5&e=$6&f=$7&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
-          # current historical data url          
+          # current historical data url
           var qurl = "http://ichart.finance.yahoo.com/table.csv?s=$1&a=$2&b=$3&c=$4&d=$5&e=$6&f=$7&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
-                    
+
           var headerset = [symb,"Date","Open","High","Low","Close","Volume","Adj Close"]
           var c = 0
           var hflag  : bool # used for testing maybe removed later
@@ -1026,7 +1025,7 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
           # could also be done to be in memory like /shm/  this file will be auto removed.
 
           var acvsfile = "nimfintmp.csv"
-          try:  
+          try:
             downloadFile(qurl,acvsfile)
           except HttpRequestError:
             echo()
@@ -1406,12 +1405,12 @@ proc showDailyReturnsCl*(self:Stocks , N:int) =
           if N == 0:
               for  x in 0.. <dfr.len:
                       echo "{:<8}{:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
-                  
-              
+
+
           else:
               for  x in 0.. <N:
                       echo "{:<8}{:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
-                  
+
 
 proc showDailyReturnsAdCl*(self:Stocks , N:int) =
       ## showdailyReturnsAdCl
@@ -1601,7 +1600,7 @@ proc ema* (dx : Stocks , N: int = 14) : Ts =
           yesterdayEMA = aema
 
 
-    result = m_emaSeries 
+    result = m_emaSeries
 
 
 proc showEma* (emx:Ts , N:int = 5) =
@@ -1925,12 +1924,12 @@ proc qqTop*() =
   ## qqTop
   ##
   ## prints qqTop logo in custom color
-  ## 
+  ##
   printHl("qq","qq",cyan)
   printHl("T","T",brightgreen)
   printHl("o","o",brightred)
   printHl("p","p",cyan)
-  
+
 
 
 # finalizer
@@ -1941,7 +1940,7 @@ proc doFinish*() =
     ##
     ## can be changed to anything desired
     ##
-    msgb() do : write(stdout,"{:<15}{} | {}{} | {}{} - {} | ".fmt("Application : ",extractFileName(getAppFilename()),"Nim : ",NimVersion," nimFinLib : ",NIMFINLIBVERSION,year(getDateStr()))) 
+    msgb() do : write(stdout,"{:<15}{} | {}{} | {}{} - {} | ".fmt("Application : ",extractFileName(getAppFilename()),"Nim : ",NimVersion," nimFinLib : ",NIMFINLIBVERSION,year(getDateStr())))
     qqTop()
     echo()
     msgy() do : write(stdout,"{:<15}{}{}".fmt("Elapsed     : ",epochtime() - startnimfinlib," secs"))
