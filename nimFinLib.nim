@@ -6,7 +6,7 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.x
+## Version     : 0.2.5
 ##
 ## Compiler    : nim 0.11.3
 ##
@@ -21,7 +21,7 @@
 ##
 ##               Yahoo forex rates
 ##
-##               Dataframe like structure for easy working with historical data and dataseries
+##               Dataframe like objects for easy working with historical data and dataseries
 ##
 ##               Returns calculations
 ##
@@ -563,10 +563,11 @@ proc currentStocks(aurl:string) =
   ##
   ## not callable
   ##
-  #  some meek error handling is implemented if the yahoo servers are down
+  #  some error handling is implemented if the yahoo servers are down
 
   var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
-  for line in getContent(aurl).splitLines:
+  try:
+    for line in getContent(aurl).splitLines:
       var data = line[1..line.high].split(",")
       # even if yahoo servers are down our data.len is still 1 so
       if data.len > 1:
@@ -580,6 +581,8 @@ proc currentStocks(aurl:string) =
              if data.len == 1 and sflag == false:
                 msgr() do : echo "Yahoo server maybe unavailable. Try again later"
                 sflag = true
+  except HttpRequestError:
+      msgr() do : echo "Yahoo current data could not be retrieved . Try again ."
 
 
 proc currentIndexes(aurl:string) {.discardable.} =
@@ -589,10 +592,11 @@ proc currentIndexes(aurl:string) {.discardable.} =
   ##
   ## not callable
   ##
-  #  some meek error handling is implemented if the yahoo servers are down
+  #  some error handling is implemented if the yahoo servers are down
 
   var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
-  for line in getContent(aurl).splitLines:
+  try:
+    for line in getContent(aurl).splitLines:
       var data = line[1..line.high].split(",")
       if data.len > 1:
               setforegroundcolor(fgYellow)
@@ -605,6 +609,9 @@ proc currentIndexes(aurl:string) {.discardable.} =
               if data.len == 1 and sflag == false:
                  msgr() do : echo "Yahoo server maybe unavailable. Try again later"
                  sflag = true
+  except HttpRequestError:
+      msgr() do : echo "Yahoo current data could not be retrieved . Try again ."
+      
 
 proc buildStockString*(apf:Portfolio):string =
   ## buildStocksString

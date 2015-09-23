@@ -7,7 +7,7 @@ Financial Library for Nim language
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|
-| nimFinLib  | Development | 0.2.x   | MIT opensource | Linux  | Nim 0.11.3 up  |
+| nimFinLib  | Development | 0.2.5   | MIT opensource | Linux  | Nim 0.11.3 up  |
 
 
 
