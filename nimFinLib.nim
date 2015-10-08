@@ -1034,7 +1034,7 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
           var s = newFileStream(acvsfile, fmRead)
           if s == nil:
              # in case of problems with the yahoo csv file we show a message
-             msgr() do : echo "Hello : Data file for $1 could not be opened " % symb
+             msgr() do : echo "Error : Data file for $1 could not be opened " % symb
 
           # now parse the csv file
           var x: CsvParser
