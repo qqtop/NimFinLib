@@ -112,7 +112,7 @@ account.pf.add(portfolio)
 # now all is set and data can be used
 echo ()
 msgy() do : echo "###############################################"
-msgy() do : echo "# Tests for Account , Portfolio ,Stocks types                 #"
+msgy() do : echo "# Tests for Account , Portfolio ,Stocks types #"
 msgy() do : echo "###############################################"
 echo ()
 
@@ -254,7 +254,7 @@ showEma(ema22,5)
 
 echo ()
 msgy() do : echo "###############################################"
-msgy() do : echo "# Tests for statistics on Stocks type             #"
+msgy() do : echo "# Tests for statistics on Stocks type         #"
 msgy() do : echo "###############################################"
 echo ()
 
