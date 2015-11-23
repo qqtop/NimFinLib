@@ -22,6 +22,18 @@ let spc = "   "
 let url = "http://www.kitco.com/texten/texten.html"
 
 
+
+proc checkChange(s:string):int = 
+     # parse the change data[6] from yahoo
+     var z = split(s," - ")[0]
+     if z.startswith("+") == true:
+        result = 1
+     elif z.startswith("-") == true:
+        result = -1
+     else:
+        result = 0
+
+
 proc currentIndexes(aurl:string,xpos:int) {.discardable.} =
     ## currentIndexes
     ##
@@ -43,8 +55,13 @@ proc currentIndexes(aurl:string,xpos:int) {.discardable.} =
                 print(unquote(data[1]),yellowgreen,xpos = xpos)                   
                 curdn(1)
                 printLnBiCol("Date : {:<12}{:<9}    ".fmt(unquote(data[4]),unquote(data[5])),":",xpos = xpos)
-                curup(2)      
-                printSlimNumber(data[3],fgr=lime,xpos = xpos + 29)
+                curup(2) 
+                var cc = checkChange(unquote(data[9]))
+                case cc
+                  of -1 : printSlimNumber(data[3],fgr=truetomato,xpos = xpos + 29)
+                  of  0 : printSlimNumber(data[3],fgr=steelblue,xpos = xpos + 29)
+                  of  1 : printSlimNumber(data[3],fgr=lime,xpos = xpos + 29)
+                  else    : print("Error",red,xpos = xpos + 29)
                 
                 printLnBiCol("Open : {:<8} High : {:<8} Change : {}".fmt(data[6],data[7],unquote(data[9])),":",xpos = xpos)
                 printLnBiCol("Range: {}".fmt(unquote(data[10])),":",xpos = xpos)
