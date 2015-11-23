@@ -11,6 +11,9 @@ Financial Library for Nim language
 
 
 
+Development Version : nimFinLib2.nim 
+
+
 Data gathering and calculations support 
 ----------------------------------------
 
