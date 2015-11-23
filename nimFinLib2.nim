@@ -60,15 +60,22 @@
 ##
 ## Contributors: reactorMonk
 ##
-## Requires    : strfmt,random modules and statistics.nim
+## Requires    : strfmt,random modules , statistics.nim and cx.nim
+##
+##               get cx.nim like so
+##               
+##               git clone https://github.com/qqtop/NimCx.git
+##               
+##               then copy cx.nim into your dev directory or path
+##
+##
 ##
 ## Notes       : it is assumed that terminal color is black background
 ##
 ##               and white text. Other color schemes may not show all output.
 ##
-##               For comprehensive tests and usage see nfT52.nim
-##               
-##               and minifin.nim
+## Tests       : For comprehensive tests and usage see nfT52.nim and minifin.nim
+## 
 ##
 ## Installation: git clone https://github.com/qqtop/NimFinLib.git
 ##
@@ -79,9 +86,10 @@
 ##
 
 
-import os,cx,strutils,parseutils,sequtils,httpclient,strfmt
+import os,strutils,parseutils,sequtils,httpclient,strfmt
 import terminal,times,tables,random, parsecsv,streams,algorithm,math,unicode
 import statistics
+import cx
 
 let NIMFINLIBVERSION* = "0.2.5dev"
 let startnimfinlib = epochTime()

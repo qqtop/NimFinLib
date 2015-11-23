@@ -23,7 +23,7 @@ import libFinHk
 var start = epochTime()
 
 # testing handler --> press ctrl-c
-setControlCHook(handler)
+#cx.setControlCHook(handler)
 
 echo ()
 msgy() do : echo "###############################################"
