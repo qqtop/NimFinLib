@@ -5,6 +5,12 @@
 Financial Library for Nim language
 ==================================
 
+
+![Image](http://qqtop.github.io/minifin1.png?raw=true)
+Output from minifin.nim
+
+
+
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|
 | nimFinLib  | Development | 0.2.5   | MIT opensource | Linux  | Nim 0.11.3 up  |
@@ -86,13 +92,6 @@ showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"])
 decho(3)
 
 ```
-
-
-Output from minifin
-
-
-![Image](http://qqtop.github.io/minifin1.png?raw=true)
-
 
 
 Want to try ? 
