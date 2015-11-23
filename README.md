@@ -91,7 +91,7 @@ decho(3)
 Output from minifin
 
 
-![Image](http://qqtop.github.io/nimcolors11.png?raw=true)
+![Image](http://qqtop.github.io/minifin1.png?raw=true)
 
 
 
