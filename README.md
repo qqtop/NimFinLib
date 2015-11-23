@@ -7,13 +7,13 @@ Financial Library for Nim language
 
 
 ![Image](http://qqtop.github.io/minifin1.png?raw=true)
-Output from minifin.nim
+Example screen from minifin.nim
 
 
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|
-| nimFinLib  | Development | 0.2.5   | MIT opensource | Linux  | Nim 0.11.3 up  |
+| nimFinLib  | Development | 0.2.5   | MIT opensource | Linux  | Nim 0.12.1 up  |
 
 
 
