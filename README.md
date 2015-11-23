@@ -88,6 +88,13 @@ decho(3)
 ```
 
 
+Output from minifin
+
+
+![Image](http://qqtop.github.io/nimcolors11.png?raw=true)
+
+
+
 Want to try ? 
 
      Get the file testMe.nim and put it into a new directory
