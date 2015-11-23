@@ -19,7 +19,12 @@
 ##
 ##               Yahoo current stock quotes
 ##
-##               Yahoo forex rates
+##               Yahoo market indexes
+##
+##               Yahoo forex rates        
+##
+##               Kitco Metal Prices
+##
 ##
 ##               Dataframe like objects for easy working with historical data and dataseries
 ##
@@ -398,6 +403,67 @@ proc currentIndexes(aurl:string) {.discardable.} =
       msgr() do : echo "Yahoo current data could not be retrieved . Try again ."
       echo()
 
+
+
+
+proc checkChange(s:string):int = 
+     # checkChange 
+     # 
+     # internal utility proc used by currentIDX
+     # parse the change data[9] from yahoo
+     # 
+     # 
+     var z = split(s," - ")[0]
+     if z.startswith("+") == true:
+        result = 1
+     elif z.startswith("-") == true:
+        result = -1
+     else:
+        result = 0
+
+
+
+proc currentIDX(aurl:string,xpos:int) {.discardable.} =
+    ## currentIDX
+    ##
+    ## display routine for current index quote using big slim letters for index value
+    ##
+    ## not callable , allows postioning
+    ##
+    #  some error handling is implemented if the yahoo servers are down
+
+    var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
+    try:
+      var ci = getContent(aurl)
+      for line in ci.splitLines:
+        var data = line[1..line.high].split(",")
+        if data.len > 1:
+                printBiCol("Code : {:<10}  ".fmt(unquote(data[0])),":",yellowgreen,cyan,xpos = xpos)
+                printLnBiCol("Market : {}".fmt(unquote(data[2])),":",yellowgreen,cyan)
+                echo()                        
+                print(unquote(data[1]),yellowgreen,xpos = xpos)                   
+                curdn(1)
+                printLnBiCol("Date : {:<12}{:<9}    ".fmt(unquote(data[4]),unquote(data[5])),":",xpos = xpos)
+                curup(2) 
+                var cc = checkChange(unquote(data[9]))
+                case cc
+                  of -1 : printSlimNumber(data[3],fgr=truetomato,xpos = xpos + 29)
+                  of  0 : printSlimNumber(data[3],fgr=steelblue,xpos = xpos + 29)
+                  of  1 : printSlimNumber(data[3],fgr=lime,xpos = xpos + 29)
+                  else    : print("Error",red,xpos = xpos + 29)
+                
+                printLnBiCol("Open : {:<8} High : {:<8} Change : {}".fmt(data[6],data[7],unquote(data[9])),":",xpos = xpos)
+                printLnBiCol("Range: {}".fmt(unquote(data[10])),":",xpos = xpos)
+                printLn(repeat("-",60),xpos = xpos)
+                #curdn(1)
+        else:
+                if data.len == 1 and sflag == false:
+                  printLn("Yahoo Server Fail.",truetomato,xpos = xpos)
+                  sflag = true
+    except HttpRequestError:
+        printLn("Yahoo Data Fail.",truetomato,xpos = xpos)
+        
+
 proc buildStockString*(apf:Portfolio):string =
   ## buildStocksString
   ##
@@ -441,6 +507,21 @@ proc showCurrentIndexes*(adf:seq[Stocks]){.discardable.} =
    hdx(echo "Index Data for a pool" )
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % idxs
    currentIndexes(qurl)
+
+
+
+proc showCurrentIDX*(s:string,xpos:int = 1){.discardable.} =
+    ## showCurrentIndexes
+    ##
+    ## callable display routine for currentIDX with a string of format IDX1+IDX2+IDX3 .. 
+    ## 
+    ## passed in . Note this will use big slim letters to display inex value
+    ##
+    ##
+    ## xpos allows x positioning
+    #
+    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % s
+    currentIDX(qurl,xpos = xpos)
 
 
 
@@ -1460,21 +1541,39 @@ proc getCurrentForex*(curs:seq[string]):Currencies =
   result = rf
 
 
-proc showCurrentForex*(curs : seq[string]) =
+# proc showCurrentForex*(curs : seq[string]) =
+#        ## showCurrentForex
+#        ##
+#        ## a convenience proc to display exchange rates
+#        ##
+#        ## .. code-block:: nim
+#        ##    showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"])
+#        ##    decho(3)
+#        ##
+#        ##
+# 
+#        var cx = getcurrentForex(curs) # we get a Currencies object back
+#        msgg() do : echo "{:<8} {:<4} {}".fmt("Pair","Cur","Rate")
+#        for x in 0.. <cx.cu.len:
+#              echo "{:<8} {:<4} {}".fmt(curs[x],cx.cu[x],cx.ra[x])
+
+
+
+proc showCurrentForex*(curs : seq[string],xpos:int = 1) =
        ## showCurrentForex
        ##
-       ## a convenience proc to display exchange rates
+       ## a convenience proc to display exchange rates with positiong
        ##
        ## .. code-block:: nim
-       ##    showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"])
+       ##    showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"],xpos = 10)
        ##    decho(3)
        ##
        ##
 
        var cx = getcurrentForex(curs) # we get a Currencies object back
-       msgg() do : echo "{:<8} {:<4} {}".fmt("Pair","Cur","Rate")
+       printLn("{:<16} {:<4} {}".fmt("Currencies","Cur","Rate"),lime,xpos = xpos)
        for x in 0.. <cx.cu.len:
-             echo "{:<8} {:<4} {}".fmt(curs[x],cx.cu[x],cx.ra[x])
+            printLn("{:<16} {:<4} {}".fmt(curs[x],cx.cu[x],cx.ra[x]),xpos = xpos)
 
 
 proc showStocksTable*(apfdata: Portfolio) =
@@ -1506,7 +1605,6 @@ proc showStockdataTable*(a:Stockdata) =
      ##
      ## shows all items of a Stockdata object
      ##
-
      echo "{:<17} : {:>12}".fmt("Price",a.price)
      echo "{:<17} : {:>12}".fmt("Change",a.change)
      echo "{:<17} : {:>12}".fmt("Volume",a.volume)
@@ -1530,6 +1628,95 @@ proc showStockdataTable*(a:Stockdata) =
      decho(2)
 
 
+
+template metal():stmt =
+    ## metal
+    ## 
+    ## utility template to display kitco metal data
+    ## 
+    ## used by showKitcoMetal
+    ## 
+
+    if ktd[x].startswith(dl) == true:
+      printLn(ktd[x],yellowgreen,xpos = xpos - 3 )
+                                  
+    elif find(ktd[x],opn) > 0 :
+        printLn(ktd[x],lime,xpos = xpos - 3)   
+      
+    elif find(ktd[x],cls) > 0:
+        printLn(ktd[x],truetomato,xpos = xpos - 3)  
+      
+    elif find(ktd[x],"Update") > 0:
+        printLn(ktd[x] & " New York Time",yellowgreen,xpos = xpos - 3)
+                          
+    else:
+          printLn(ktd[x],cx.white,xpos = xpos - 3)
+
+
+
+proc showKitcoMetal*(xpos:int = 1) = 
+    ## showKitcoMetal
+    ## 
+    ## get and display kitco metal prices
+    ## 
+    ##  
+    let dl  = "   ----------------------------------------------------------------------"
+    let cls = "CLOSED"
+    let opn = "OPEN" 
+    let url = "http://www.kitco.com/texten/texten.html"
+    
+    printLn("Gold,Silver,Platinum Spot price : New York and Asia / Europe ",peru,xpos = xpos)
+    
+    var kt = getContent(url)
+    var kts = splitlines(kt)
+    var ktd = newSeq[string]()
+          
+    var nymarket = false
+    var asiaeuropemarket = false
+      
+    var addflag = false 
+    for ktl in kts:
+      
+        if find(ktl,"File created on ") > 0:
+            addflag = false 
+      
+        if find(ktl,"New York") > 0:
+            addflag = true
+                          
+        if addflag == true:  
+            ktd.add(ktl)
+          
+  
+    # now scan for closed metal markets
+    var lc = 0
+    for s in ktd:
+        inc lc
+        if find(s,cls) > 0:
+          if lc < 5:
+                nymarket = false
+          elif lc > 10:
+                asiaeuropemarket = false
+        if find(s,opn) > 0:
+            if lc < 5:
+                nymarket = true
+            elif lc > 10:
+                asiaeuropemarket = true
+ 
+    if nymarket == false and asiaeuropemarket == false:
+          printLn("All Metal Markets Closed",truetomato,xpos = xpos)
+          for x in 13.. <ktd.len: metal()   
+              
+    elif nymarket == true and asiaeuropemarket == true:
+          # both open we show new york gold       
+          for x in 0.. ktd.len - 18: metal()                                       
+  
+    elif nymarket == true and asiaeuropemarket == false:
+        # ny  open we show new york gold       
+          for x in 0.. <ktd.len - 18: metal()                                                                     
+
+    elif nymarket == false and asiaeuropemarket == true:
+          # asiaeuropemarket  open we show asiaeuropemarket gold       
+          for x in 13.. <ktd.len: metal()                        
 
 
 

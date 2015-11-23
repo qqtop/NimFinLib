@@ -354,7 +354,10 @@ showCurrentIndexes(idx)
 # here passing in our indexpool a  seq[Stocks] type
 showCurrentIndexes(indexpool)
 
-
+# here showing in large slim numbers
+decho(2)
+# showCurrentIDX accepts only strings so far so we need to massage the indexpool into string
+showCurrentIDX(buildstockstring(indexpool))
 
 echo ()
 superheader(" Testing getSymbol3 - Additional stock info ")
@@ -387,6 +390,13 @@ echo()
 echo "Current EURUSD Rate : ","{:<8}".fmt(curs.ra.last)
 echo "Current EURHKD Rate : ","{:<8}".fmt(curs.ra.first)
 echo()
+
+
+
+echo ()
+superHeader(" Test for Kitco Metal Prices ")
+showKitcoMetal()
+echo ()
 
 
 echo ()
