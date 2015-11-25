@@ -1,5 +1,6 @@
 import os,cx,httpclient,strutils,nimFinLib2,times,strfmt,osproc
 
+
 # MINIFIN
 
 # A MINI financial information system example
@@ -12,11 +13,33 @@ import os,cx,httpclient,strutils,nimFinLib2,times,strfmt,osproc
 # terminal size : full screen 80 x 40
 # font          : monospace
 # fontsize      : 9 regular
-
-
+# 
+# profiling
+# import nimProf
+# nim c -d:ssl --profiler:on --stackTrace:on minifin 
+# 
+# 
+# nim c -d:release --threads:on --gc:boehm minifin
+# 
+# memory seems not to be freed somewhere
+# 
+var mmax = 0        # give it some unlikely value to adjust
+var mmin = 1000000  #  
 
 proc bottomInfo(lpx:int,mxpos:int,ts:int) = 
+      # some bottom information 
+      var mm = getOccupiedMem()
+      if mm >= mmax:
+         mmax = mm
+      if mm < mmin:
+         mmin = mm
+      if mm > 1_000_000:
+         GC_FullCollect()
+
+      #curdn(1)
+      printLn("Memory  : " &  $mm &  " | Min : " & $mmin & " | Max : " & $mmax,cx.gray,xpos = mxpos)
       print("Updated : " & $lpx & " times ",cx.gray,xpos = mxpos)
+      print(" Update Interval " & $ts & " secs.",cx.gray)
       printLn("Next Update: " & $(getLocalTime(getTime()) + initInterval(0,ts,0,0,0)),pastelGreen,xpos = cx.tw - 45)
       print("{:<14}".fmt("Application :"),pastelgreen,xpos = mxpos)
       print(extractFileName(getAppFilename()),brightblack)
@@ -53,7 +76,7 @@ proc doit(mxpos:int) =
     # display top forex set
     showCurrentForex(@["EURHKD","GBPHKD","JPYHKD","AUDHKD","CNYHKD"],xpos = cx.tw -41)
     # down 3
-    curdn(3)
+    curdn(2)
     # display second forex set and update time
     showCurrentForex(@["EURUSD","GBPUSD","USDJPY","AUDUSD","USDCNY"],xpos = cx.tw -41)
     curdn(1)
@@ -75,6 +98,7 @@ proc doit(mxpos:int) =
 # setup auto refresh schedule default 1 min , min 10 secs , max 10 minutes
 # commandLine input in seconds 
 # 
+
 var timespace = 60000
 if len(commandLineParams()) > 0:
     for param in commandLineParams():

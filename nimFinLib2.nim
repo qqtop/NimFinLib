@@ -86,15 +86,12 @@
 ##
 
 
-import os,strutils,parseutils,sequtils,httpclient,strfmt
+
+import os,cx,strutils,parseutils,sequtils,httpclient,net,strfmt
 import terminal,times,tables,random, parsecsv,streams,algorithm,math,unicode
 import statistics
-import cx
 
 let NIMFINLIBVERSION* = "0.2.5dev"
-let startnimfinlib = epochTime()
-
-
 
 type
 
@@ -452,13 +449,22 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
                 print(unquote(data[1]),yellowgreen,xpos = xpos)                   
                 curdn(1)
                 printLnBiCol("Date : {:<12}{:<9}    ".fmt(unquote(data[4]),unquote(data[5])),":",xpos = xpos)
-                curup(2) 
+                curup(1) 
                 var cc = checkChange(unquote(data[9]))
                 case cc
-                  of -1 : printSlimNumber(data[3],fgr=truetomato,xpos = xpos + 29)
-                  of  0 : printSlimNumber(data[3],fgr=steelblue,xpos = xpos + 29)
-                  of  1 : printSlimNumber(data[3],fgr=lime,xpos = xpos + 29)
-                  else    : print("Error",red,xpos = xpos + 29)
+                  of -1 : 
+                          print(showRune("FFEC"),red,xpos = xpos + 29)
+                          curup(1)
+                          printSlimNumber(data[3],fgr=truetomato,xpos = xpos + 30)
+                  of  0 :
+                          curup(1) 
+                          printSlimNumber(data[3],fgr=steelblue,xpos = xpos + 30)
+                  of  1 : 
+                          print(showRune("FFEA"),lime,xpos = xpos + 29)
+                          curup(1)
+                          printSlimNumber(data[3],fgr=lime,xpos = xpos + 30 )
+                  else  : 
+                          print("Error",red,xpos = xpos + 29)
                 
                 printLnBiCol("Open : {:<8} High : {:<8} Change : {}".fmt(data[6],data[7],unquote(data[9])),":",xpos = xpos)
                 printLnBiCol("Range: {}".fmt(unquote(data[10])),":",xpos = xpos)
@@ -1492,8 +1498,83 @@ proc showEma* (emx:Ts , N:int = 5) =
           echo "{:<11} {:>11} ".fmt(emx.dd[x],emx.tx[x])
 
 
+# 
+# proc getCurrentForex*(curs:seq[string],xpos:int = 1):Currencies =
+#   ## getCurrentForex     deprecated version which uses parsecsv and a tempfile
+#   ##
+#   ## get the latest yahoo exchange rate info for a currency pair
+#   ##
+#   ## e.g EURUSD , JPYUSD ,GBPHKD
+#   ##
+#   ## .. code-block:: nim
+#   ##    var curs = getCurrentForex(@["EURUSD","EURHKD"])
+#   ##    echo()
+#   ##    echo "Current EURUSD Rate : ","{:<8}".fmt(curs.ra[0])
+#   ##    echo "Current EURHKD Rate : ","{:<8}".fmt(curs.ra[1])
+#   ##    echo()
+#   ##
+# 
+#   # currently using cvs data url
+#   try:
+#           var aurl = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=c4l1&s="    #  EURUSD=X,GBPUSD=X
+#           for ac in curs:
+#             aurl = aurl & ac & "=X,"
+# 
+#           # init a Currencies object to hold forex data
+#           var rf = initCurrencies()
+# 
+#           var acvsfile = "nimcurmp.csv"  # temporary file
+#           downloadFile(aurl,acvsfile)
+# 
+#           var s = newFileStream(acvsfile, fmRead)
+#           if s == nil:
+#               # in case of problems with the yahoo csv file we show a message
+#               msgr() do : echo "Hello : Forex data file $1 could not be opened " % acvsfile
+# 
+#           # now parse the csv file
+#           var x: CsvParser
+#           var c = 0
+#           open(x, s , acvsfile, separator=',')
+#           while readRow(x):
+#               c = 0 # counter to assign item to correct var
+#               for val in items(x.row):
+#                       c += 1
+# 
+#                       case c
+#                       of 1:
+#                             rf.cu.add(val)
+#                       of 2:
+#                             if val == "N/A":
+#                               rf.ra.add(0.00)
+#                             else:
+#                               rf.ra.add(parseFloat(val))
+#                       else:
+#                             msgr() do : echo "Csv currency data in unexpected format "
+# 
+#           # clean up
+#           removeFile(acvsfile)
+#           result = rf
+#           
+#   except HttpRequestError:
+#           printLn("Forex Data temporary unavailable" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+#   except ValueError:
+#           discard
+#   except OSError:
+#           discard
+#   except OverflowError:
+#           discard
+#   except  TimeoutError:
+#          println("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+#   except  ProtocolError:
+#          println("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+#   except :
+#          discard
+#   finally:
+#         discard  
+#         
+        
 
-proc getCurrentForex*(curs:seq[string]):Currencies =
+proc getCurrentForex*(curs:seq[string],xpos:int = 1):Currencies =
   ## getCurrentForex
   ##
   ## get the latest yahoo exchange rate info for a currency pair
@@ -1509,45 +1590,52 @@ proc getCurrentForex*(curs:seq[string]):Currencies =
   ##
 
   # currently using cvs data url
-  var aurl = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=c4l1&s="    #  EURUSD=X,GBPUSD=X
-  for ac in curs:
-     aurl = aurl & ac & "=X,"
+  # this version does not need temp file as we parse cvs as text file directly
+  
+  try:
+          var aurl = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=c4l1&s="    #  EURUSD=X,GBPUSD=X
+          for ac in curs:
+            aurl = aurl & ac & "=X,"
 
-  # init a Currencies object to hold forex data
-  var rf = initCurrencies()
+          # init a Currencies object to hold forex data
+          var rf = initCurrencies()
+          var zs = splitlines(unquote(getcontent(aurl)))  # get data
+          var c = 0
+          for zl in zs:
+              var x = split(zl,",")
+              c = 0 # counter to assign item to correct var
+              for val in x:
+                       c += 1
+                       case c
+                        of 1:
+                             rf.cu.add(val)
+                        of 2:
+                             if val == "N/A":
+                                rf.ra.add(0.00)
+                             else:
+                               rf.ra.add(parseFloat(val))
+                        else:
+                             println("Csv currency data in unexpected format ",truetomato,xpos = xpos)
+          result = rf
+          
+  except HttpRequestError:
+          printLn("Forex Data temporary unavailable" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+  except ValueError:
+          discard
+  except OSError:
+          discard
+  except OverflowError:
+          discard
+  except  TimeoutError:
+         println("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+  except  ProtocolError:
+         println("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+  except :
+         discard
+  finally:
+        discard  
 
-  var acvsfile = "nimcurmp.csv"  # temporary file
-  downloadFile(aurl,acvsfile)
-
-  var s = newFileStream(acvsfile, fmRead)
-  if s == nil:
-       # in case of problems with the yahoo csv file we show a message
-       msgr() do : echo "Hello : Forex data file $1 could not be opened " % acvsfile
-
-  # now parse the csv file
-  var x: CsvParser
-  var c = 0
-  open(x, s , acvsfile, separator=',')
-  while readRow(x):
-      c = 0 # counter to assign item to correct var
-      for val in items(x.row):
-              c += 1
-
-              case c
-              of 1:
-                    rf.cu.add(val)
-              of 2:
-                    if val == "N/A":
-                       rf.ra.add(0.00)
-                    else:
-                       rf.ra.add(parseFloat(val))
-              else:
-                    msgr() do : echo "Csv currency data in unexpected format "
-
-  # clean up
-  removeFile(acvsfile)
-  result = rf
-
+       
 
 # proc showCurrentForex*(curs : seq[string]) =
 #        ## showCurrentForex
@@ -1564,8 +1652,6 @@ proc getCurrentForex*(curs:seq[string]):Currencies =
 #        msgg() do : echo "{:<8} {:<4} {}".fmt("Pair","Cur","Rate")
 #        for x in 0.. <cx.cu.len:
 #              echo "{:<8} {:<4} {}".fmt(curs[x],cx.cu[x],cx.ra[x])
-
-
 
 proc showCurrentForex*(curs : seq[string],xpos:int = 1) =
        ## showCurrentForex
@@ -1584,7 +1670,7 @@ proc showCurrentForex*(curs : seq[string],xpos:int = 1) =
             printLn("{:<16} {:<4} {}".fmt(curs[x],cx.cu[x],cx.ra[x]),xpos = xpos)
 
 
-proc showStocksTable*(apfdata: Portfolio) =
+proc showStocksTable*(apfdata: Portfolio,xpos:int = 1) =
    ## showStocksTable
    ##
    ## a convenience prog to display the data part of a Portfolio object
@@ -1647,12 +1733,18 @@ template metal():stmt =
 
     if ktd[x].startswith(dl) == true:
       printLn(ktd[x],yellowgreen,xpos = xpos - 3 )
-                                  
+      
+    elif find(ktd[x],"Asia / Europe") > 0:
+       print(strip(ktd[x],true,true),cx.white,xpos = xpos)
+        
+    elif find(ktd[x],"New York") > 0:
+       print(strip(ktd[x],true,true),cx.white,xpos = xpos)
+    
     elif find(ktd[x],opn) > 0 :
-        printLn(ktd[x],lime,xpos = xpos - 3)   
+        printLn(ktd[x],lime)   
       
     elif find(ktd[x],cls) > 0:
-        printLn(ktd[x],truetomato,xpos = xpos - 3)  
+        printLn(ktd[x],truetomato)  
       
     elif find(ktd[x],"Update") > 0:
         printLn(ktd[x] & " New York Time",yellowgreen,xpos = xpos - 3)
@@ -1675,58 +1767,76 @@ proc showKitcoMetal*(xpos:int = 1) =
     
     printLn("Gold,Silver,Platinum Spot price : New York and Asia / Europe ",peru,xpos = xpos)
     
-    var kt = getContent(url)
-    var kts = splitlines(kt)
-    var ktd = newSeq[string]()
-          
-    var nymarket = false
-    var asiaeuropemarket = false
-      
-    var addflag = false 
-    for ktl in kts:
-      
-        if find(ktl,"File created on ") > 0:
-            addflag = false 
-      
-        if find(ktl,"New York") > 0:
-            addflag = true
-                          
-        if addflag == true:  
-            ktd.add(ktl)
-          
+    try:
+            var kt = getContent(url,timeout = 5000)
   
-    # now scan for closed metal markets
-    var lc = 0
-    for s in ktd:
-        inc lc
-        if find(s,cls) > 0:
-          if lc < 5:
-                nymarket = false
-          elif lc > 10:
-                asiaeuropemarket = false
-        if find(s,opn) > 0:
-            if lc < 5:
-                nymarket = true
-            elif lc > 10:
-                asiaeuropemarket = true
- 
-    if nymarket == false and asiaeuropemarket == false:
-          printLn("All Metal Markets Closed",truetomato,xpos = xpos)
-          for x in 13.. <ktd.len: metal()   
+            var kts = splitlines(kt)
+            var ktd = newSeq[string]()
+                  
+            var nymarket = false
+            var asiaeuropemarket = false
               
-    elif nymarket == true and asiaeuropemarket == true:
-          # both open we show new york gold       
-          for x in 0.. ktd.len - 18: metal()                                       
-  
-    elif nymarket == true and asiaeuropemarket == false:
-        # ny  open we show new york gold       
-          for x in 0.. <ktd.len - 18: metal()                                                                     
+            var addflag = false 
+            for ktl in kts:
+              
+                if find(ktl,"File created on ") > 0:
+                    addflag = false 
+              
+                if find(ktl,"New York") > 0:
+                    addflag = true
+                                  
+                if addflag == true:  
+                    ktd.add(ktl)
+                  
+          
+            # now scan for closed metal markets
+            var lc = 0
+            for s in ktd:
+                inc lc
+                if find(s,cls) > 0:
+                  if lc < 5:
+                        nymarket = false
+                  elif lc > 10:
+                        asiaeuropemarket = false
+                if find(s,opn) > 0:
+                    if lc < 5:
+                        nymarket = true
+                    elif lc > 10:
+                        asiaeuropemarket = true
+        
+            if nymarket == false and asiaeuropemarket == false:
+                  printLn("All Metal Markets Closed",truetomato,xpos = xpos)
+                  for x in 13.. <ktd.len: metal()   
+                      
+            elif nymarket == true and asiaeuropemarket == true:
+                  # both open we show new york gold       
+                  for x in 0.. ktd.len - 18: metal()                                       
+          
+            elif nymarket == true and asiaeuropemarket == false:
+                # ny  open we show new york gold       
+                  for x in 0.. <ktd.len - 18: metal()                                                                     
 
-    elif nymarket == false and asiaeuropemarket == true:
-          # asiaeuropemarket  open we show asiaeuropemarket gold       
-          for x in 13.. <ktd.len: metal()                        
-
-
+            elif nymarket == false and asiaeuropemarket == true:
+                  # asiaeuropemarket  open we show asiaeuropemarket gold       
+                  for x in 13.. <ktd.len: metal()  
+                  
+                  
+    except HttpRequestError:
+          printLn("Kitco Data temporary not available" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+    except ValueError:
+          discard
+    except OSError:
+          discard
+    except OverflowError:
+          discard
+    except  TimeoutError:
+         println("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+    except  ProtocolError:
+         println("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+    except :
+         discard
+    finally:
+        discard         
 
 # utility procs
 
