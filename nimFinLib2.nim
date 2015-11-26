@@ -1805,7 +1805,7 @@ proc showKitcoMetal*(xpos:int = 1) =
                         asiaeuropemarket = true
         
             if nymarket == false and asiaeuropemarket == false:
-                  printLn("All Metal Markets Closed",truetomato,xpos = xpos)
+                  printLn("All Metal Markets Closed or Data unavailable",truetomato,xpos = xpos)
                   for x in 13.. <ktd.len: metal()   
                       
             elif nymarket == true and asiaeuropemarket == true:
@@ -1822,7 +1822,7 @@ proc showKitcoMetal*(xpos:int = 1) =
                   
                   
     except HttpRequestError:
-          printLn("Kitco Data temporary not available" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+          printLn("Kitco Data temporary unavailable : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
     except ValueError:
           discard
     except OSError:
@@ -1830,13 +1830,13 @@ proc showKitcoMetal*(xpos:int = 1) =
     except OverflowError:
           discard
     except  TimeoutError:
-         println("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+         println("TimeoutError : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
     except  ProtocolError:
-         println("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+         println("Protocol Error : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
     except :
          discard
     finally:
-        discard         
+         discard         
 
 # utility procs
 
