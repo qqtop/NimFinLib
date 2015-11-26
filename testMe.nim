@@ -32,7 +32,7 @@ proc source() =
    afile = "https://raw.githubusercontent.com/qqtop/NimFinLib/master/statistics.nim"
    downloadFile(afile,"statistics.nim")
    afile = "https://raw.githubusercontent.com/qqtop/NimCx/master/cx.nim"
-   downloadFile(afile,"statistics.nim")
+   downloadFile(afile,"cx.nim")
 
 proc janitation() =
     # here comes the janitor and does some quick cleaning
