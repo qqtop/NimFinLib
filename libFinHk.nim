@@ -6,9 +6,9 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.0.x
+## Version     : 0.0.6
 ##
-## Compiler    : nim 0.11.3
+## Compiler    : nim 0.12.1
 ##
 ##
 ## Description : A library to support financial calculations with Nim
@@ -40,9 +40,9 @@
 import os,strutils,parseutils,sequtils,httpclient,strfmt
 import terminal,times,tables,random
 import parsecsv,streams,algorithm,math,unicode
-import statistics,nimFinLib
+import statistics,nimFinLib,cx
 
-let LIBFINHKVERSION* = "0.0.5"
+let LIBFINHKVERSION* = "0.0.6"
 
 proc hkexToYhoo*(stc:string):string =
    ## hkexToYhoo
@@ -223,7 +223,7 @@ proc getHKEXcodesFromFile*(fname : string):seq[seq[string]] =
                      echo "Stockcodes Items   : ",stockcodes.len
                      echo "CompanyNames Items : ",companynames.len
                      echo "BoardLots Items    : ",boardlots.len
-                     msgr() do : echo aline
+                     aline()
                      # on error we return empty
                      result = @[]
 

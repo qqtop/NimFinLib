@@ -1,10 +1,10 @@
 import os,terminal,sequtils,strutils,times,math,unicode,tables,strfmt,random
 from statistics import kurtosis,quantile,skewness
-import nimFinLib2,cx
+import nimFinLib,cx
 # comment next line if tests concerning libFinHk not required
-#import libFinHk
+# import libFinHk
 # uncomment next line for compilation with nimprofiler
-#import nimProf
+# import nimProf
 
 
 ## nfT52.nim
@@ -12,7 +12,7 @@ import nimFinLib2,cx
 ## Master Testing Suite of nimFinLib2  the current development version
 ##
 ## compile with
-## nim c --deadcodeelim:on -d:release --opt:size -d:ssl nfT52
+## nim c --deadcodeelim:on -d:release --opt:size -d:ssl --gc:boehm nfT52
 ##
 ## compile with profiler  --> uncomment import nimprof line above
 ## nim c -d:ssl --profiler:on --stackTrace:on nfT52
@@ -143,7 +143,7 @@ echo data.open.last
 decho(2) # print 2 blank lines
 
 echo "Show hist. stock data between 2 dates incl. if available"
-showhistdata(data,"2015-04-12","2015-05-10")
+showhistdata(data,"2015-10-12","2015-11-15")
 echo()
 
 echo ()
@@ -200,11 +200,11 @@ showTimeseries(ts,htable[ohlcva],"tail",5) # oldest on bottom
 
 echo()
 # testing utility procs
-msgg() do : echo "Timeseries display test "
-msgy() do : echo "{}  {:<10} {}".fmt("first   ",ts.dd.first,ts.tx.first)
-msgy() do : echo "{}  {:<10} {}".fmt("head(1) ",ts.dd.head(1),ts.tx.head(1))
-msgy() do : echo "{}  {:<10} {}".fmt("last    ",ts.dd.last,ts.tx.last)
-msgy() do : echo "{}  {:<10} {}".fmt("tail(1) ",ts.dd.tail(1),ts.tx.tail(1))
+printLn("Timeseries display test ",lime)
+printLn("{}  {:<10} {}".fmt("first   ",ts.dd.first,ts.tx.first),yellow)
+printLn("{}  {:<10} {}".fmt("head(1) ",ts.dd.head(1),ts.tx.head(1)),yellow)
+printLn("{}  {:<10} {}".fmt("last    ",ts.dd.last,ts.tx.last),yellow)
+printLn("{}  {:<10} {}".fmt("tail(1) ",ts.dd.tail(1),ts.tx.tail(1)),yellow)
 
 
 # if we use an orderedtable we also can get a nicely formated display
@@ -251,8 +251,8 @@ var ohlcvaSet    = @[data.ro[0],data.rh[0],data.rl[0],data.rc[0],data.rv[0],data
 var ohlcvaheader = @["Open","High","Low","Close","Volume","Adj.Close"]
 
 for x in 0.. <ohlcvaSet.len:
-     echo aline
-     msgg() do : echo "Stats for : ", data.stock ," based on ", ohlcvaheader[x]
+     aline()
+     printLn("Stats for : " & data.stock & " based on " & ohlcvaheader[x],green)
      statistics(ohlcvaSet[x])
 
 decho(2)
@@ -349,15 +349,15 @@ showCurrentStocks(account.pf[0])
 
 # here just passing a single code (index)
 var idx : string = indexpool[0].stock
-showCurrentIndexes(idx)
+showCurrentIDX(idx)
 
 # here passing in our indexpool a  seq[Stocks] type
-showCurrentIndexes(indexpool)
+showCurrentIDX(indexpool)
 
 # here showing in large slim numbers
 decho(2)
 # showCurrentIDX accepts only strings so far so we need to massage the indexpool into string
-showCurrentIDX(buildstockstring(indexpool))
+#showCurrentIDX(buildstockstring(indexpool))
 
 echo ()
 superheader(" Testing getSymbol3 - Additional stock info ")
@@ -367,7 +367,7 @@ var symb = "AAPL"
 var sx = getSymbol3(symb)
 decho(2)
 msgg() do : echo "Stock Code : ", symb
-echo aline
+aline()
 showStockdatatable(sx)
 decho(2)
 
@@ -378,7 +378,7 @@ echo ()
 
 # look at "current" exchange rates as supplied from yahoo
 echo()
-msgy() do : echo "Yahoo Exchange Rates"
+printLn("Yahoo Exchange Rates",peru)
 var checkcurrencies = @["EURUSD","GBPUSD","GBPHKD","JPYUSD","AUDUSD","EURHKD","JPYHKD","CNYHKD"]
 showCurrentForex(checkcurrencies)
 
@@ -443,16 +443,16 @@ when declared(libFinHk):
           #      echo "Problem with ",x
 
           echo()
-          msgg() do : echo("Top 50  List of Hongkong Stock Exchange MainBoard Listed Stocks")
-          msgc() do : echo "{:<5} {:<7} {:<22}  {:<10}".fmt("No.","Code","Name","BoardLot")
+          printLn("Top 50  List of Hongkong Stock Exchange MainBoard Listed Stocks",green)
+          printLn("{:<5} {:<7} {:<22}  {:<10}".fmt("No.","Code","Name","BoardLot"),cyan)
           for x in 0.. <50 :
             try:
                echo "{:<5} {:<7} {:<22}  {:>6}".fmt(x + 1,hxc[0][x],hxc[1][x],hxc[2][x])
             except:
-               msgr() do : echo "Problem with item in hkex.csv",x
+               printLn("Problem with item in hkex.csv" & $x,truetomato)
 
           echo()
-          msgg() do : echo("Bottom 10  List of Hongkong Stock Exchange MainBoard Listed Stocks")
+          printLn("Bottom 10  List of Hongkong Stock Exchange MainBoard Listed Stocks",green)
           for x in hxc[0].len-10.. <hxc[0].len :
              try:
                 echo "{:<5} {:<7} {:<22}  {:>6}".fmt(x + 1,hxc[0][x],hxc[1][x],hxc[2][x])
@@ -461,7 +461,7 @@ when declared(libFinHk):
 
         else:
              # in case of parsing errors due to issues with the website we return some message
-             msgr() do : echo "An error has occured and no valid result set was returned"
+             printLn("An error has occured and no valid result set was returned",red)
 
 
         msgy() do : echo "Test for hkexToYhoo - show bottom 10 codes converted to yahoo format"
@@ -529,5 +529,5 @@ when isMainModule:
   # show time elapsed for this run
   when declared(libFinHk):
       decho(2)
-      msgb() do : echo "{:<15}{} {} - {}".fmt("Library     : ","qqTop libFinHk : ",LIBFINHKVERSION,year(getDateStr()))
+      println("{:<15}{} {} - {}".fmt("Library     : ","qqTop libFinHk : ",LIBFINHKVERSION,cx.year(getDateStr())),brightblack)
   cx.doFinish()

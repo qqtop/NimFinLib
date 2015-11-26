@@ -1,4 +1,5 @@
 import nimFinLib,times,strfmt,strutils
+from cx import decho,cecholn,peru
 
 # show latest stock quotes
 showCurrentStocks("IBM+BP.L+0001.HK")
@@ -20,7 +21,7 @@ decho(3)
 
 
 # show stock name and latest adjusted close
-msgg() do: echo "{:<8} {:<11} {:>15}".fmt("Code","Date","Adj.Close")
+cecholn(peru,"{:<8} {:<11} {:>15}".fmt("Code","Date","Adj.Close"))
 echo  "{:<8} {:<11} {:>15}".fmt(ibm.stock,ibm.date.last,ibm.adjc.last)
 decho(1)
 

@@ -6,9 +6,9 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.5
+## Version     : 0.2.6
 ##
-## Compiler    : nim 0.11.3
+## Compiler    : nim 0.12.1
 ##
 ##
 ## Description : A basic library for financial calculations with Nim
@@ -19,7 +19,12 @@
 ##
 ##               Yahoo current stock quotes
 ##
-##               Yahoo forex rates
+##               Yahoo market indexes
+##
+##               Yahoo forex rates        
+##
+##               Kitco Metal Prices
+##
 ##
 ##               Dataframe like objects for easy working with historical data and dataseries
 ##
@@ -35,11 +40,16 @@
 ##               Documention was created with : nim doc nimFinLib
 ##
 ##
+## Notes       : nimFinlib is being developed utilizing cx.nim module
+##               to improve coloring of data and positioning of output.
+##               Terminals tested : bash,xterm,st.
+##
+##
 ## Project     : https://github.com/qqtop/NimFinLib
 ##
 ## Tested on   : Linux
 ##
-## ProjectStart: 2015-06-05
+## ProjectStart: 2015-06-05 / 2015-11-21
 ##
 ## ToDo        : Ratios , Covariance , Correlation
 ##               improve timeout exception handling if yahoo data fails to be retrieved
@@ -49,13 +59,22 @@
 ##
 ## Contributors: reactorMonk
 ##
-## Requires    : strfmt,random modules and statistics.nim
+## Requires    : strfmt,random modules , statistics.nim and cx.nim
+##
+##               get cx.nim like so
+##               
+##               git clone https://github.com/qqtop/NimCx.git
+##               
+##               then copy cx.nim into your dev directory or path
+##
+##
 ##
 ## Notes       : it is assumed that terminal color is black background
 ##
 ##               and white text. Other color schemes may not show all output.
 ##
-##               For comprehensive tests and usage see nimFinT5.nim
+## Tests       : For comprehensive tests and example usage see nfT52.nim and minifin.nim
+## 
 ##
 ## Installation: git clone https://github.com/qqtop/NimFinLib.git
 ##
@@ -66,25 +85,12 @@
 ##
 
 
-import os,strutils,parseutils,sequtils,httpclient,strfmt
+
+import os,cx,strutils,parseutils,sequtils,httpclient,net,strfmt
 import terminal,times,tables,random, parsecsv,streams,algorithm,math,unicode
 import statistics
 
-let NIMFINLIBVERSION* = "0.2.5"
-let startnimfinlib = epochTime()
-
-const
-       red*    = "red"
-       green*  = "green"
-       cyan*   = "cyan"
-       yellow* = "yellow"
-       white*  = "white"
-       black*  = "black"
-       brightred*    = "brightred"
-       brightgreen*  = "brightgreen"
-       brightcyan*   = "brightcyan"
-       brightyellow* = "brightyellow"
-       brightwhite*  = "brightwhite"
+let NIMFINLIBVERSION* = "0.2.6"
 
 type
 
@@ -169,169 +175,6 @@ type
        ra* : seq[float]   # relevant rate  e.g 1.354
 
 
-template msgg*(code: stmt): stmt =
-      ## msgX templates
-      ## convenience templates for colored text output
-      ## the assumption is that the terminal is white text and black background
-      ## naming of the templates is like msg+color so msgy => yellow
-      ## msg+color+b turns on the bright flag
-      ##
-      ## .. code-block:: nim
-      ##    msgg() do : echo "How nice, it's in green"
-      ##
-      setforegroundcolor(fgGreen)
-      code
-      setforegroundcolor(fgWhite)
-
-template msggb*(code: stmt): stmt =
-      ## msggb
-      ##
-      ## .. code-block:: nim
-      ##    msggb() do : echo "How nice, it's in bright green"
-      ##
-
-      setforegroundcolor(fgGreen,true)
-      code
-      setforegroundcolor(fgWhite)
-
-
-template msgy*(code: stmt): stmt =
-      setforegroundcolor(fgYellow)
-      code
-      setforegroundcolor(fgWhite)
-
-
-template msgyb*(code: stmt): stmt =
-      setforegroundcolor(fgYellow,true)
-      code
-      setforegroundcolor(fgWhite)
-
-
-template msgr*(code: stmt): stmt =
-      setforegroundcolor(fgRed)
-      code
-      setforegroundcolor(fgWhite)
-
-
-template msgrb*(code: stmt): stmt =
-      setforegroundcolor(fgRed,true)
-      code
-      setforegroundcolor(fgWhite)
-
-template msgc*(code: stmt): stmt =
-      setforegroundcolor(fgCyan)
-      code
-      setforegroundcolor(fgWhite)
-
-
-template msgcb*(code: stmt): stmt =
-      setforegroundcolor(fgCyan,true)
-      code
-      setforegroundcolor(fgWhite)
-
-
-template msgw*(code: stmt): stmt =
-      setforegroundcolor(fgWhite)
-      code
-      setforegroundcolor(fgWhite)
-
-
-template msgwb*(code: stmt): stmt =
-      setforegroundcolor(fgWhite,true)
-      code
-      setforegroundcolor(fgWhite)
-
-
-template msgb*(code: stmt): stmt =
-      setforegroundcolor(fgBlack,true)
-      code
-      setforegroundcolor(fgWhite)
-
-
-template hdx*(code:stmt):stmt  =
-   ## hdx
-   ##
-   ## hdx is used for headers to make them stand out
-   ##
-   ## it puts the text between 2 horizontal "+" lines
-   ##
-
-   echo ""
-   echo repeat("+",tw)
-   setforegroundcolor(fgCyan)
-   code
-   setforegroundcolor(fgWhite)
-   echo repeat("+",tw)
-   echo ""
-
-template withFile*(f: expr, filename: string, mode: FileMode,
-                    body: stmt): stmt {.immediate.} =
-    ## withFile
-    ##
-    ## file open close utility template
-    ##
-    ## .. code-block:: nim
-    ##    let curFile="notes.txt"    # some file
-    ##    withFile(txt, curFile, fmRead):
-    ##        while true :
-    ##            try:
-    ##               stdout.writeln(txt.readLine())   # do something with the lines
-    ##            except:
-    ##               break
-    ##    echo()
-    ##
-
-    let fn = filename
-    var f: File
-
-    if open(f, fn, mode):
-        try:
-          body
-        finally:
-          close(f)
-    else:
-        let msg = "Cannot open file"
-        echo ()
-        msgy() do : echo "Processing file " & fn & ", stopped . Reason: ", msg
-        quit()
-
-
-
-proc printHl*(sen:string,astr:string,col:string) =
-      ## printHl
-      ##
-      ## print and highlight all appearances of a char or substring of a string
-      ##
-      ## with a certain color
-      ##
-      ## .. code-block:: nim
-      ##    printHl("HELLO THIS IS A TEST","T",green)
-      ##
-      ## this would highlight all T in green
-      ##
-      ## available colors : green,yellow,cyan,red,white,black,brightgreen,brightwhite
-      ##
-      ##                    brightred,brightcyan,brightyellow
-
-      var rx = sen.split(astr)
-      for x in rx.low.. rx.high:
-          writestyled(rx[x],{})
-          if x != rx.high:
-              case col
-              of green  : msgg() do  : write(stdout,astr)
-              of red    : msgr() do  : write(stdout,astr)
-              of cyan   : msgc() do  : write(stdout,astr)
-              of yellow : msgy() do  : write(stdout,astr)
-              of white  : msgw() do  : write(stdout,astr)
-              of black  : msgb() do  : write(stdout,astr)
-              of brightgreen : msggb() do : write(stdout,astr)
-              of brightwhite : msgwb() do : write(stdout,astr)
-              of brightyellow: msgyb() do : write(stdout,astr)
-              of brightcyan  : msgcb() do : write(stdout,astr)
-              of brightred   : msgrb() do : write(stdout,astr)
-              else  : msgw() do  : write(stdout,astr)
-
-
 proc timeSeries*[T](self:T,ty:string): Ts =
      ## timeseries
      ## returns a Ts type date and one data column based on ty selection
@@ -359,7 +202,7 @@ proc timeSeries*[T](self:T,ty:string): Ts =
      return ts
 
 
-proc showTimeSeries* (ats:Ts,header,ty:string,N:int)  =
+proc showTimeSeries* (ats:Ts,header,ty:string,N:int,fgr:string = yellowgreen,bgr:string = black,xpos:int = 0)  =
    ## showTimeseries
    ## takes a Ts object as input as well as a header string
    ## for the data column , a string which can be one of
@@ -382,7 +225,7 @@ proc showTimeSeries* (ats:Ts,header,ty:string,N:int)  =
    ##
 
 
-   msgg() do : echo "{:<11} {:>11} ".fmt("Date",header)
+   printLn("{:<11} {:>11} ".fmt("Date",header),fgr)
    if ats.dd.len > 0:
         if ty == "all":
             for x in 0.. <ats.tx.len:
@@ -487,57 +330,25 @@ proc initPool*():seq[Stocks] =
   apool = @[]
   result  = apool
 
-converter toTwInt(x: cushort): int = result = int(x)
-when defined(Linux):
-    proc getTerminalWidth*() : int =
-      ## getTerminalWidth
-      ##
-      ## utility to easily draw correctly sized lines on linux terminals
-      ##
-      ## and get linux terminal width
-      ##
-      ## for windows this currently is set to terminalwidth 80
-      ##
-      ## .. code-block:: nim
-      ##
-      ##    echo "Terminalwidth : ",tw
-      ##    echo aline
-      ##
-      ## tw and aline are exported
-      ## but of course you also can do
-      ##
-      ## .. code-block:: nim
-      ##    var mytermwidth = getTerminalWidth()
-      ##    echo repeat("*",mytermwidth)
-      ## in case you want to use another line building char
-      ##
-      type WinSize = object
-        row, col, xpixel, ypixel: cushort
-      const TIOCGWINSZ = 0x5413
-      proc ioctl(fd: cint, request: culong, argp: pointer)
-        {.importc, header: "<sys/ioctl.h>".}
-      var size: WinSize
-      ioctl(0, TIOCGWINSZ, addr size)
-      result = toTwInt(size.col)
+proc aline*()  {.discardable.} =
+      printLn(repeat("-",tw),xpos = 0)
 
-    var tw* = getTerminalWidth()
-    var aline* = repeat("-",tw)
 
-# currently hardcoded for windows
-when defined(Windows):
-     var tw* = 80
-     var aline* = repeat("-",tw)
+proc checkChange(s:string):int = 
+     # checkChange 
+     # 
+     # internal utility proc used by currentIDX
+     # parse the change data[9] from yahoo
+     # 
+     # 
+     var z = split(s," - ")[0]
+     if z.startswith("+") == true:
+        result = 1
+     elif z.startswith("-") == true:
+        result = -1
+     else:
+        result = 0
 
-proc decho*(z:int)  =
-    ## decho
-    ##
-    ## blank lines creator
-    ##
-    ## .. code-block:: nim
-    ##    decho(10)
-    ## to create 10 blank lines
-    for x in 0.. <z:
-      echo()
 
 proc getCurrentQuote*(stcks:string) : string =
    ## getCurrentQuote
@@ -555,7 +366,7 @@ proc getCurrentQuote*(stcks:string) : string =
       result = "-1"
 
 
-proc currentStocks(aurl:string) =
+proc currentStocks(aurl:string,xpos:int = 1) =
   ## currentStocks
   ##
   ## display routine for current stock quote maybe 15 mins delayed
@@ -566,27 +377,36 @@ proc currentStocks(aurl:string) =
 
   var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
   try:
-    var ci = getContent(aurl)
+    var ci = getContent(aurl,timeout = 5000)
     for line in ci.splitLines:
       var data = line[1..line.high].split(",")
       # even if yahoo servers are down our data.len is still 1 so
       if data.len > 1:
-              setforegroundcolor(fgGreen)
-              echo "Code : {:<10} Name : {}  Market : {}".fmt(data[0],data[1],data[2])
-              setforegroundcolor(fgWhite)
-              echo "Date : {:<12}{:<9}    Price  : {:<8} Volume : {:>12}".fmt(data[4],data[5],data[3],data[8])
-              echo "Open : {:<8} High : {:<8} Change : {} Range : {}".fmt(data[6],data[7],data[9],data[10])
-              echo repeat("-",tw)
+              printLn("Code : {:<10} Name : {}  Market : {}".fmt(unquote(data[0]),unquote(data[1]),unquote(data[2])),yellowgreen,xpos = xpos)
+              printLn("Date : {:<12}{:<9}    Price  : {:<8} Volume : {:>12}".fmt(unquote(data[4]),unquote(data[5]),data[3],data[8]),white,xpos = xpos)
+              var cc = checkchange(unquote(data[9]))
+              if cc == -1:
+                    printLn("Open : {:<8} High : {:<8} Change :{}{}{}{} Range : {}".fmt(data[6],data[7],red,showRune("FFEC"),white,unquote(data[9]),unquote(data[10])),white,xpos = xpos)
+              elif cc == 0:
+                    printLn("Open : {:<8} High : {:<8} Change : {}{} Range : {}".fmt(data[6],data[7]," ",unquote(data[9]),unquote(data[10])),white,xpos = xpos)
+       
+              else :  # up
+                    printLn("Open : {:<8} High : {:<8} Change :{}{}{}{} Range : {}".fmt(data[6],data[7],lime,showRune("FFEA"),white,unquote(data[9]),unquote(data[10])),white,xpos = xpos)
+       
+       
+              printLn(repeat("-",tw))
       else:
              if data.len == 1 and sflag == false:
-                msgr() do : echo "Yahoo server maybe unavailable. Try again later"
+                printLn("Yahoo server maybe unavailable. Try again later",truetomato,xpos = xpos)
                 sflag = true
   except HttpRequestError:
-      msgr() do : echo "Yahoo current data could not be retrieved . Try again ."
+      printLn("Yahoo current data could not be retrieved . Try again .",truetomato,xpos = xpos)
       echo()
+  finally:
+      discard    
 
-proc currentIndexes(aurl:string) {.discardable.} =
-  ## currentIndexes
+proc currentIndexes(aurl:string,xpos:int = 1) {.discardable.} =
+  ## currentIndexes    currently unused - a different display format still needs to be adjusted for cx
   ##
   ## display routine for current index quote
   ##
@@ -614,6 +434,58 @@ proc currentIndexes(aurl:string) {.discardable.} =
       msgr() do : echo "Yahoo current data could not be retrieved . Try again ."
       echo()
 
+
+
+proc currentIDX(aurl:string,xpos:int) {.discardable.} =
+    ## currentIDX
+    ##
+    ## display routine for current index quote using big slim letters for index value
+    ##
+    ## called by showCurrentIDX , allows postioning
+    ##
+    #  some error handling is implemented if the yahoo servers are down
+
+    var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
+    try:
+      var ci = getContent(aurl)
+      for line in ci.splitLines:
+        var data = line[1..line.high].split(",")
+        if data.len > 1:
+                printBiCol("Code : {:<10}  ".fmt(unquote(data[0])),":",yellowgreen,cyan,xpos = xpos)
+                printLnBiCol("Market : {}".fmt(unquote(data[2])),":",yellowgreen,cyan)
+                echo()                        
+                print(unquote(data[1]),yellowgreen,xpos = xpos)                   
+                curdn(1)
+                printLnBiCol("Date : {:<12}{:<9}    ".fmt(unquote(data[4]),unquote(data[5])),":",xpos = xpos)
+                curup(1) 
+                var cc = checkChange(unquote(data[9]))
+                case cc
+                  of -1 : 
+                          print(showRune("FFEC"),red,xpos = xpos + 29)
+                          curup(1)
+                          printSlimNumber(data[3],fgr=truetomato,xpos = xpos + 30)
+                  of  0 :
+                          curup(1) 
+                          printSlimNumber(data[3],fgr=steelblue,xpos = xpos + 30)
+                  of  1 : 
+                          print(showRune("FFEA"),lime,xpos = xpos + 29)
+                          curup(1)
+                          printSlimNumber(data[3],fgr=lime,xpos = xpos + 30 )
+                  else  : 
+                          print("Error",red,xpos = xpos + 29)
+                
+                printLnBiCol("Open : {:<8} High : {:<8} Change : {}".fmt(data[6],data[7],unquote(data[9])),":",xpos = xpos)
+                printLnBiCol("Range: {}".fmt(unquote(data[10])),":",xpos = xpos)
+                printLn(repeat("-",60),xpos = xpos)
+                #curdn(1)
+        else:
+                if data.len == 1 and sflag == false:
+                  printLn("Yahoo Server Fail.",truetomato,xpos = xpos)
+                  sflag = true
+    except HttpRequestError:
+        printLn("Yahoo Data Fail.",truetomato,xpos = xpos)
+        
+
 proc buildStockString*(apf:Portfolio):string =
   ## buildStocksString
   ##
@@ -635,32 +507,38 @@ proc buildStockString*(adf:seq[Stocks]):string =
   result = xs
 
 
-# Note showCurrentIndexes and showCurrentStocks are basically the same
+# Note showCurrentIDX and showCurrentStocks are basically the same
 # but it makes for easier reading in the application to give it different names
 
-proc showCurrentIndexes*(idxs:string){.discardable.} =
-   ## showCurrentIndexes
-   ##
-   ## callable display routine for currentIndexes
-   ##
-   hdx(echo "Index Data")
-   var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % idxs
-   currentIndexes(qurl)
-
-
-proc showCurrentIndexes*(adf:seq[Stocks]){.discardable.} =
+proc showCurrentIDX*(adf:seq[Stocks],xpos:int = 1){.discardable.} =
    ## showCurrentIndexes
    ##
    ## callable display routine for currentIndexes with a pool object passed in
    ##
    var idxs = buildStockString(adf)
-   hdx(echo "Index Data for a pool" )
+   #hdx(echo "Index Data for a pool" )
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % idxs
-   currentIndexes(qurl)
+   currentIDX(qurl,xpos = xpos)
 
 
 
-proc showCurrentStocks*(apf:Portfolio){.discardable.} =
+
+proc showCurrentIDX*(idxs:string,xpos:int = 1){.discardable.} =
+    ## showCurrentIndexes
+    ##
+    ## callable display routine for currentIDX with a string of format IDX1+IDX2+IDX3 .. 
+    ## 
+    ## passed in . Note this will use big slim letters to display inex value
+    ##
+    ##
+    ## xpos allows x positioning
+    #
+    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % idxs
+    currentIDX(qurl,xpos = xpos)
+
+
+
+proc showCurrentStocks*(apf:Portfolio,xpos:int = 1){.discardable.} =
    ## showCurrentStocks
    ##
    ## callable display routine for currentStocks with Portfolio object passed in
@@ -680,11 +558,11 @@ proc showCurrentStocks*(apf:Portfolio){.discardable.} =
    var stcks = buildStockString(apf)
    hdx(echo "Stocks Current Quote for $1" % apf.nx)
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
-   currentStocks(qurl)
+   currentStocks(qurl,xpos = xpos)
 
 
 
-proc showCurrentStocks*(stcks:string){.discardable.} =
+proc showCurrentStocks*(stcks:string,xpos:int = 1){.discardable.} =
    ## showCurrentStocks
    ##
    ## callable display routine for currentStocks with stockstring passed in
@@ -700,19 +578,9 @@ proc showCurrentStocks*(stcks:string){.discardable.} =
 
    hdx(echo "Stocks Current Quote")
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
-   currentStocks(qurl)
+   currentStocks(qurl,xpos = xpos)
 
-
-
-proc day*(aDate:string) : string =
-   ## day
-   ##
-   ## get day substring from a yyyy-MM-dd date string
-   ##
-   ## Format dd
-   ##
-   aDate.split("-")[2]
-
+ 
 
 proc ymonth*(aDate:string) : string =
   ## ymonth
@@ -721,233 +589,11 @@ proc ymonth*(aDate:string) : string =
   ##
   ## Format MM
   ##
-  ## not exported and only used internally for yahoo url setup
+  ## only used internally for yahoo url setup
   #
   var asdm = $(parseInt(aDate.split("-")[1])-1)
   if len(asdm) < 2: asdm = "0" & asdm
   result = asdm
-
-
-proc month*(aDate:string) : string =
-  ## month
-  ##
-  ## get month substring from a yyyy-MM-dd date string
-  ##
-  ## Format MM
-  ##
-  var asdm = $(parseInt(aDate.split("-")[1]))
-  if len(asdm) < 2: asdm = "0" & asdm
-  result = asdm
-
-
-proc year*(aDate:string) : string = aDate.split("-")[0]
-     ## year
-     ##
-     ## get year substring from a yyyy-MM-dd date string
-     ##
-     ## Format yyyy
-
-
-proc validdate*(adate:string):bool =
-     ## validdate
-     ##
-     ## the purpose of this function is to strictly enforce correct dates
-     ##
-     ## input in format yyyy-MM-dd with correct year,month,day ranges
-     ##
-
-     var m30 = @["04","06","09","11"]
-     var m31 = @["01","03","05","07","08","10","12"]
-
-     var xdate = parseInt(aDate.replace("-",""))
-     # check 1 is our date between 1900 - 3000
-     if xdate > 19000101 and xdate < 30001212:
-        var spdate = aDate.split("-")
-        if parseint(spdate[0]) >= 1900 and parseint(spdate[0]) <= 3000:
-             if spdate[1] in m30:
-               # so day max 30
-                if parseInt(spdate[2]) > 0 and parseInt(spdate[2]) < 31:
-                   result = true
-                else:
-                   result = false
-
-             elif spdate[1] in m31:
-               # so day max 30
-                if parseInt(spdate[2]) > 0 and parseInt(spdate[2]) < 32:
-                   result = true
-                else:
-                   result = false
-
-             else:
-                   # so its february
-                   if spdate[1] == "02" :
-                      # check leapyear
-                      if isleapyear(parseint(spdate[0])) == true:
-                          if parseInt(spdate[2]) > 0 and parseint(spdate[2]) < 30:
-                            result = true
-                          else:
-                            result = false
-                      else:
-                          if parseInt(spdate[2]) > 0 and parseint(spdate[2]) < 29:
-                            result = true
-                          else:
-                            result = false
-
-proc intervalsecs*(startDate,endDate:string) : float =
-      ## interval procs returns time elapsed between two dates in secs,hours etc.
-      if validdate(startDate) and validdate(endDate):
-          var f     = "yyyy-MM-dd"
-          var ssecs = toSeconds(timeinfototime(startDate.parse(f)))
-          var esecs = toSeconds(timeinfototime(endDate.parse(f)))
-          var isecs = esecs - ssecs
-          result = isecs
-      else:
-          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
-          msgr() do : echo  "proc intervalsecs"
-          result = -0.0
-
-proc intervalmins*(startDate,endDate:string) : float =
-      if validdate(startDate) and validdate(endDate):
-           var imins = intervalsecs(startDate,endDate) / 60
-           result = imins
-      else:
-          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
-          msgr() do : echo  "proc intervalmins"
-          result = -0.0
-
-
-proc intervalhours*(startDate,endDate:string) : float =
-     if validdate(startDate) and validdate(endDate):
-         var ihours = intervalsecs(startDate,endDate) / 3600
-         result = ihours
-     else:
-          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
-          msgr() do : echo  "proc intervalhours"
-          result = -0.0
-
-proc intervaldays*(startDate,endDate:string) : float =
-      if validdate(startDate) and validdate(endDate):
-          var idays = intervalsecs(startDate,endDate) / 3600 / 24
-          result = idays
-      else:
-          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
-          msgr() do : echo  "proc intervaldays"
-          result = -0.0
-
-proc intervalweeks*(startDate,endDate:string) : float =
-
-      if validdate(startDate) and validdate(endDate):
-          var iweeks = intervalsecs(startDate,endDate) / 3600 / 24 / 7
-          result = iweeks
-      else:
-          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
-          msgr() do : echo  "proc intervalweeks"
-          result = -0.0
-
-
-proc intervalmonths*(startDate,endDate:string) : float =
-     if validdate(startDate) and validdate(endDate):
-          var imonths = intervalsecs(startDate,endDate) / 3600 / 24 / 365  * 12
-          result = imonths
-
-     else:
-          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
-          msgr() do : echo  "proc intervalmonths"
-          result = -0.0
-
-proc intervalyears*(startDate,endDate:string) : float =
-     if validdate(startDate) and validdate(endDate):
-          var iyears = intervalsecs(startDate,endDate) / 3600 / 24 / 365
-          result = iyears
-     else:
-          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
-          msgr() do : echo  "proc intervalyears"
-          result = -0.0
-
-
-
-proc compareDates*(startDate,endDate:string) : int =
-     # dates must be in form yyyy-MM-dd
-     # we want this to answer
-     # s == e   ==> 0
-     # s >= e   ==> 1
-     # s <= e   ==> 2
-     # -1 undefined , invalid s date
-     # -2 undefined . invalid e and or s date
-     if validdate(startDate) and validdate(enddate):
-
-        var std = startDate.replace("-","")
-        var edd = endDate.replace("-","")
-        if std == edd:
-          result = 0
-        elif std >= edd:
-          result = 1
-        elif std <= edd:
-          result = 2
-        else:
-          result = -1
-     else:
-
-          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
-          msgr() do : echo  "proc comparedates"
-          result = -2
-
-
-proc sleepy*[T:float|int](s:T) =
-    # s is in seconds
-    var ss = epochtime()
-    var ee = ss + s.float
-    var c = 0
-    while ee > epochtime():
-        inc c
-    # feedback line can be commented out
-    #msgr() do : echo "Loops during waiting for ",s,"secs : ",c
-
-
-
-proc fx(nx:TimeInfo):string =
-        result = nx.format("yyyy-MM-dd")
-
-proc plusDays*(aDate:string,days:int):string =
-   ## plusDays
-   ##
-   ## adds days to date string of format yyyy-MM-dd  or result of getDateStr()
-   ##
-   ## and returns a string of format yyyy-MM-dd
-   ##
-   ## the passed in date string must be a valid date or an error message will be returned
-   ##
-   if validdate(aDate) == true:
-      var rxs = ""
-      var tifo = parse(aDate,"yyyy-MM-dd") # this returns a TimeInfo type
-      var myinterval = initInterval()
-      myinterval.days = days
-      rxs = fx(tifo + myinterval)
-      result = rxs
-   else:
-      msgr() do : echo "Date error : ",aDate
-      result = "Error"
-
-proc minusDays*(aDate:string,days:int):string =
-   ## minusDays
-   ##
-   ## subtracts days from a date string of format yyyy-MM-dd  or result of getDateStr()
-   ##
-   ## and returns a string of format yyyy-MM-dd
-   ##
-   ## the passed in date string must be a valid date or an error message will be returned
-   ##
-
-   if validdate(aDate) == true:
-      var rxs = ""
-      var tifo = parse(aDate,"yyyy-MM-dd") # this returns a TimeInfo type
-      var myinterval = initInterval()
-      myinterval.days = days
-      rxs = fx(tifo - myinterval)
-      result = rxs
-   else:
-      msgr() do : echo "Date error : ",aDate
-      result = "Error"
 
 
 
@@ -1619,8 +1265,83 @@ proc showEma* (emx:Ts , N:int = 5) =
           echo "{:<11} {:>11} ".fmt(emx.dd[x],emx.tx[x])
 
 
+# 
+# proc getCurrentForex*(curs:seq[string],xpos:int = 1):Currencies =
+#   ## getCurrentForex     deprecated version which uses parsecsv and a tempfile
+#   ##
+#   ## get the latest yahoo exchange rate info for a currency pair
+#   ##
+#   ## e.g EURUSD , JPYUSD ,GBPHKD
+#   ##
+#   ## .. code-block:: nim
+#   ##    var curs = getCurrentForex(@["EURUSD","EURHKD"])
+#   ##    echo()
+#   ##    echo "Current EURUSD Rate : ","{:<8}".fmt(curs.ra[0])
+#   ##    echo "Current EURHKD Rate : ","{:<8}".fmt(curs.ra[1])
+#   ##    echo()
+#   ##
+# 
+#   # currently using cvs data url
+#   try:
+#           var aurl = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=c4l1&s="    #  EURUSD=X,GBPUSD=X
+#           for ac in curs:
+#             aurl = aurl & ac & "=X,"
+# 
+#           # init a Currencies object to hold forex data
+#           var rf = initCurrencies()
+# 
+#           var acvsfile = "nimcurmp.csv"  # temporary file
+#           downloadFile(aurl,acvsfile)
+# 
+#           var s = newFileStream(acvsfile, fmRead)
+#           if s == nil:
+#               # in case of problems with the yahoo csv file we show a message
+#               msgr() do : echo "Hello : Forex data file $1 could not be opened " % acvsfile
+# 
+#           # now parse the csv file
+#           var x: CsvParser
+#           var c = 0
+#           open(x, s , acvsfile, separator=',')
+#           while readRow(x):
+#               c = 0 # counter to assign item to correct var
+#               for val in items(x.row):
+#                       c += 1
+# 
+#                       case c
+#                       of 1:
+#                             rf.cu.add(val)
+#                       of 2:
+#                             if val == "N/A":
+#                               rf.ra.add(0.00)
+#                             else:
+#                               rf.ra.add(parseFloat(val))
+#                       else:
+#                             msgr() do : echo "Csv currency data in unexpected format "
+# 
+#           # clean up
+#           removeFile(acvsfile)
+#           result = rf
+#           
+#   except HttpRequestError:
+#           printLn("Forex Data temporary unavailable" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+#   except ValueError:
+#           discard
+#   except OSError:
+#           discard
+#   except OverflowError:
+#           discard
+#   except  TimeoutError:
+#          println("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+#   except  ProtocolError:
+#          println("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+#   except :
+#          discard
+#   finally:
+#         discard  
+#         
+        
 
-proc getCurrentForex*(curs:seq[string]):Currencies =
+proc getCurrentForex*(curs:seq[string],xpos:int = 1):Currencies =
   ## getCurrentForex
   ##
   ## get the latest yahoo exchange rate info for a currency pair
@@ -1636,64 +1357,87 @@ proc getCurrentForex*(curs:seq[string]):Currencies =
   ##
 
   # currently using cvs data url
-  var aurl = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=c4l1&s="    #  EURUSD=X,GBPUSD=X
-  for ac in curs:
-     aurl = aurl & ac & "=X,"
+  # this version does not need temp file as we parse cvs as text file directly
+  
+  try:
+          var aurl = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=c4l1&s="    #  EURUSD=X,GBPUSD=X
+          for ac in curs:
+            aurl = aurl & ac & "=X,"
 
-  # init a Currencies object to hold forex data
-  var rf = initCurrencies()
+          # init a Currencies object to hold forex data
+          var rf = initCurrencies()
+          var zs = splitlines(unquote(getcontent(aurl)))  # get data
+          var c = 0
+          for zl in zs:
+              var x = split(zl,",")
+              c = 0 # counter to assign item to correct var
+              for val in x:
+                       c += 1
+                       case c
+                        of 1:
+                             rf.cu.add(val)
+                        of 2:
+                             if val == "N/A":
+                                rf.ra.add(0.00)
+                             else:
+                               rf.ra.add(parseFloat(val))
+                        else:
+                             println("Csv currency data in unexpected format ",truetomato,xpos = xpos)
+          result = rf
+          
+  except HttpRequestError:
+          printLn("Forex Data temporary unavailable" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+  except ValueError:
+          discard
+  except OSError:
+          discard
+  except OverflowError:
+          discard
+  except  TimeoutError:
+         println("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+  except  ProtocolError:
+         println("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+  except :
+         discard
+  finally:
+        discard  
 
-  var acvsfile = "nimcurmp.csv"  # temporary file
-  downloadFile(aurl,acvsfile)
+       
 
-  var s = newFileStream(acvsfile, fmRead)
-  if s == nil:
-       # in case of problems with the yahoo csv file we show a message
-       msgr() do : echo "Hello : Forex data file $1 could not be opened " % acvsfile
+# proc showCurrentForex*(curs : seq[string]) =
+#        ## showCurrentForex
+#        ##
+#        ## a convenience proc to display exchange rates
+#        ##
+#        ## .. code-block:: nim
+#        ##    showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"])
+#        ##    decho(3)
+#        ##
+#        ##
+# 
+#        var cx = getcurrentForex(curs) # we get a Currencies object back
+#        msgg() do : echo "{:<8} {:<4} {}".fmt("Pair","Cur","Rate")
+#        for x in 0.. <cx.cu.len:
+#              echo "{:<8} {:<4} {}".fmt(curs[x],cx.cu[x],cx.ra[x])
 
-  # now parse the csv file
-  var x: CsvParser
-  var c = 0
-  open(x, s , acvsfile, separator=',')
-  while readRow(x):
-      c = 0 # counter to assign item to correct var
-      for val in items(x.row):
-              c += 1
-
-              case c
-              of 1:
-                    rf.cu.add(val)
-              of 2:
-                    if val == "N/A":
-                       rf.ra.add(0.00)
-                    else:
-                       rf.ra.add(parseFloat(val))
-              else:
-                    msgr() do : echo "Csv currency data in unexpected format "
-
-  # clean up
-  removeFile(acvsfile)
-  result = rf
-
-
-proc showCurrentForex*(curs : seq[string]) =
+proc showCurrentForex*(curs : seq[string],xpos:int = 1) =
        ## showCurrentForex
        ##
-       ## a convenience proc to display exchange rates
+       ## a convenience proc to display exchange rates with positiong
        ##
        ## .. code-block:: nim
-       ##    showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"])
+       ##    showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"],xpos = 10)
        ##    decho(3)
        ##
        ##
 
        var cx = getcurrentForex(curs) # we get a Currencies object back
-       msgg() do : echo "{:<8} {:<4} {}".fmt("Pair","Cur","Rate")
+       printLn("{:<16} {:<4} {}".fmt("Currencies","Cur","Rate"),lime,xpos = xpos)
        for x in 0.. <cx.cu.len:
-             echo "{:<8} {:<4} {}".fmt(curs[x],cx.cu[x],cx.ra[x])
+            printLn("{:<16} {:<4} {}".fmt(curs[x],cx.cu[x],cx.ra[x]),xpos = xpos)
 
 
-proc showStocksTable*(apfdata: Portfolio) =
+proc showStocksTable*(apfdata: Portfolio,xpos:int = 1) =
    ## showStocksTable
    ##
    ## a convenience prog to display the data part of a Portfolio object
@@ -1722,7 +1466,6 @@ proc showStockdataTable*(a:Stockdata) =
      ##
      ## shows all items of a Stockdata object
      ##
-
      echo "{:<17} : {:>12}".fmt("Price",a.price)
      echo "{:<17} : {:>12}".fmt("Change",a.change)
      echo "{:<17} : {:>12}".fmt("Volume",a.volume)
@@ -1747,7 +1490,120 @@ proc showStockdataTable*(a:Stockdata) =
 
 
 
+template metal():stmt =
+    ## metal
+    ## 
+    ## utility template to display kitco metal data
+    ## 
+    ## used by showKitcoMetal
+    ## 
 
+    if ktd[x].startswith(dl) == true:
+      printLn(ktd[x],yellowgreen,xpos = xpos - 3 )
+      
+    elif find(ktd[x],"Asia / Europe") > 0:
+       print(strip(ktd[x],true,true),cx.white,xpos = xpos)
+        
+    elif find(ktd[x],"New York") > 0:
+       print(strip(ktd[x],true,true),cx.white,xpos = xpos)
+    
+    elif find(ktd[x],opn) > 0 :
+        printLn(ktd[x],lime)   
+      
+    elif find(ktd[x],cls) > 0:
+        printLn(ktd[x],truetomato)  
+      
+    elif find(ktd[x],"Update") > 0:
+        printLn(ktd[x] & " New York Time",yellowgreen,xpos = xpos - 3)
+                          
+    else:
+          printLn(ktd[x],cx.white,xpos = xpos - 3)
+
+
+
+proc showKitcoMetal*(xpos:int = 1) = 
+    ## showKitcoMetal
+    ## 
+    ## get and display kitco metal prices
+    ## 
+    ##  
+    let dl  = "   ----------------------------------------------------------------------"
+    let cls = "CLOSED"
+    let opn = "OPEN" 
+    let url = "http://www.kitco.com/texten/texten.html"
+    
+    printLn("Gold,Silver,Platinum Spot price : New York and Asia / Europe ",peru,xpos = xpos)
+    
+    try:
+            var kt = getContent(url,timeout = 5000)
+  
+            var kts = splitlines(kt)
+            var ktd = newSeq[string]()
+                  
+            var nymarket = false
+            var asiaeuropemarket = false
+              
+            var addflag = false 
+            for ktl in kts:
+              
+                if find(ktl,"File created on ") > 0:
+                    addflag = false 
+              
+                if find(ktl,"New York") > 0:
+                    addflag = true
+                                  
+                if addflag == true:  
+                    ktd.add(ktl)
+                  
+          
+            # now scan for closed metal markets
+            var lc = 0
+            for s in ktd:
+                inc lc
+                if find(s,cls) > 0:
+                  if lc < 5:
+                        nymarket = false
+                  elif lc > 10:
+                        asiaeuropemarket = false
+                if find(s,opn) > 0:
+                    if lc < 5:
+                        nymarket = true
+                    elif lc > 10:
+                        asiaeuropemarket = true
+        
+            if nymarket == false and asiaeuropemarket == false:
+                  printLn("All Metal Markets Closed or Data unavailable",truetomato,xpos = xpos)
+                  for x in 13.. <ktd.len: metal()   
+                      
+            elif nymarket == true and asiaeuropemarket == true:
+                  # both open we show new york gold       
+                  for x in 0.. ktd.len - 18: metal()                                       
+          
+            elif nymarket == true and asiaeuropemarket == false:
+                # ny  open we show new york gold       
+                  for x in 0.. <ktd.len - 18: metal()                                                                     
+
+            elif nymarket == false and asiaeuropemarket == true:
+                  # asiaeuropemarket  open we show asiaeuropemarket gold       
+                  for x in 13.. <ktd.len: metal()  
+                  
+                  
+    except HttpRequestError:
+          printLn("Kitco Data temporary unavailable : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+    except ValueError:
+          discard
+    except OSError:
+          discard
+    except OverflowError:
+          discard
+    except  TimeoutError:
+         println("TimeoutError : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+    except  ProtocolError:
+         println("Protocol Error : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+    except :
+         discard
+    finally:
+         discard         
 
 # utility procs
 
@@ -1832,74 +1688,6 @@ proc presentValueFV*(FV:float,i:float,n:float):float =
      var zz = 1.0 + i
      result = FV / (pow(zz,n.float))
 
-
-proc rainbow* (astr : string) =
-    ## rainbow
-    ##
-    ## random multi colored string
-    ##
-    ## .. code-block:: nim
-    ##    rainbow("Sparkling string display !")
-    ##    decho(2)
-    ##
-
-    var c = 0
-    var a = toSeq(1.. 12)
-    for x in 0.. <astr.len:
-       c = a[randomInt(a.len)]
-       case c
-        of 1  : msgg()  do : write(stdout,astr[x])
-        of 2  : msgr()  do : write(stdout,astr[x])
-        of 3  : msgc()  do : write(stdout,astr[x])
-        of 4  : msgy()  do : write(stdout,astr[x])
-        of 5  : msggb() do : write(stdout,astr[x])
-        of 6  : msgr()  do : write(stdout,astr[x])
-        of 7  : msgwb() do : write(stdout,astr[x])
-        of 8  : msgc()  do : write(stdout,astr[x])
-        of 9  : msgyb() do : write(stdout,astr[x])
-        of 10 : msggb() do : write(stdout,astr[x])
-        of 11 : msgcb() do : write(stdout,astr[x])
-        else  : msgw()  do : write(stdout,astr[x])
-
-
-
-proc handler*() {.noconv.} =
-  ## handler
-  ##
-  ## experimental
-  ##
-  ## this runs if ctrl-c is pressed
-  ##
-  ## and provides some feedback upon exit
-  ##
-  ## .. code-block:: nim
-  ##    import nimFinLib
-  ##    # get the latest delayed quotes for your stock
-  ##    # press ctrl-c to exit
-  ##    # setControlCHook(handler)    # auto registered exit handler
-  ##    while true :
-  ##       showCurrentStocks("IBM+AAPL+BP.L")
-  ##       sleepy(5)
-  ##
-  ##
-
-  eraseScreen()
-  echo()
-  echo aline
-  msgg() do: echo "Thank you for using     : ",getAppFilename()
-  msgc() do: echo "{}{:<11}{:>9}".fmt("Last compilation on     : ",CompileDate ,CompileTime)
-  echo aline
-  echo "Using nimFinLib Version : ", NIMFINLIBVERSION
-  echo "Nim Version             : ", NimVersion
-  echo()
-  rainbow("Have a Nice Day !")  ## change or add custom messages as required
-  decho(2)
-  system.addQuitProc(resetAttributes)
-  quit(0)
-
-# this handler is automatically registered , comment out if undesired
-setControlCHook(handler)
-
 # procs for future use
 
 proc logisticf* (z:float):float =
@@ -1920,34 +1708,8 @@ proc logisticf_derivative* (z:float): float =
 
 
 
-proc qqTop*() =
-  ## qqTop
-  ##
-  ## prints qqTop logo in custom color
-  ##
-  printHl("qq","qq",cyan)
-  printHl("T","T",brightgreen)
-  printHl("o","o",brightred)
-  printHl("p","p",cyan)
-
-
-
-# finalizer
-proc doFinish*() =
-    ## doFinish
-    ##
-    ## a end of program routine which displays some information
-    ##
-    ## can be changed to anything desired
-    ##
-    msgb() do : write(stdout,"{:<15}{} | {}{} | {}{} - {} | ".fmt("Application : ",extractFileName(getAppFilename()),"Nim : ",NimVersion," nimFinLib : ",NIMFINLIBVERSION,year(getDateStr())))
-    qqTop()
-    echo()
-    msgy() do : write(stdout,"{:<15}{}{}".fmt("Elapsed     : ",epochtime() - startnimfinlib," secs"))
-    decho(2)
-    system.addQuitProc(resetAttributes)
-    quit 0
 
 
 #------------------------------------------------------------------------------------------
+# End of nimFinLib
 #------------------------------------------------------------------------------------------

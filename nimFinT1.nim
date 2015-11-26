@@ -1,4 +1,4 @@
-import nimFinLib,times,strfmt
+import nimFinLib,times,strfmt,cx
 
 # nimFinLib simple tests
 # here we just use the Stocks object

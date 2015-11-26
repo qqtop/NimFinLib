@@ -13,11 +13,9 @@ Example screen from minifin.nim
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|
-| nimFinLib  | Development | 0.2.5   | MIT opensource | Linux  | Nim 0.12.1 up  |
+| nimFinLib  | Development | 0.2.6   | MIT opensource | Linux  | Nim 0.12.1 up  |
 
 
-
-Development Version : nimFinLib2.nim 
 
 
 Data gathering and calculations support 
@@ -59,7 +57,7 @@ example1.nim
 ------------
 
 ```nimrod         
-import nimFinLib,times,strfmt,strutils
+import nimFinLib,times,strfmt,strutils,cx
 
 # show latest stock quotes
 showCurrentStocks("IBM+BP.L+0001.HK")

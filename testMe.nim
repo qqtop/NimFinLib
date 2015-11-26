@@ -31,6 +31,8 @@ proc source() =
    downloadFile(afile,"example1.nim")
    afile = "https://raw.githubusercontent.com/qqtop/NimFinLib/master/statistics.nim"
    downloadFile(afile,"statistics.nim")
+   afile = "https://raw.githubusercontent.com/qqtop/NimCx/master/cx.nim"
+   downloadFile(afile,"statistics.nim")
 
 proc janitation() =
     # here comes the janitor and does some quick cleaning
@@ -39,10 +41,11 @@ proc janitation() =
     removeFile("example1")
     removeFile("testMe")
     removeFile("statistics.nim")
+    removeFile("cx.nim")
     removeDir("nimcache")
 
 source()
-var exitCode = execCmd("nim -d:release --opt:speed --hints:off --verbosity:0 -w:off c -r " & "example1.nim") 
+var exitCode = execCmd("nim -d:release  -d:ssl --gc:boehm  --opt:speed --hints:off --verbosity:0 -w:off c -r " & "example1.nim") 
 janitation()
 
 echo()

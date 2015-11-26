@@ -1,5 +1,5 @@
 import nimFinLib,times
-
+from cx import hdx,decho,printLn
 # example to quickly display var. data items for one stock code and forex
 
 

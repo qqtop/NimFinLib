@@ -1,12 +1,11 @@
-import os,cx,httpclient,strutils,nimFinLib2,times,strfmt,osproc
+import os,cx,httpclient,strutils,nimFinLib,times,strfmt,osproc
 
 
 # MINIFIN
 
 # A MINI financial information system example
 # currently set to update every minute if started w/o param
-# here we show part of upcoming nimFinLib procs which utilize cx coloring and
-# positional printing.
+# 
 # 
 # Usage : minifin 20    # update every 20 seconds
 # 
@@ -21,7 +20,6 @@ import os,cx,httpclient,strutils,nimFinLib2,times,strfmt,osproc
 # 
 # nim c -d:release --threads:on --gc:boehm minifin
 # 
-# memory seems not to be freed somewhere
 # 
 var mmax = 0        # give it some unlikely value to adjust
 var mmin = 1000000  #  
@@ -34,7 +32,7 @@ proc bottomInfo(lpx:int,mxpos:int,ts:int) =
       if mm < mmin:
          mmin = mm
       if mm > 1_000_000:
-         GC_FullCollect()
+           GC_FullCollect() # free some memory
 
       #curdn(1)
       printLn("Memory  : " &  $mm &  " | Min : " & $mmin & " | Max : " & $mmax,cx.gray,xpos = mxpos)
