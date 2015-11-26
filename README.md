@@ -41,16 +41,32 @@ Data gathering and calculations support
 API Docs
 --------
 
-http://qqtop.github.io/nimFinLib.html
+      http://qqtop.github.io/nimFinLib.html
 
-for a library pertaining to Hongkong Stocks see
+      for a library pertaining to Hongkong Stocks see
 
-http://qqtop.github.io/libFinHk.html
+      http://qqtop.github.io/libFinHk.html
 
+Tests and Examples
+------------------
 
-nimFinTxx are test programs to show use of the library .
+      nimFinTxx   are test programs to show use of the library .
+      
+      examplex    short examples 
+      
+      nfT52       the main testing suite
+      
+      testMe      automated example1      
+      
 
-strfmt and random can be installed with nimble, statistics is included .
+Requirements
+
+      strfmt and random can be installed with nimble
+      
+      statistics is included
+      
+      cx  from  https://github.com/qqtop/NimCx
+      
 
 
 example1.nim 
