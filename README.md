@@ -124,8 +124,7 @@ NOTE :
      Forking ,testing, suggestions ,ideas are welcome.
      This is development code , hence use at your own risk.
      
-     Executables - if any - will have been build to run on linux 64
-     and tested on Ubuntu 14.04 LTS and openSuse 13.2.
+     Tested Ubuntu 14.04 LTS , openSuse 13.2 ,openSuse Leap42.1 
               
               
               
