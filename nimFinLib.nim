@@ -475,15 +475,31 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
                           print("Error",red,xpos = xpos + 29)
                 
                 printLnBiCol("Open : {:<8} High : {:<8} Change : {}".fmt(data[6],data[7],unquote(data[9])),":",xpos = xpos)
-                printLnBiCol("Range: {}".fmt(unquote(data[10])),":",xpos = xpos)
-                printLn(repeat("-",60),xpos = xpos)
+                printLnBiCol("Range: {}  ".fmt(unquote(data[10])),":",xpos = xpos)
+                               
+                printLn(repeat("-",70),xpos = xpos)
                 #curdn(1)
         else:
                 if data.len == 1 and sflag == false:
                   printLn("Yahoo Server Fail.",truetomato,xpos = xpos)
                   sflag = true
     except HttpRequestError:
-        printLn("Yahoo Data Fail.",truetomato,xpos = xpos)
+          printLn("Index Data temporary unavailable" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+    except ValueError:
+          discard
+    except OSError:
+          discard
+    except OverflowError:
+          discard
+    except  TimeoutError:
+         println("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+    except  ProtocolError:
+          println("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+    except :
+         discard
+    finally:
+        discard  
+
         
 
 proc buildStockString*(apf:Portfolio):string =
@@ -524,25 +540,92 @@ proc showCurrentIDX*(adf:seq[Stocks],xpos:int = 1){.discardable.} =
 
 
 proc showCurrentIDX*(idxs:string,xpos:int = 1){.discardable.} =
-    ## showCurrentIndexes
+    ## showCurrentIDX
     ##
     ## callable display routine for currentIDX with a string of format IDX1+IDX2+IDX3 .. 
     ## 
     ## passed in . Note this will use big slim letters to display inex value
     ##
-    ##
+    ## .. code-block:: nim
+    ##     showCurrentIDX("^HSI+^GDAXI+^FTSE+^NYA",xpos = 5)
     ## xpos allows x positioning
     #
     var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % idxs
     currentIDX(qurl,xpos = xpos)
 
 
+proc currentSTX(aurl:string,xpos:int) {.discardable.} =
+    ## currentIDX
+    ##
+    ## display routine for current index quote using big slim letters for index value
+    ##
+    ## called by showCurrentSTX , allows postioning
+    ##
+    #  some error handling is implemented if the yahoo servers are down
+
+    var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
+    try:
+      var ci = getContent(aurl)
+      for line in ci.splitLines:
+        var data = line[1..line.high].split(",")
+        if data.len > 1:
+                printBiCol("Code : {:<10}  ".fmt(unquote(data[0])),":",yellowgreen,cyan,xpos = xpos)
+                printLnBiCol("Market : {}".fmt(unquote(data[2])),":",yellowgreen,cyan)
+                echo()                        
+                print(unquote(data[1]),yellowgreen,xpos = xpos)                   
+                curdn(1)
+                printLnBiCol("Date : {:<12}{:<9}    ".fmt(unquote(data[4]),unquote(data[5])),":",xpos = xpos)
+                curup(1) 
+                var cc = checkChange(unquote(data[9]))
+                case cc
+                  of -1 : 
+                          print(showRune("FFEC"),red,xpos = xpos + 29)
+                          curup(1)
+                          printSlimNumber(data[3],fgr=truetomato,xpos = xpos + 30)
+                  of  0 :
+                          curup(1) 
+                          printSlimNumber(data[3],fgr=steelblue,xpos = xpos + 30)
+                  of  1 : 
+                          print(showRune("FFEA"),lime,xpos = xpos + 29)
+                          curup(1)
+                          printSlimNumber(data[3],fgr=lime,xpos = xpos + 30 )
+                  else  : 
+                          print("Error",red,xpos = xpos + 29)
+                
+                printLnBiCol("Open : {:<8} High : {:<8}Change : {}".fmt(data[6],data[7],unquote(data[9])),":",xpos = xpos)
+                printBiCol("Range: {}{:<13}".fmt(unquote(data[10]),""),":",xpos = xpos)
+                printLnBiCol("Volume : {}  ".fmt(unquote(data[8])),":")               
+                printLn(repeat("-",70),xpos = xpos)
+                #curdn(1)
+        else:
+                if data.len == 1 and sflag == false:
+                   printLn("Yahoo Server Fail.",truetomato,xpos = xpos)
+                   sflag = true
+    except HttpRequestError:
+          printLn("Stock Data temporary unavailable" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+    except ValueError:
+          discard
+    except OSError:
+          discard
+    except OverflowError:
+          discard
+    except  TimeoutError:
+         println("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+    except  ProtocolError:
+         println("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+    except :
+         discard
+    finally:
+        discard  
+
 
 proc showCurrentStocks*(apf:Portfolio,xpos:int = 1){.discardable.} =
    ## showCurrentStocks
    ##
    ## callable display routine for currentStocks with Portfolio object passed in
-   ##
+   ## 
+   ## wide display style
+   ## 
    ## .. code-block:: nim
    ##    showCurrentStocks(myAccount.pf[0])
    ##
@@ -567,6 +650,8 @@ proc showCurrentStocks*(stcks:string,xpos:int = 1){.discardable.} =
    ##
    ## callable display routine for currentStocks with stockstring passed in
    ##
+   ## wide display style
+   ##
    ## .. code-block:: nim
    ##    showCurrentStocks("IBM+BP.L+0001.HK")
    ##    decho(2)
@@ -580,6 +665,53 @@ proc showCurrentStocks*(stcks:string,xpos:int = 1){.discardable.} =
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
    currentStocks(qurl,xpos = xpos)
 
+
+proc showCurrentSTX*(apf:Portfolio,xpos:int = 1){.discardable.} =
+   ## showCurrentSTX
+   ##
+   ## callable display routine for currentSTX with Portfolio object passed in
+   ## 
+   ## compact display style
+   ##
+   ## .. code-block:: nim
+   ##    showCurrentStocks(myAccount.pf[0])
+   ##
+   ## This means get all stock codes of the first portfolio in myAccount
+   ##
+   ## Note : Yahoo servers maybe down sometimes which will make this procs fail.
+   ##
+   ## Just wait a bit and try again. Stay calm ! Do not panic !
+   ##
+   ## for full example see nimFinT5.nim
+   ##
+
+   var stcks = buildStockString(apf)
+   hdx(echo "Stocks Current Quote for $1" % apf.nx)
+   var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
+   currentSTX(qurl,xpos = xpos)
+
+
+
+proc showCurrentSTX*(stcks:string,xpos:int = 1){.discardable.} =
+   ## showCurrentSTX
+   ##
+   ## callable display routine for currentSTX with stockstring passed in
+   ##
+   ## compact display style
+   ##
+   ## .. code-block:: nim
+   ##    showCurrentStocks("IBM+BP.L+0001.HK")
+   ##    decho(2)
+   ##
+   ## Note : Yahoo servers maybe down sometimes which will make this procs fail.
+   ##
+   ## Just wait a bit and try again. Stay calm ! Do not panic !
+   ##
+
+   hdx(echo "Stocks Current Quote")
+   var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
+   currentSTX(qurl,xpos = xpos)
+ 
  
 
 proc ymonth*(aDate:string) : string =
