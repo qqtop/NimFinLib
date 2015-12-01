@@ -335,7 +335,7 @@ for x in -a.. a:
 
 
 echo ()
-superheader(" Tests for Current Stocks and Indexes  ")
+superheader(" Tests for Current Stocks and Indexes  - Wide View")
 echo ()
 
 # we can pass a single stock code or multiple stockcodes like so IBM+BP.L+ORCL
@@ -349,6 +349,27 @@ showCurrentStocks(account.pf[0])
 
 # here just passing a single code (index)
 var idx : string = indexpool[0].stock
+showCurrentIndexes(idx)
+
+# here passing in our indexpool a  seq[Stocks] type
+showCurrentIndexes(indexpool)
+
+
+
+echo ()
+superheader(" Tests for Current Stocks and Indexes  - Compact View")
+echo ()
+
+# we can pass some stocks from around the world
+showCurrentSTX("AAPL+IBM+BP.L+BAS.DE")
+
+# we also can pass all stocks in a portfolio and display the latest quotes
+# here we use the first portfolio in account
+showCurrentSTX(account.pf[0])
+
+
+# here just passing a single code (index)
+idx = indexpool[0].stock
 showCurrentIDX(idx)
 
 # here passing in our indexpool a  seq[Stocks] type

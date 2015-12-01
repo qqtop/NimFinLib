@@ -526,16 +526,47 @@ proc buildStockString*(adf:seq[Stocks]):string =
 # Note showCurrentIDX and showCurrentStocks are basically the same
 # but it makes for easier reading in the application to give it different names
 
-proc showCurrentIDX*(adf:seq[Stocks],xpos:int = 1){.discardable.} =
+proc showCurrentIndexes*(adf:seq[Stocks],xpos:int = 1){.discardable.} =
    ## showCurrentIndexes
    ##
    ## callable display routine for currentIndexes with a pool object passed in
+   ## 
+   ## wide view
+   ##
+   var idxs = buildStockString(adf)
+   #hdx(echo "Index Data for a pool" )
+   var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % idxs
+   currentIndexes(qurl,xpos = xpos)
+
+
+proc showCurrentIndexes*(idxs:string,xpos:int = 1){.discardable.} =
+    ## showCurrentIndexes
+    ##
+    ## callable display routine for currentIDX with a string of format IDX1+IDX2+IDX3 .. 
+    ## 
+    ## passed in . Note this will use big slim letters to display inex value
+    ## 
+    ## wide view
+    ##
+    ## .. code-block:: nim
+    ##     showCurrentIDX("^HSI+^GDAXI+^FTSE+^NYA",xpos = 5)
+    ## xpos allows x positioning
+    #
+    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % idxs
+    currentIndexes(qurl,xpos = xpos)
+
+
+proc showCurrentIDX*(adf:seq[Stocks],xpos:int = 1){.discardable.} =
+   ## showCurrentIDX
+   ##
+   ## callable display routine for currentIndexes with a pool object passed in
+   ## 
+   ## compact view
    ##
    var idxs = buildStockString(adf)
    #hdx(echo "Index Data for a pool" )
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % idxs
    currentIDX(qurl,xpos = xpos)
-
 
 
 
@@ -545,6 +576,9 @@ proc showCurrentIDX*(idxs:string,xpos:int = 1){.discardable.} =
     ## callable display routine for currentIDX with a string of format IDX1+IDX2+IDX3 .. 
     ## 
     ## passed in . Note this will use big slim letters to display inex value
+    ## 
+    ## compact view
+    ## 
     ##
     ## .. code-block:: nim
     ##     showCurrentIDX("^HSI+^GDAXI+^FTSE+^NYA",xpos = 5)
@@ -560,7 +594,8 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
     ## display routine for current index quote using big slim letters for index value
     ##
     ## called by showCurrentSTX , allows postioning
-    ##
+    ## 
+    ## 
     #  some error handling is implemented if the yahoo servers are down
 
     var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
@@ -624,7 +659,7 @@ proc showCurrentStocks*(apf:Portfolio,xpos:int = 1){.discardable.} =
    ##
    ## callable display routine for currentStocks with Portfolio object passed in
    ## 
-   ## wide display style
+   ## wide view
    ## 
    ## .. code-block:: nim
    ##    showCurrentStocks(myAccount.pf[0])
@@ -650,7 +685,7 @@ proc showCurrentStocks*(stcks:string,xpos:int = 1){.discardable.} =
    ##
    ## callable display routine for currentStocks with stockstring passed in
    ##
-   ## wide display style
+   ## wide view
    ##
    ## .. code-block:: nim
    ##    showCurrentStocks("IBM+BP.L+0001.HK")
@@ -671,7 +706,7 @@ proc showCurrentSTX*(apf:Portfolio,xpos:int = 1){.discardable.} =
    ##
    ## callable display routine for currentSTX with Portfolio object passed in
    ## 
-   ## compact display style
+   ## compact view
    ##
    ## .. code-block:: nim
    ##    showCurrentStocks(myAccount.pf[0])
