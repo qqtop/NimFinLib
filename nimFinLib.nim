@@ -6,7 +6,7 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.6
+## Version     : 0.2.6.1
 ##
 ## Compiler    : nim 0.12.1
 ##
@@ -420,11 +420,21 @@ proc currentIndexes(aurl:string,xpos:int = 1) {.discardable.} =
     for line in ci.splitLines:
       var data = line[1..line.high].split(",")
       if data.len > 1:
-              setforegroundcolor(fgYellow)
-              echo "Code : {:<10} Name : {}  Market : {}".fmt(data[0],data[1],data[2])
-              setforegroundcolor(fgWhite)
-              echo "Date : {:<12}{:<9}    Index  : {:<8}".fmt(data[4],data[5],data[3])
-              echo "Open : {:<8} High : {:<8} Change : {} Range : {}".fmt(data[6],data[7],data[9],data[10])
+              var cc = checkChange(unquote(data[9]))
+             
+              case cc
+                  of -1 : 
+                          printLn("{}{:>7} {}{:<9}  {}{:>7} {}{:<16} {}{:>7} {}{:<6} {}{:<7} {}{:<10}{} {:<8} {}{:>9} {}{}{}{}".fmt(yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , "Index : ",red , showRune("FFEC"),lightskyblue , unquote(data[3])))
+                          printLn("{}Open : {}{:<8}  {}Change : {}{:<2}{}{:>10}  {}Range : {}{} ".fmt(yellowgreen,white,unquote(data[6]),yellowgreen,red , showRune("FFEC") ,white , unquote(data[9]),yellowgreen,white,unquote(data[10])))            
+                  of  0 : 
+                          printLn("{}{:>7} {}{:<9}  {}{:>7} {}{:<16} {}{:>7} {}{:<6} {}{:<7} {}{:<10}{} {:<8} {}{:>9} {}{}{}{}".fmt(yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , "Index : ",white, " ",lightskyblue , unquote(data[3])))
+                          printLn("{}Open : {}{:<8}  {}Change : {}{:<2}{}{:>10}  {}Range : {}{} ".fmt(yellowgreen,white,unquote(data[6]),yellowgreen,white," "              ,white , unquote(data[9]),yellowgreen,white,unquote(data[10])))             
+                  of  1 : 
+                          printLn("{}{:>7} {}{:<9}  {}{:>7} {}{:<16} {}{:>7} {}{:<6} {}{:<7} {}{:<10}{} {:<8} {}{:>9} {}{}{}{}".fmt(yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , "Index : ",lime , showRune("FFEA"),lightskyblue , unquote(data[3])))
+                          printLn("{}Open : {}{:<8}  {}Change : {}{:<2}{}{:>10}  {}Range : {}{} ".fmt(yellowgreen,white,unquote(data[6]),yellowgreen,lime ,showRune("FFEA") ,white , unquote(data[9]),yellowgreen,white,unquote(data[10])))
+                    
+                  else  : printLn("Data Error",red)
+                          
               echo repeat("-",tw)
       else:
               if data.len == 1 and sflag == false:
