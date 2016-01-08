@@ -6,7 +6,7 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.6.1
+## Version     : 0.2.6.2
 ##
 ## Compiler    : nim 0.12.1
 ##
@@ -72,6 +72,10 @@
 ## Notes       : it is assumed that terminal color is black background
 ##
 ##               and white text. Other color schemes may not show all output.
+##               
+##               also read notes about terminal compability in cx.nim
+##               
+##               Best results with terminals supporting truecolor.
 ##
 ## Tests       : For comprehensive tests and example usage see nfT52.nim and minifin.nim
 ## 
@@ -90,7 +94,7 @@ import os,cx,strutils,parseutils,sequtils,httpclient,net,strfmt
 import terminal,times,tables,random, parsecsv,streams,algorithm,math,unicode
 import statistics
 
-let NIMFINLIBVERSION* = "0.2.6"
+let NIMFINLIBVERSION* = "0.2.6.2"
 
 type
 
