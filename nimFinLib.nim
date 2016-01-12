@@ -723,7 +723,7 @@ proc showCurrentSTX*(apf:Portfolio,xpos:int = 1){.discardable.} =
    ## compact view
    ##
    ## .. code-block:: nim
-   ##    showCurrentStocks(myAccount.pf[0])
+   ##    showCurrentSTX(myAccount.pf[0])
    ##
    ## This means get all stock codes of the first portfolio in myAccount
    ##
@@ -749,7 +749,7 @@ proc showCurrentSTX*(stcks:string,xpos:int = 1){.discardable.} =
    ## compact display style
    ##
    ## .. code-block:: nim
-   ##    showCurrentStocks("IBM+BP.L+0001.HK")
+   ##    showCurrentSTX("IBM+BP.L+0001.HK")
    ##    decho(2)
    ##
    ## Note : Yahoo servers maybe down sometimes which will make this procs fail.
@@ -761,7 +761,8 @@ proc showCurrentSTX*(stcks:string,xpos:int = 1){.discardable.} =
    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
    currentSTX(qurl,xpos = xpos)
  
- 
+
+
 
 proc ymonth*(aDate:string) : string =
   ## ymonth

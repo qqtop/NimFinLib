@@ -1,4 +1,4 @@
-import os,cx,httpclient,strutils,nimFinLib,times,strfmt,osproc
+import os,cx,httpclient,strutils,nimFinLib,times,strfmt,osproc,parseopt2
 
 
 # MINIFIN
@@ -6,6 +6,7 @@ import os,cx,httpclient,strutils,nimFinLib,times,strfmt,osproc
 # A MINI financial information system example
 # currently set to update every minute if started w/o param
 # 
+# Compiler : NIM 0.12.1
 # 
 # Usage : minifin 20    # update every 20 seconds
 # 
@@ -21,8 +22,44 @@ import os,cx,httpclient,strutils,nimFinLib,times,strfmt,osproc
 # nim c -d:release --threads:on --gc:boehm minifin
 # 
 # 
-var mmax = 0        # give it some unlikely value to adjust
-var mmin = 1000000  #  
+# 
+# 
+# NOTES:
+
+#        auto refresh schedule default 1 min , min 10 secs , max 10 minutes
+#        commandLine input in seconds 
+#        
+#        see -h for usage  to set refreshtime (implemented) and
+#        stock display ( not yet implemented)
+#        
+# Future :
+#         further idea is to have some other prog input being polled asyncly
+#         so we run minifin and another prog called blah which sends new stock codes
+#         to be displayed by the running minifin if so required or redisplay prev one
+#         maybe max 10 codes in form of code open high low close 
+# 
+# 
+
+var mmax      = 0        # give it some unlikely value to adjust
+var mmin      = 1000000  #  
+var timespace = 60000    # default update every 1 min 
+var MINIFINVERSION   = "1.0"
+var stock = ""
+
+
+proc writeVersion() = 
+  printLn("minifin version : " & MINIFINVERSION,lime)
+  doFinish()
+
+proc writehelp() = 
+  println("Help",yellow)
+  printLn("minifin version : " & MINIFINVERSION,lime)
+  println("Example usage : ",salmon)
+  println("-t 10        refresh time in secs",yellowgreen)
+  println("-s 0386.HK   one stock code yahoo style",yellowgreen)
+  doFinish()
+
+
 
 proc bottomInfo(lpx:int,mxpos:int,ts:int) = 
       # some bottom information 
@@ -92,33 +129,49 @@ proc doit(mxpos:int) =
     showKitcoMetal(xpos = mxpos)
     
         
-# main
-# setup auto refresh schedule default 1 min , min 10 secs , max 10 minutes
-# commandLine input in seconds 
-# 
+# main loop
+  
+proc checkTimespace(ts:int):int = 
+    var tsx = 0
+    if ts > 10 and ts < 600:
+           tsx = ts * 1000 # allow min 10 sec max 10 minutes refresh
+    elif ts <= 10 :
+           tsx = 10000  # min allowed 10 secs
+    else:   
+           tsx = 600 * 1000 # in any case refresh every 10 minutes  
+                
+    result = tsx
+  
+  
 
-var timespace = 60000
-if len(commandLineParams()) > 0:
-    for param in commandLineParams():
-       if parseInt(param) > 10 and parseInt(param) < 600:
-          timespace = parseInt(param) * 1000 # allow min 10 sec max 10 minutes refresh
-       elif parseInt(param) <= 10 :
-          timespace = 10000  # min allowed 10 secs
-       else:   
-          timespace = 600 * 1000 # in any case refresh every 10 minutes  
-else:
-     timespace = 60000 # default update every 1 min 
-          
+
+var filename = ""  
+for kind, key, val in getopt():
+  case kind
+  
+  of cmdArgument:
+    filename = key
+    
+  of cmdLongOption, cmdShortOption:
+    case key
+    of "help", "h"   : writeHelp()
+    of "version", "v": writeVersion()
+    of "time","t"    : timespace = checkTimespace(parseInt(val))
+    of "stock","s"   : stock = $val
+    
+  of cmdEnd: assert(false) # cannot happen
+  
+    
     
 var lpx = 0                   # reload counter
-var ts = timespace div 1000   # reload timeout
+#var ts = timespace div 1000   # reload timeout
 var mxpos = 5                 # space from left edge for our setup here
 
 # run forever 
 while true:
       inc lpx
       doit(mxpos)
-      bottomInfo(lpx,mxpos,ts)
+      bottomInfo(lpx,mxpos,timespace div 1000)
       curset()
       sleep(timespace)
   
