@@ -88,13 +88,14 @@
 ##
 ##
 
-
-
 import os,cx,strutils,parseutils,sequtils,httpclient,net,strfmt
 import terminal,times,tables,random, parsecsv,streams,algorithm,math,unicode
 import statistics
 
 let NIMFINLIBVERSION* = "0.2.6.2"
+
+let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
+
 
 type
 
@@ -173,10 +174,37 @@ type
 
   Currencies* {.inheritable.} = object
        ## Currencies type
-       ## is a simple object to hold current currency data
+       ## a simple object to hold current currency data
 
        cu* : seq[string]  # currency code pair e.g. EURUSD
        ra* : seq[float]   # relevant rate  e.g 1.354
+
+
+
+type 
+ 
+   YHobject* {.inheritable.} = object
+        ## YHobject type
+        ## a simple object to hold certain yahoo stock data 
+        ## 
+        ## 
+        stcode*   : string
+        stname*   : string
+        stmarket* : string
+        stprice*  : string
+        stchange* : string
+        stopen*   : string
+        sthigh*   : string
+        stvolume* : string
+        strange*  : string
+        stdate*   : string
+        sttime*   : string
+      
+
+
+
+
+
 
 
 proc timeSeries*[T](self:T,ty:string): Ts =
@@ -298,6 +326,21 @@ proc initStocks*(): Stocks =
     adf.rca   = @[]
     result = adf
 
+proc initYHobject*() : YHobject = 
+     
+     var myst : YHobject
+     myst.stcode   = ""
+     myst.stname   = ""
+     myst.stmarket = ""
+     myst.stprice  = ""
+     myst.stdate   = ""
+     myst.sttime   = ""
+     myst.stopen   = ""
+     myst.sthigh   = ""
+     myst.stvolume = ""
+     myst.stchange = ""
+     myst.strange  = ""
+     result = myst
 
 proc initCurrencies*():Currencies=
      ## initCurrencies
@@ -338,7 +381,7 @@ proc aline*()  {.discardable.} =
       printLn(repeat("-",tw),xpos = 0)
 
 
-proc checkChange(s:string):int = 
+proc checkChange*(s:string):int = 
      # checkChange 
      # 
      # internal utility proc used by currentIDX
@@ -358,7 +401,7 @@ proc getCurrentQuote*(stcks:string) : string =
    ## getCurrentQuote
    ##
    ## gets the current price/quote from yahoo for 1 stock code
-   var aurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
+   var aurl=yahoourl  % stcks
    #var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
    var data = newSeq[string]()
    var line = getContent(aurl)
@@ -368,6 +411,36 @@ proc getCurrentQuote*(stcks:string) : string =
       result = data[3]
    else:
       result = "-1"
+
+
+
+
+
+proc getStocks*(aurl:string,xpos:int = 1):seq[string] =
+  ## getStocks
+  ##
+  ## fetch stock data from yahoo and return in a seq[string] .
+  ## 
+  ## Data can be easily unpacked see showStocks.
+  ## 
+  ## Quote maybe 15 mins delayed
+  ##
+  ## callable
+  ##
+  #  some error handling is implemented if the yahoo servers are down
+ 
+  var data3 = newSeq[string]()
+    
+  try:
+       let zz = splitLines(getContent(aurl,timeout = 5000))
+       for zs in 0.. <zz.len-1: data3.add(zz[zs])    
+      
+  except HttpRequestError:
+      printLn("Yahoo current data could not be retrieved . Try again .\L",truetomato,xpos = xpos)
+  finally:
+      result = data3    
+
+
 
 
 proc currentStocks(aurl:string,xpos:int = 1) =
@@ -448,6 +521,63 @@ proc currentIndexes(aurl:string,xpos:int = 1) {.discardable.} =
       msgr() do : echo "Yahoo current data could not be retrieved . Try again ."
       echo()
 
+
+
+
+proc yahooStocks*(stock:string,xpos:int = 1):seq[YHobject] =
+    ## yahooStocks
+    ## 
+    ## move all stocks data received by getStocks into a seq[YHobject] for 
+    ## 
+    ## easy moving about and unpacking
+    ##  
+    result = newSeq[YHobject]()
+    let data5 = getStocks(yahoourl % stock ,xpos = xpos)
+    var dn = newSeq[string]()
+    var ss = stock.split("+")
+    for x in 0.. <ss.len:
+          dn = data5[x].split(",")
+          var myst = initYHobject()
+          if dn.len == 11:
+              myst.stcode   = unquote(dn[0])
+              myst.stname   = unquote(dn[1])
+              myst.stmarket = unquote(dn[2])
+              myst.stprice  = unquote(dn[3])
+              myst.stdate   = unquote(dn[4])
+              myst.sttime   = unquote(dn[5])
+              myst.stopen   = unquote(dn[6])
+              myst.sthigh   = unquote(dn[7])
+              myst.stvolume = unquote(dn[8])
+              myst.stchange = unquote(dn[9])
+              myst.strange  = unquote(dn[10])
+          else:
+              # maybe will never be reached as yahoo may return N/A
+              println("Yahoo retunred insufficient data for $1",red % $ss[x],xpos = xpos)   
+              
+          result.add(myst)
+
+
+
+proc showStocks*(stock:string,xpos:int = 1) =
+    ## showStocks
+    ## 
+    ## convenience proc to lists all stocks received by getStocks
+    ## 
+    ##  
+    ## 
+    ##  
+    for x in yahooStocks(stock,xpos = 10):
+        printlnBiCol("Code      : " & x.stcode)
+        printlnBiCol("Name      : " & x.stname)
+        printlnBiCol("Market    : " & x.stmarket)
+        printlnBiCol("Price     : " & x.stprice)
+        printlnBiCol("Date/Time : " & "{} {}".fmt(x.stdate,x.sttime))
+        printlnBiCol("Open      : " & x.stopen)
+        printlnBiCol("High      : " & x.sthigh)
+        printlnBiCol("Volume    : " & x.stVolume)
+        printlnBiCol("Change    : " & x.stchange)
+        printlnBiCol("Range     : " & x.strange)    
+        echo()        
 
 
 proc currentIDX(aurl:string,xpos:int) {.discardable.} =
@@ -549,7 +679,7 @@ proc showCurrentIndexes*(adf:seq[Stocks],xpos:int = 1){.discardable.} =
    ##
    var idxs = buildStockString(adf)
    #hdx(echo "Index Data for a pool" )
-   var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % idxs
+   var qurl=yahoourl  % idxs
    currentIndexes(qurl,xpos = xpos)
 
 
@@ -566,7 +696,7 @@ proc showCurrentIndexes*(idxs:string,xpos:int = 1){.discardable.} =
     ##     showCurrentIDX("^HSI+^GDAXI+^FTSE+^NYA",xpos = 5)
     ## xpos allows x positioning
     #
-    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % idxs
+    var qurl=yahoourl  % idxs
     currentIndexes(qurl,xpos = xpos)
 
 
@@ -579,7 +709,7 @@ proc showCurrentIDX*(adf:seq[Stocks],xpos:int = 1){.discardable.} =
    ##
    var idxs = buildStockString(adf)
    #hdx(echo "Index Data for a pool" )
-   var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % idxs
+   var qurl=yahoourl  % idxs
    currentIDX(qurl,xpos = xpos)
 
 
@@ -598,7 +728,7 @@ proc showCurrentIDX*(idxs:string,xpos:int = 1){.discardable.} =
     ##     showCurrentIDX("^HSI+^GDAXI+^FTSE+^NYA",xpos = 5)
     ## xpos allows x positioning
     #
-    var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % idxs
+    var qurl=yahoourl  % idxs
     currentIDX(qurl,xpos = xpos)
 
 
@@ -689,7 +819,7 @@ proc showCurrentStocks*(apf:Portfolio,xpos:int = 1){.discardable.} =
 
    var stcks = buildStockString(apf)
    hdx(echo "Stocks Current Quote for $1" % apf.nx)
-   var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
+   var qurl=yahoourl  % stcks
    currentStocks(qurl,xpos = xpos)
 
 
@@ -711,7 +841,7 @@ proc showCurrentStocks*(stcks:string,xpos:int = 1){.discardable.} =
    ##
 
    hdx(echo "Stocks Current Quote")
-   var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
+   var qurl=yahoourl  % stcks
    currentStocks(qurl,xpos = xpos)
 
 
@@ -736,7 +866,7 @@ proc showCurrentSTX*(apf:Portfolio,xpos:int = 1){.discardable.} =
 
    var stcks = buildStockString(apf)
    hdx(echo "Stocks Current Quote for $1" % apf.nx)
-   var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
+   var qurl=yahoourl  % stcks
    currentSTX(qurl,xpos = xpos)
 
 
@@ -758,7 +888,7 @@ proc showCurrentSTX*(stcks:string,xpos:int = 1){.discardable.} =
    ##
 
    hdx(echo "Stocks Current Quote")
-   var qurl="http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm" % stcks
+   var qurl=yahoourl  % stcks
    currentSTX(qurl,xpos = xpos)
  
 

@@ -22,7 +22,7 @@ import os,cx,httpclient,strutils,nimFinLib,times,strfmt,osproc,parseopt2
 # nim c -d:release --threads:on --gc:boehm minifin
 # 
 # 
-# 
+# USAGE: minifin -t:10 -s:0386.HK+0880.HK+0555.HK+BP.L+AAPL+BAS.DE
 # 
 # NOTES:
 
@@ -54,9 +54,12 @@ proc writeVersion() =
 proc writehelp() = 
   println("Help",yellow)
   printLn("minifin version : " & MINIFINVERSION,lime)
-  println("Example usage : ",salmon)
-  println("-t 10        refresh time in secs",yellowgreen)
-  println("-s 0386.HK   one stock code yahoo style",yellowgreen)
+  println("\nExample command line parameters : ",salmon)
+  println("-t:10             refresh time in secs",yellowgreen)
+  println("-s:0005.HK+AAPL   none ,one or more stock codes yahoo style",yellowgreen)
+  echo()
+  println("\nExample usage : ",salmon)
+  println("minifin -t:10 -s:0386.HK+0880.HK+0555.HK+BP.L+AAPL+BAS.DE",yellowgreen)
   doFinish()
 
 
@@ -90,7 +93,7 @@ proc bottomInfo(lpx:int,mxpos:int,ts:int) =
       printLn(ntc,gray,xpos = cx.tw - ntc.len - 3)
 
 
-proc doit(mxpos:int) =
+proc doit(mxpos:int,stock:string) =
     # setup the terminal
     cleanScreen()
     curset()
@@ -116,6 +119,19 @@ proc doit(mxpos:int) =
     showCurrentForex(@["EURUSD","GBPUSD","USDJPY","AUDUSD","USDCNY"],xpos = cx.tw -41)
     curdn(1)
     cx.printLn($getTime(),yellowgreen,xpos = cx.tw - 40)
+    
+    
+    # here we display price and range data for stocks passedf in from command line
+    if stock.len > 0:
+       decho(3)
+       println("{:<10} {:>10}     {}".fmt("Stock","Current","Range"),lime,xpos = cx.tw - 41)
+       var sxc = 0 # we limit to max 15 stocks displayable
+       for x in yahooStocks(stock,xpos = 10):
+             inc sxc
+             if sxc < 16:
+                printlnBiCol("{:<10} : {:>8}  {} ".fmt(x.stcode,x.stprice,x.strange),xpos = cx.tw -41)
+             
+       
     # go back to top left
     curset()
     # down 2
@@ -170,7 +186,7 @@ var mxpos = 5                 # space from left edge for our setup here
 # run forever 
 while true:
       inc lpx
-      doit(mxpos)
+      doit(mxpos,stock)
       bottomInfo(lpx,mxpos,timespace div 1000)
       curset()
       sleep(timespace)
