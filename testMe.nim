@@ -29,8 +29,6 @@ proc source() =
    downloadFile(afile,"nimFinLib.nim")
    afile = "https://raw.githubusercontent.com/qqtop/NimFinLib/master/example1.nim"
    downloadFile(afile,"example1.nim")
-   afile = "https://raw.githubusercontent.com/qqtop/NimFinLib/master/statistics.nim"
-   downloadFile(afile,"statistics.nim")
    afile = "https://raw.githubusercontent.com/qqtop/NimCx/master/cx.nim"
    downloadFile(afile,"cx.nim")
 
@@ -40,7 +38,6 @@ proc janitation() =
     removeFile("example1.nim")
     removeFile("example1")
     removeFile("testMe")
-    removeFile("statistics.nim")
     removeFile("cx.nim")
     removeDir("nimcache")
 
