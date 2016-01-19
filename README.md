@@ -63,10 +63,9 @@ Tests and Examples
 Requirements
 
       strfmt and random can be installed with nimble
-      
-      statistics is included
-      
-      cx  from  https://github.com/qqtop/NimCx
+                
+      cx  from  https://github.com/qqtop/NimCx  will be pulled in automatically
+           
       
 
 
@@ -125,5 +124,5 @@ NOTE :
      Forking ,testing, suggestions ,ideas are welcome.
      This is development code , hence use at your own risk.
      
-     Tested Ubuntu 14.04 LTS , openSuse 13.2 , openSuse Leap42.1 
+     Tested Ubuntu 14.04 LTS , openSuse 13.2 , openSuse Leap42.1 ,openSuse TumbleWeed
               
