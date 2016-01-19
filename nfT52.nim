@@ -6,7 +6,7 @@ import nimFinLib,cx
 # uncomment next line for compilation with nimprofiler
 # import nimProf
 
-
+# tested with NIM 0.13.0
 
 ## nfT52.nim
 ##
