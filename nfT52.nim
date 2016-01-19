@@ -7,6 +7,7 @@ import nimFinLib,cx
 # import nimProf
 
 
+
 ## nfT52.nim
 ##
 ## Master Testing Suite of nimFinLib2  the current development version
