@@ -6,7 +6,7 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.0.6
+## Version     : 0.0.7
 ##
 ## Compiler    : nim 0.12.1
 ##
@@ -40,7 +40,7 @@
 import os,strutils,parseutils,sequtils,httpclient,strfmt
 import terminal,times,tables,random
 import parsecsv,streams,algorithm,math,unicode
-import statistics,nimFinLib,cx
+import stats,nimFinLib,cx
 
 let LIBFINHKVERSION* = "0.0.6"
 
