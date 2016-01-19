@@ -8,7 +8,7 @@
 ##
 ## Version     : 0.2.6.2
 ##
-## Compiler    : nim 0.12.1
+## Compiler    : nim 0.13.0
 ##
 ##
 ## Description : A basic library for financial calculations with Nim
@@ -90,7 +90,7 @@
 
 import os,cx,strutils,parseutils,sequtils,httpclient,net,strfmt
 import terminal,times,tables,random, parsecsv,streams,algorithm,math,unicode
-import statistics
+import stats  #,statistics
 
 let NIMFINLIBVERSION* = "0.2.6.2"
 
@@ -522,12 +522,10 @@ proc currentIndexes(aurl:string,xpos:int = 1) {.discardable.} =
       echo()
 
 
-
-
 proc yahooStocks*(stock:string,xpos:int = 1):seq[YHobject] =
     ## yahooStocks
     ## 
-    ## move all stocks data received by getStocks into a seq[YHobject] for 
+    ## store all stocks data received by getStocks into a seq[YHobject] for 
     ## 
     ## easy moving about and unpacking
     ##  
@@ -552,7 +550,7 @@ proc yahooStocks*(stock:string,xpos:int = 1):seq[YHobject] =
               myst.strange  = unquote(dn[10])
           else:
               # maybe will never be reached as yahoo may return N/A
-              println("Yahoo retunred insufficient data for $1",red % $ss[x],xpos = xpos)   
+              println("Yahoo returned insufficient data for $1",red % $ss[x],xpos = xpos)   
               
           result.add(myst)
 

@@ -101,7 +101,7 @@ proc doit(mxpos:int,stock:string) =
     # print the large MINI with Finance Center and Yahoo delayed notice underneath
     printNimsxR(nimsx2,randcol(),xpos = cx.tw - 42)
     #printBigLetters("MINI",xpos = 102,fun = true)  # also ok
-    printLn("Finance Center",yellowgreen,xpos = cx.tw -35)  
+    printLn("Finance Center",yellowgreen,xpos = cx.tw - 35)  
     var ymd = "Yahoo Market Data delayed 15 minutes"
     printLn(ymd,truetomato,xpos = cx.tw - 41)
     # move cursor to top left
@@ -112,11 +112,11 @@ proc doit(mxpos:int,stock:string) =
     # down 10        
     curdn(10)
     # display top forex set
-    showCurrentForex(@["EURHKD","GBPHKD","JPYHKD","AUDHKD","CNYHKD"],xpos = cx.tw -41)
+    showCurrentForex(@["EURHKD","GBPHKD","JPYHKD","AUDHKD","CNYHKD"],xpos = cx.tw - 41)
     # down 3
     curdn(2)
     # display second forex set and update time
-    showCurrentForex(@["EURUSD","GBPUSD","USDJPY","AUDUSD","USDCNY"],xpos = cx.tw -41)
+    showCurrentForex(@["EURUSD","GBPUSD","USDJPY","AUDUSD","USDCNY"],xpos = cx.tw - 41)
     curdn(1)
     cx.printLn($getTime(),yellowgreen,xpos = cx.tw - 40)
     
@@ -129,7 +129,7 @@ proc doit(mxpos:int,stock:string) =
        for x in yahooStocks(stock,xpos = 10):
              inc sxc
              if sxc < 16:
-                printlnBiCol("{:<10} : {:>8}  {} ".fmt(x.stcode,x.stprice,x.strange),xpos = cx.tw -41)
+                printlnBiCol("{:<10} : {:>8}  {} ".fmt(x.stcode,x.stprice,x.strange),xpos = cx.tw - 41)
              
        
     # go back to top left

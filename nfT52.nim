@@ -1,6 +1,6 @@
-import os,terminal,sequtils,strutils,times,math,unicode,tables,strfmt,random
-from statistics import kurtosis,quantile,skewness
+import os,terminal,sequtils,strutils,times,math,stats,unicode,tables,strfmt,random
 import nimFinLib,cx
+
 # comment next line if tests concerning libFinHk not required
 # import libFinHk
 # uncomment next line for compilation with nimprofiler
@@ -17,8 +17,8 @@ import nimFinLib,cx
 ## compile with profiler  --> uncomment import nimprof line above
 ## nim c -d:ssl --profiler:on --stackTrace:on nfT52
 ## then run prog and check file: profile_results.txt
-## 
-## 
+##
+
 
 var start = epochTime()
 
