@@ -643,7 +643,6 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
         discard  
 
         
-
 proc buildStockString*(apf:Portfolio):string =
   ## buildStocksString
   ##
