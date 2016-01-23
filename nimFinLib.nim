@@ -59,15 +59,13 @@
 ##
 ## Contributors: reactorMonk
 ##
-## Requires    : strfmt,random modules , statistics.nim and cx.nim
+## Requires    : strfmt,random modules 
 ##
-##               get cx.nim like so
+##               cx libraries from NimCx are automatically pulled in
 ##               
-##               git clone https://github.com/qqtop/NimCx.git
+##               in case of problems remove old cx-xxx dir in your nimble/pkgs directory
 ##               
-##               then copy cx.nim into your dev directory or path
-##
-##
+##               and try again.
 ##
 ## Notes       : it is assumed that terminal color is black background
 ##
@@ -80,11 +78,7 @@
 ## Tests       : For comprehensive tests and example usage see nfT52.nim and minifin.nim
 ## 
 ##
-## Installation: git clone https://github.com/qqtop/NimFinLib.git
-##
-## or
-##
-## nimble install nimFinLib
+## Installation: nimble install nimFinLib
 ##
 ##
 
