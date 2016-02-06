@@ -6,9 +6,9 @@ import os,cx,httpclient,strutils,nimFinLib,times,strfmt,osproc,parseopt2
 # A MINI financial information system example
 # currently set to update every minute if started w/o param
 # 
-# Compiler : NIM 0.12.1
+# Compiler : NIM 0.13.1
 # 
-# Usage : minifin 20    # update every 20 seconds
+# USAGE: minifin -t:10 -s:0386.HK+0880.HK+0555.HK+BP.L+AAPL+BAS.DE
 # 
 # terminal size : full screen 80 x 40
 # font          : monospace
@@ -22,7 +22,6 @@ import os,cx,httpclient,strutils,nimFinLib,times,strfmt,osproc,parseopt2
 # nim c -d:release --threads:on --gc:boehm minifin
 # 
 # 
-# USAGE: minifin -t:10 -s:0386.HK+0880.HK+0555.HK+BP.L+AAPL+BAS.DE
 # 
 # NOTES:
 
@@ -43,7 +42,7 @@ import os,cx,httpclient,strutils,nimFinLib,times,strfmt,osproc,parseopt2
 var mmax      = 0        # give it some unlikely value to adjust
 var mmin      = 1000000  #  
 var timespace = 60000    # default update every 1 min 
-var MINIFINVERSION   = "1.0"
+var MINIFINVERSION   = "1.2"
 var stock = ""
 
 
@@ -99,11 +98,11 @@ proc doit(mxpos:int,stock:string) =
     curset()
     cx.decho(2)
     # print the large MINI with Finance Center and Yahoo delayed notice underneath
-    printNimsxR(nimsx2,randcol(),xpos = cx.tw - 42)
+    printNimsxR(nimsx2,randcol(),xpos = cx.tw - 46)
     #printBigLetters("MINI",xpos = 102,fun = true)  # also ok
-    printLn("Finance Center",yellowgreen,xpos = cx.tw - 35)  
+    printLn("Finance Center",yellowgreen,xpos = cx.tw - 39)  
     var ymd = "Yahoo Market Data delayed 15 minutes"
-    printLn(ymd,truetomato,xpos = cx.tw - 41)
+    printLn(ymd,truetomato,xpos = cx.tw - 45)
     # move cursor to top left
     curset()
     # down 2
@@ -112,24 +111,24 @@ proc doit(mxpos:int,stock:string) =
     # down 10        
     curdn(10)
     # display top forex set
-    showCurrentForex(@["EURHKD","GBPHKD","JPYHKD","AUDHKD","CNYHKD"],xpos = cx.tw - 41)
+    showCurrentForex(@["EURHKD","GBPHKD","JPYHKD","AUDHKD","CNYHKD"],xpos = cx.tw - 45)
     # down 3
     curdn(2)
     # display second forex set and update time
-    showCurrentForex(@["EURUSD","GBPUSD","USDJPY","AUDUSD","USDCNY"],xpos = cx.tw - 41)
+    showCurrentForex(@["EURUSD","GBPUSD","USDJPY","AUDUSD","USDCNY"],xpos = cx.tw - 45)
     curdn(1)
-    cx.printLn($getTime(),yellowgreen,xpos = cx.tw - 40)
+    cx.printLn($getTime(),yellowgreen,xpos = cx.tw - 44)
     
     
     # here we display price and range data for stocks passedf in from command line
     if stock.len > 0:
        decho(3)
-       println("{:<10} {:>10}     {}".fmt("Stock","Current","Range"),lime,xpos = cx.tw - 41)
+       println("{:<10} {:>10}     {}".fmt("Stock","Current","Range"),lime,xpos = cx.tw - 45)
        var sxc = 0 # we limit to max 15 stocks displayable
        for x in yahooStocks(stock,xpos = 10):
              inc sxc
              if sxc < 16:
-                printlnBiCol("{:<10} : {:>8}  {} ".fmt(x.stcode,x.stprice,x.strange),xpos = cx.tw - 41)
+                printlnBiCol("{:<10} : {:>8}  {} ".fmt(x.stcode,x.stprice,x.strange),xpos = cx.tw - 45)
              
        
     # go back to top left
@@ -158,8 +157,6 @@ proc checkTimespace(ts:int):int =
                 
     result = tsx
   
-  
-
 
 var filename = ""  
 for kind, key, val in getopt():
@@ -180,7 +177,7 @@ for kind, key, val in getopt():
     
     
 var lpx = 0                   # reload counter
-#var ts = timespace div 1000   # reload timeout
+#var ts = timespace div 1000  # reload timeout
 var mxpos = 5                 # space from left edge for our setup here
 
 # run forever 

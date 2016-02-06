@@ -6,9 +6,9 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.6.2
+## Version     : 0.2.6.3
 ##
-## Compiler    : nim 0.13.0
+## Compiler    : nim 0.13.1
 ##
 ##
 ## Description : A basic library for financial calculations with Nim
@@ -59,13 +59,15 @@
 ##
 ## Contributors: reactorMonk
 ##
-## Requires    : strfmt,random modules 
+## Requires    : strfmt,random modules , statistics.nim and cx.nim
 ##
-##               cx libraries from NimCx are automatically pulled in
+##               get cx.nim like so
 ##               
-##               in case of problems remove old cx-xxx dir in your nimble/pkgs directory
+##               git clone https://github.com/qqtop/NimCx.git
 ##               
-##               and try again.
+##               then copy cx.nim into your dev directory or path
+##
+##
 ##
 ## Notes       : it is assumed that terminal color is black background
 ##
@@ -78,7 +80,11 @@
 ## Tests       : For comprehensive tests and example usage see nfT52.nim and minifin.nim
 ## 
 ##
-## Installation: nimble install nimFinLib
+## Installation: git clone https://github.com/qqtop/NimFinLib.git
+##
+## or
+##
+## nimble install nimFinLib
 ##
 ##
 
@@ -86,7 +92,7 @@ import os,cx,strutils,parseutils,sequtils,httpclient,net,strfmt
 import terminal,times,tables,random, parsecsv,streams,algorithm,math,unicode
 import stats  #,statistics
 
-let NIMFINLIBVERSION* = "0.2.6.2"
+let NIMFINLIBVERSION* = "0.2.6.3"
 
 let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
 
@@ -94,67 +100,67 @@ let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
 type
 
   Account*  = object
-      ## Account type
-      ## holds all portfolios similar to a master account
-      ## portfolios are Portfolio objects
-      pf* : seq[Portfolio]  ## pf holds all Portfolio type portfolios for an account
+        ## Account type
+        ## holds all portfolios similar to a master account
+        ## portfolios are Portfolio objects
+        pf* : seq[Portfolio]  ## pf holds all Portfolio type portfolios for an account
 
 
 
   Portfolio* {.inheritable.} = object
-      ## Portfolio type
-      ## holds one portfolio with all relevant historic stocks data
-      nx* : string   ## nx  holds portfolio name  e.g. MyGetRichPortfolio
-      dx* : seq[Stocks]  ## dx  holds all stocks with historical data
+        ## Portfolio type
+        ## holds one portfolio with all relevant historic stocks data
+        nx* : string   ## nx  holds portfolio name  e.g. MyGetRichPortfolio
+        dx* : seq[Stocks]  ## dx  holds all stocks with historical data
 
 
 
   Stocks* {.inheritable.} = object of Portfolio
-    ## Stocks type
-    ## holds individual stocks history data and RunningStat for ohlcva columns
-    ## even more items may be added like full company name etc in the future
-    ## items are stock code, ohlcva, rc and rca .
-    stock* : string            ## yahoo style stock code
-    date*  : seq[string]
-    open*  : seq[float]
-    high*  : seq[float]
-    low*   : seq[float]
-    close* : seq[float]
-    vol*   : seq[float]        ## volume
-    adjc*  : seq[float]        ## adjusted close price
-    ro*    : seq[Runningstat]  ## RunningStat for open price
-    rh*    : seq[Runningstat]  ## RunningStat for high price
-    rl*    : seq[Runningstat]  ## RunningStat for low price
-    rc*    : seq[Runningstat]  ## RunningStat for close price
-    rv*    : seq[Runningstat]  ## RunningStat for volume price
-    rca*   : seq[Runningstat]  ## RunningStat for adjusted close price
+        ## Stocks type
+        ## holds individual stocks history data and RunningStat for ohlcva columns
+        ## even more items may be added like full company name etc in the future
+        ## items are stock code, ohlcva, rc and rca .
+        stock* : string            ## yahoo style stock code
+        date*  : seq[string]
+        open*  : seq[float]
+        high*  : seq[float]
+        low*   : seq[float]
+        close* : seq[float]
+        vol*   : seq[float]        ## volume
+        adjc*  : seq[float]        ## adjusted close price
+        ro*    : seq[Runningstat]  ## RunningStat for open price
+        rh*    : seq[Runningstat]  ## RunningStat for high price
+        rl*    : seq[Runningstat]  ## RunningStat for low price
+        rc*    : seq[Runningstat]  ## RunningStat for close price
+        rv*    : seq[Runningstat]  ## RunningStat for volume price
+        rca*   : seq[Runningstat]  ## RunningStat for adjusted close price
 
 
 
   Stockdata*  {.inheritable.} = object
-    ## Stockdata type
-    ## holds additional stock data and statistics as currently available from yahoo
-    ##
-    price*            : float
-    change*           : float
-    volume*           : float
-    avgdailyvol*      : float
-    market*           : string
-    marketcap*        : string
-    bookvalue*        : float
-    ebitda*           : string
-    dividendpershare* : float
-    dividendperyield* : float
-    earningspershare* : float
-    week52high*       : float
-    week52low*        : float
-    movingavg50day*   : float
-    movingavg200day*  : float
-    priceearingratio* : float
-    priceearninggrowthratio* : float
-    pricesalesratio*  : float
-    pricebookratio*   : float
-    shortratio*       : float
+        ## Stockdata type
+        ## holds additional stock data and statistics as currently available from yahoo
+        ##
+        price*            : float
+        change*           : float
+        volume*           : float
+        avgdailyvol*      : float
+        market*           : string
+        marketcap*        : string
+        bookvalue*        : float
+        ebitda*           : string
+        dividendpershare* : float
+        dividendperyield* : float
+        earningspershare* : float
+        week52high*       : float
+        week52low*        : float
+        movingavg50day*   : float
+        movingavg200day*  : float
+        priceearingratio* : float
+        priceearninggrowthratio* : float
+        pricesalesratio*  : float
+        pricebookratio*   : float
+        shortratio*       : float
 
 
   Ts* {.inheritable.} = object
@@ -587,34 +593,62 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
       for line in ci.splitLines:
         var data = line[1..line.high].split(",")
         if data.len > 1:
-                printBiCol("Code : {:<10}  ".fmt(unquote(data[0])),":",yellowgreen,cyan,xpos = xpos)
-                printLnBiCol("Market : {}".fmt(unquote(data[2])),":",yellowgreen,cyan)
-                echo()                        
-                print(unquote(data[1]),yellowgreen,xpos = xpos)                   
+                printBiCol("Code : {:<10}  ".fmt(unquote(data[0])),":",salmon,cyan,xpos = xpos)
+                printLnBiCol("Index : {}".fmt(unquote(data[1])),":",salmon,cyan)
+                curdn(1)                      
+                printLnBiCol("Exch : {:<30}".fmt(unquote(data[2])),":",yellowgreen,goldenrod,xpos = xpos)                   
                 curdn(1)
                 printLnBiCol("Date : {:<12}{:<9}    ".fmt(unquote(data[4]),unquote(data[5])),":",xpos = xpos)
                 curup(1) 
                 var cc = checkChange(unquote(data[9]))
+                
+                var slmdis = 57 - 2       # used for fine alignment of slim number xpos
+                var chgdis = slmdis + 2   # used for fine alignment of change data xpos
                 case cc
                   of -1 : 
-                          print(showRune("FFEC"),red,xpos = xpos + 29)
+                          print(showRune("FFEC"),red,xpos = xpos + 31)
                           curup(1)
-                          printSlimNumber(data[3],fgr=truetomato,xpos = xpos + 30)
+                          printSlim(data[3],truetomato,xpos = xpos + slmdis,align = "right")
+                          print("Change",red,xpos = chgdis)
+                          curdn(1)
+                          print(split(unquote(data[9])," - ")[0],xpos = chgdis)
+                          curdn(1)
+                          print(split(unquote(data[9])," - ")[1],xpos = chgdis)                 
+                          curdn(3)
                   of  0 :
                           curup(1) 
-                          printSlimNumber(data[3],fgr=steelblue,xpos = xpos + 30)
+                          printSlim(data[3],steelblue,xpos = xpos + slmdis,align = "right")  
+                          print("Change",white,xpos = chgdis)
+                          curdn(1)
+                          print(split(unquote(data[9])," - ")[0],xpos = chgdis)
+                          curdn(1)
+                          print(split(unquote(data[9])," - ")[1],xpos = chgdis)
+                          curdn(3)
                   of  1 : 
-                          print(showRune("FFEA"),lime,xpos = xpos + 29)
+                          print(showRune("FFEA"),lime,xpos = xpos + 31)
                           curup(1)
-                          printSlimNumber(data[3],fgr=lime,xpos = xpos + 30 )
+                          printSlim(data[3],lime,xpos = xpos + slmdis ,align = "right")         
+                          print("Change",yellowgreen,xpos = chgdis)
+                          curdn(1)
+                          print(split(unquote(data[9])," - ")[0],xpos = chgdis)
+                          curdn(1)
+                          print(split(unquote(data[9])," - ")[1],xpos = chgdis)
+                          curdn(3)
                   else  : 
-                          print("Error",red,xpos = xpos + 29)
+                          print("Error",red,xpos = xpos + 31)              
                 
-                printLnBiCol("Open : {:<8} High : {:<8} Change : {}".fmt(data[6],data[7],unquote(data[9])),":",xpos = xpos)
-                printLnBiCol("Range: {}  ".fmt(unquote(data[10])),":",xpos = xpos)
-                               
-                printLn(repeat("-",70),xpos = xpos)
-                #curdn(1)
+                curup(1)
+                printLnBiCol("Range: {}".fmt(unquote(data[10])),":",xpos = xpos)
+                
+                printBiCol("Open : {:<8} ".fmt(data[6]),":",xpos = xpos)     
+                
+                if unquote(data[8]) == "0":
+                    printBiCol("  {}".fmt("Vol   : N/A"),":",xpos = xpos + 17)
+                else:
+                    printBiCol("  {}".fmt("Vol   : " & unquote(data[8])),":",xpos = xpos + 17)               
+                printLn("Yahoo Finance Data",brightblack,xpos = slmdis - 10)
+                printLn(repeat("_",63),xpos = xpos)
+                
         else:
                 if data.len == 1 and sflag == false:
                   printLn("Yahoo Server Fail.",truetomato,xpos = xpos)
@@ -637,6 +671,7 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
         discard  
 
         
+
 proc buildStockString*(apf:Portfolio):string =
   ## buildStocksString
   ##
@@ -739,34 +774,58 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
       for line in ci.splitLines:
         var data = line[1..line.high].split(",")
         if data.len > 1:
-                printBiCol("Code : {:<10}  ".fmt(unquote(data[0])),":",yellowgreen,cyan,xpos = xpos)
-                printLnBiCol("Market : {}".fmt(unquote(data[2])),":",yellowgreen,cyan)
-                echo()                        
-                print(unquote(data[1]),yellowgreen,xpos = xpos)                   
+                printBiCol  ("Code : {:<9} ".fmt(unquote(data[0])),":",lightskyblue,cyan,xpos = xpos)
+                printLnBiCol("   Name : {:<36} ".fmt(unquote(data[1])),":",lightskyblue,pastelyellowgreen)
+                printLnBiCol("Exch : {} ".fmt(unquote(data[2])),":",yellowgreen,goldenrod,xpos = xpos)
                 curdn(1)
                 printLnBiCol("Date : {:<12}{:<9}    ".fmt(unquote(data[4]),unquote(data[5])),":",xpos = xpos)
                 curup(1) 
                 var cc = checkChange(unquote(data[9]))
+                
+                var slmdis = 57 - 2       # used for fine alignment of slim number xpos
+                var chgdis = slmdis + 2   # used for fine alignment of change data xpos
                 case cc
                   of -1 : 
-                          print(showRune("FFEC"),red,xpos = xpos + 29)
+                          print(showRune("FFEC"),red,xpos = xpos + 31)
                           curup(1)
-                          printSlimNumber(data[3],fgr=truetomato,xpos = xpos + 30)
+                          printSlim(data[3],truetomato,xpos = xpos + slmdis,align = "right")
+                          print("Change",red,xpos = chgdis)
+                          curdn(1)
+                          print(split(unquote(data[9])," - ")[0],xpos = chgdis)
+                          curdn(1)
+                          print(split(unquote(data[9])," - ")[1],xpos = chgdis)                 
+                          curdn(3)
                   of  0 :
                           curup(1) 
-                          printSlimNumber(data[3],fgr=steelblue,xpos = xpos + 30)
+                          printSlim(data[3],steelblue,xpos = xpos + slmdis,align = "right")  
+                          print("Change",white,xpos = chgdis)
+                          curdn(1)
+                          print(split(unquote(data[9])," - ")[0],xpos = chgdis)
+                          curdn(1)
+                          print(split(unquote(data[9])," - ")[1],xpos = chgdis)
+                          curdn(3)
                   of  1 : 
-                          print(showRune("FFEA"),lime,xpos = xpos + 29)
+                          print(showRune("FFEA"),lime,xpos = xpos + 31)
                           curup(1)
-                          printSlimNumber(data[3],fgr=lime,xpos = xpos + 30 )
+                          printSlim(data[3],lime,xpos = xpos + slmdis ,align = "right")         
+                          print("Change",yellowgreen,xpos = chgdis)
+                          curdn(1)
+                          print(split(unquote(data[9])," - ")[0],xpos = chgdis)
+                          curdn(1)
+                          print(split(unquote(data[9])," - ")[1],xpos = chgdis)
+                          curdn(3)
                   else  : 
-                          print("Error",red,xpos = xpos + 29)
+                          print("Error",red,xpos = xpos + 31)              
                 
-                printLnBiCol("Open : {:<8} High : {:<8}Change : {}".fmt(data[6],data[7],unquote(data[9])),":",xpos = xpos)
-                printBiCol("Range: {}{:<13}".fmt(unquote(data[10]),""),":",xpos = xpos)
-                printLnBiCol("Volume : {}  ".fmt(unquote(data[8])),":")               
-                printLn(repeat("-",70),xpos = xpos)
-                #curdn(1)
+                curup(1)
+                printLnBiCol("Range: {}".fmt(unquote(data[10])),":",xpos = xpos)
+                
+                printBiCol("Open : {:<8} ".fmt(data[6]),":",xpos = xpos)     
+                          
+                printBiCol("{}".fmt("   Vol  : " & unquote(data[8])),":",xpos = xpos + 17)               
+                printLn("Yahoo Finance Data",brightblack,xpos = slmdis - 10)
+                printLn(repeat("_",63),xpos = xpos)
+            
         else:
                 if data.len == 1 and sflag == false:
                    printLn("Yahoo Server Fail.",truetomato,xpos = xpos)
@@ -878,7 +937,7 @@ proc showCurrentSTX*(stcks:string,xpos:int = 1){.discardable.} =
    ## Just wait a bit and try again. Stay calm ! Do not panic !
    ##
 
-   hdx(echo "Stocks Current Quote")
+   hdx(println("Stocks Quote ",yellowgreen,termblack),width = 64)
    var qurl=yahoourl  % stcks
    currentSTX(qurl,xpos = xpos)
  
@@ -1713,10 +1772,15 @@ proc getCurrentForex*(curs:seq[string],xpos:int = 1):Currencies =
 #        ## a convenience proc to display exchange rates
 #        ##
 #        ## .. code-block:: nim
-#        ##    showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"])
-#        ##    decho(3)
-#        ##
-#        ##
+#        ##    
+#        ##    var curs = @["EURUSD","GBPHKD","CADEUR","AUDNZD","GBPCNY","JPYHKD"]
+#        ##    var cursl = curs.len
+#        ##    showCurrentForex(curs,xpos = 5)
+#        ##    curup(cursl + 2)
+#        ##    drawbox(cursl + 2,36,1,2,xpos = 3)
+#        ##    decho(cursl + 5)
+#        ##    doFinish()
+#        ##    
 # 
 #        var cx = getcurrentForex(curs) # we get a Currencies object back
 #        msgg() do : echo "{:<8} {:<4} {}".fmt("Pair","Cur","Rate")

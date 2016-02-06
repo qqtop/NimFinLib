@@ -6,7 +6,7 @@ import nimFinLib,cx
 # uncomment next line for compilation with nimprofiler
 # import nimProf
 
-# tested with NIM 0.13.0
+
 
 ## nfT52.nim
 ##
@@ -19,6 +19,11 @@ import nimFinLib,cx
 ## nim c -d:ssl --profiler:on --stackTrace:on nfT52
 ## then run prog and check file: profile_results.txt
 ##
+## if using valgrind
+## 
+## nim -d:release --debugger:native c nfT52
+## valgrind --tool=callgrind ./nfT52
+## kcachegrind
 
 
 var start = epochTime()
@@ -74,10 +79,12 @@ var
 var stockpool = initPool()   # holds all history data for each stock fetched
 var indexpool = initPool()   # holds index history data
 
-# the pools are empty , so now load the pools with data based
-# on above provided symbol lists , of course this symbols can
-# come from a database or text file
-# note: getSymbol2 use below , this gets the yahoo historical data
+#[ the pools are empty , so now load the pools with data based
+   on above provided symbol lists , of course this symbols can
+   come from a database or text file
+   note: getSymbol2 use below , this gets the yahoo historical data
+]#
+
 for symbx in symbols:
     stockpool.add(getSymbol2(symbx,startDate,endDate))
 echo()
@@ -367,19 +374,19 @@ showCurrentSTX("AAPL+IBM+BP.L+BAS.DE")
 # we also can pass all stocks in a portfolio and display the latest quotes
 # here we use the first portfolio in account
 showCurrentSTX(account.pf[0])
+decho(2)
 
 
-# here just passing a single code (index)
+
+echo "Passing a single code (index) \n"
 idx = indexpool[0].stock
 showCurrentIDX(idx)
-
-# here passing in our indexpool a  seq[Stocks] type
-showCurrentIDX(indexpool)
-
-# here showing in large slim numbers
 decho(2)
-# showCurrentIDX accepts only strings so far so we need to massage the indexpool into string
-#showCurrentIDX(buildstockstring(indexpool))
+
+echo "Passing in our indexpool a  seq[Stocks] type\n"
+showCurrentIDX(indexpool)
+decho(2)
+
 
 echo ()
 superheader(" Testing getSymbol3 - Additional stock info ")
