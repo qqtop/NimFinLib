@@ -7,6 +7,10 @@ Financial Library for Nim
 ==========================
 
 
+
+![Image](http://qqtop.github.io/nfT50.png?raw=true)
+Example screen from nfT50.nim
+
 ![Image](http://qqtop.github.io/minifin1.png?raw=true)
 Example screen from minifin.nim
 
@@ -55,7 +59,9 @@ Tests and Examples
       
       examplex    short examples 
       
-      nfT52       the main testing suite
+      nfT52       the main raw testing suite
+      
+      nfT50       stock and index display test
       
       testMe      automated example1      
       

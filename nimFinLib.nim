@@ -595,58 +595,56 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
         if data.len > 1:
                 printBiCol("Code : {:<10}  ".fmt(unquote(data[0])),":",salmon,cyan,xpos = xpos)
                 printLnBiCol("Index : {}".fmt(unquote(data[1])),":",salmon,cyan)
-                curdn(1)                      
+                #curdn(1)                      
                 printLnBiCol("Exch : {:<30}".fmt(unquote(data[2])),":",yellowgreen,goldenrod,xpos = xpos)                   
-                curdn(1)
+                #curdn(1)
                 printLnBiCol("Date : {:<12}{:<9}    ".fmt(unquote(data[4]),unquote(data[5])),":",xpos = xpos)
-                curup(1) 
+                curup(1) # needed to position the rune below
                 var cc = checkChange(unquote(data[9]))
                 
                 var slmdis = 57 - 2       # used for fine alignment of slim number xpos
-                var chgdis = slmdis + 2   # used for fine alignment of change data xpos
+                var chgdis = slmdis + 1   # used for fine alignment of change data xpos
                 case cc
                   of -1 : 
                           print(showRune("FFEC"),red,xpos = xpos + 31)
                           curup(1)
                           printSlim(data[3],truetomato,xpos = xpos + slmdis,align = "right")
-                          print("Change",red,xpos = chgdis)
+                          print("Change",red,xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[0],xpos = chgdis)
+                          print(split(unquote(data[9])," - ")[0],xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[1],xpos = chgdis)                 
-                          curdn(3)
+                          print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)                 
+                          curdn(1)
                   of  0 :
                           curup(1) 
                           printSlim(data[3],steelblue,xpos = xpos + slmdis,align = "right")  
-                          print("Change",white,xpos = chgdis)
+                          print("Change",white,xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[0],xpos = chgdis)
+                          print(split(unquote(data[9])," - ")[0],xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[1],xpos = chgdis)
-                          curdn(3)
+                          print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)
+                          curdn(1)
                   of  1 : 
                           print(showRune("FFEA"),lime,xpos = xpos + 31)
                           curup(1)
                           printSlim(data[3],lime,xpos = xpos + slmdis ,align = "right")         
-                          print("Change",yellowgreen,xpos = chgdis)
+                          print("Change",yellowgreen,xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[0],xpos = chgdis)
+                          print(split(unquote(data[9])," - ")[0],xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[1],xpos = chgdis)
-                          curdn(3)
+                          print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)
+                          curdn(1)
                   else  : 
                           print("Error",red,xpos = xpos + 31)              
                 
                 curup(1)
                 printLnBiCol("Range: {}".fmt(unquote(data[10])),":",xpos = xpos)
-                
                 printBiCol("Open : {:<8} ".fmt(data[6]),":",xpos = xpos)     
-                
                 if unquote(data[8]) == "0":
                     printBiCol("  {}".fmt("Vol   : N/A"),":",xpos = xpos + 17)
                 else:
                     printBiCol("  {}".fmt("Vol   : " & unquote(data[8])),":",xpos = xpos + 17)               
-                printLn("Yahoo Finance Data",brightblack,xpos = slmdis - 10)
+                printLn("Yahoo Finance Data",brightblack,xpos = xpos + slmdis - 12)
                 printLn(repeat("_",63),xpos = xpos)
                 
         else:
@@ -726,7 +724,7 @@ proc showCurrentIndexes*(idxs:string,xpos:int = 1){.discardable.} =
     currentIndexes(qurl,xpos = xpos)
 
 
-proc showCurrentIDX*(adf:seq[Stocks],xpos:int = 1){.discardable.} =
+proc showCurrentIDX*(adf:seq[Stocks],xpos:int = 1,header:bool = false){.discardable.} =
    ## showCurrentIDX
    ##
    ## callable display routine for currentIndexes with a pool object passed in
@@ -734,13 +732,13 @@ proc showCurrentIDX*(adf:seq[Stocks],xpos:int = 1){.discardable.} =
    ## compact view
    ##
    var idxs = buildStockString(adf)
-   #hdx(echo "Index Data for a pool" )
+   if header == true: hdx(println("Index Data ",yellowgreen,termblack),width = 64,xpos = xpos)
    var qurl=yahoourl  % idxs
    currentIDX(qurl,xpos = xpos)
 
 
 
-proc showCurrentIDX*(idxs:string,xpos:int = 1){.discardable.} =
+proc showCurrentIDX*(idxs:string,xpos:int = 1,header:bool = false){.discardable.} =
     ## showCurrentIDX
     ##
     ## callable display routine for currentIDX with a string of format IDX1+IDX2+IDX3 .. 
@@ -754,6 +752,7 @@ proc showCurrentIDX*(idxs:string,xpos:int = 1){.discardable.} =
     ##     showCurrentIDX("^HSI+^GDAXI+^FTSE+^NYA",xpos = 5)
     ## xpos allows x positioning
     #
+    if header == true: hdx(println("Index Quote ",yellowgreen,termblack),width = 64,xpos = xpos)
     var qurl=yahoourl  % idxs
     currentIDX(qurl,xpos = xpos)
 
@@ -777,53 +776,51 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
                 printBiCol  ("Code : {:<9} ".fmt(unquote(data[0])),":",lightskyblue,cyan,xpos = xpos)
                 printLnBiCol("   Name : {:<36} ".fmt(unquote(data[1])),":",lightskyblue,pastelyellowgreen)
                 printLnBiCol("Exch : {} ".fmt(unquote(data[2])),":",yellowgreen,goldenrod,xpos = xpos)
-                curdn(1)
+                #curdn(1)
                 printLnBiCol("Date : {:<12}{:<9}    ".fmt(unquote(data[4]),unquote(data[5])),":",xpos = xpos)
                 curup(1) 
                 var cc = checkChange(unquote(data[9]))
                 
                 var slmdis = 57 - 2       # used for fine alignment of slim number xpos
-                var chgdis = slmdis + 2   # used for fine alignment of change data xpos
+                var chgdis = slmdis + 1   # used for fine alignment of change data xpos
                 case cc
                   of -1 : 
                           print(showRune("FFEC"),red,xpos = xpos + 31)
                           curup(1)
                           printSlim(data[3],truetomato,xpos = xpos + slmdis,align = "right")
-                          print("Change",red,xpos = chgdis)
+                          print("Change",red,xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[0],xpos = chgdis)
+                          print(split(unquote(data[9])," - ")[0],xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[1],xpos = chgdis)                 
-                          curdn(3)
+                          print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)                 
+                          curdn(1)
                   of  0 :
                           curup(1) 
                           printSlim(data[3],steelblue,xpos = xpos + slmdis,align = "right")  
-                          print("Change",white,xpos = chgdis)
+                          print("Change",white,xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[0],xpos = chgdis)
+                          print(split(unquote(data[9])," - ")[0],xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[1],xpos = chgdis)
-                          curdn(3)
+                          print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)
+                          curdn(1)
                   of  1 : 
                           print(showRune("FFEA"),lime,xpos = xpos + 31)
                           curup(1)
                           printSlim(data[3],lime,xpos = xpos + slmdis ,align = "right")         
-                          print("Change",yellowgreen,xpos = chgdis)
+                          print("Change",yellowgreen,xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[0],xpos = chgdis)
+                          print(split(unquote(data[9])," - ")[0],xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[1],xpos = chgdis)
-                          curdn(3)
+                          print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)
+                          curdn(1)
                   else  : 
                           print("Error",red,xpos = xpos + 31)              
                 
                 curup(1)
                 printLnBiCol("Range: {}".fmt(unquote(data[10])),":",xpos = xpos)
-                
-                printBiCol("Open : {:<8} ".fmt(data[6]),":",xpos = xpos)     
-                          
+                printBiCol("Open : {:<8} ".fmt(data[6]),":",xpos = xpos)          
                 printBiCol("{}".fmt("   Vol  : " & unquote(data[8])),":",xpos = xpos + 17)               
-                printLn("Yahoo Finance Data",brightblack,xpos = slmdis - 10)
+                printLn("Yahoo Finance Data",brightblack,xpos = xpos + slmdis - 12)
                 printLn(repeat("_",63),xpos = xpos)
             
         else:
@@ -848,7 +845,7 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
         discard  
 
 
-proc showCurrentStocks*(apf:Portfolio,xpos:int = 1){.discardable.} =
+proc showCurrentStocks*(apf:Portfolio,xpos:int = 1,header:bool = false){.discardable.} =
    ## showCurrentStocks
    ##
    ## callable display routine for currentStocks with Portfolio object passed in
@@ -868,13 +865,13 @@ proc showCurrentStocks*(apf:Portfolio,xpos:int = 1){.discardable.} =
    ##
 
    var stcks = buildStockString(apf)
-   hdx(echo "Stocks Current Quote for $1" % apf.nx)
+   if header == true : hdx(println("Stocks Current Quote for $1" % apf.nx,yellowgreen,termblack,xpos = xpos + 2),width = 64,xpos = xpos)         
    var qurl=yahoourl  % stcks
    currentStocks(qurl,xpos = xpos)
 
 
 
-proc showCurrentStocks*(stcks:string,xpos:int = 1){.discardable.} =
+proc showCurrentStocks*(stcks:string,xpos:int = 1,header:bool = false){.discardable.} =
    ## showCurrentStocks
    ##
    ## callable display routine for currentStocks with stockstring passed in
@@ -890,12 +887,12 @@ proc showCurrentStocks*(stcks:string,xpos:int = 1){.discardable.} =
    ## Just wait a bit and try again. Stay calm ! Do not panic !
    ##
 
-   hdx(echo "Stocks Current Quote")
+   if header == true : hdx(println("Stocks Current Quote ",yellowgreen,termblack,xpos = xpos + 2),width = 64,xpos = xpos)         
    var qurl=yahoourl  % stcks
    currentStocks(qurl,xpos = xpos)
 
 
-proc showCurrentSTX*(apf:Portfolio,xpos:int = 1){.discardable.} =
+proc showCurrentSTX*(apf:Portfolio,xpos:int = 1,header:bool = false){.discardable.} =
    ## showCurrentSTX
    ##
    ## callable display routine for currentSTX with Portfolio object passed in
@@ -915,13 +912,13 @@ proc showCurrentSTX*(apf:Portfolio,xpos:int = 1){.discardable.} =
    ##
 
    var stcks = buildStockString(apf)
-   hdx(echo "Stocks Current Quote for $1" % apf.nx)
+   if header == true: hdx(println("Stocks Current Quote for $1" % apf.nx,yellowgreen,termblack,xpos = xpos + 2),width = 64,xpos = xpos)
    var qurl=yahoourl  % stcks
    currentSTX(qurl,xpos = xpos)
 
 
 
-proc showCurrentSTX*(stcks:string,xpos:int = 1){.discardable.} =
+proc showCurrentSTX*(stcks:string,xpos:int = 1,header:bool = false){.discardable.} =
    ## showCurrentSTX
    ##
    ## callable display routine for currentSTX with stockstring passed in
@@ -936,8 +933,7 @@ proc showCurrentSTX*(stcks:string,xpos:int = 1){.discardable.} =
    ##
    ## Just wait a bit and try again. Stay calm ! Do not panic !
    ##
-
-   hdx(println("Stocks Quote ",yellowgreen,termblack),width = 64)
+   if header == true :  hdx(println("Stocks Quote ",yellowgreen,termblack,xpos = xpos + 2),width = 64,xpos = xpos)
    var qurl=yahoourl  % stcks
    currentSTX(qurl,xpos = xpos)
  
