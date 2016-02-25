@@ -6,7 +6,7 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.6.3
+## Version     : 0.2.6.4
 ##
 ## Compiler    : nim 0.13.1
 ##
@@ -92,7 +92,7 @@ import os,cx,strutils,parseutils,sequtils,httpclient,net,strfmt
 import terminal,times,tables,random, parsecsv,streams,algorithm,math,unicode
 import stats  #,statistics
 
-let NIMFINLIBVERSION* = "0.2.6.3"
+let NIMFINLIBVERSION* = "0.2.6.4"
 
 let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
 
@@ -789,7 +789,8 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
     try:
       var ci = getContent(aurl)
       for line in ci.splitLines:
-        var data = line[1..line.high].split(",")
+        var data = line[1..line.high].split(",") 
+        
         if data.len > 1:
                 printBiCol  ("Code : {:<9} ".fmt(unquote(data[0])),":",lightskyblue,cyan,xpos = xpos)
                 printLnBiCol("   Name : {:<36} ".fmt(unquote(data[1])),":",lightskyblue,pastelyellowgreen)
@@ -797,7 +798,7 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
                 #curdn(1)
                 printLnBiCol("Date : {:<12}{:<9}    ".fmt(unquote(data[4]),unquote(data[5])),":",xpos = xpos)
                 curup(1) 
-                var cc = checkChange(unquote(data[9]))
+                var cc = checkChange(unquote(data[9])) 
                 
                 var slmdis = 57 - 2       # used for fine alignment of slim number xpos
                 var chgdis = slmdis + 1   # used for fine alignment of change data xpos
@@ -808,18 +809,30 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
                           printSlim(data[3],truetomato,xpos = xpos + slmdis,align = "right")
                           print("Change",red,xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[0],xpos = xpos + chgdis)
+                          try:
+                             print(split(unquote(data[9])," - ")[0],xpos = xpos + chgdis)
+                          except:
+                             print("N/A",xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)                 
+                          try:
+                             print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)
+                          except:
+                             print("N/A",xpos = xpos + chgdis)
                           curdn(1)
                   of  0 :
                           curup(1) 
                           printSlim(data[3],steelblue,xpos = xpos + slmdis,align = "right")  
                           print("Change",white,xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[0],xpos = xpos + chgdis)
+                          try:
+                             print(split(unquote(data[9])," - ")[0],xpos = xpos + chgdis)
+                          except:
+                             print("N/A",xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)
+                          try:
+                             print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)
+                          except:
+                             print("N/A",xpos = xpos + chgdis)
                           curdn(1)
                   of  1 : 
                           print(showRune("FFEA"),lime,xpos = xpos + 31)
@@ -827,9 +840,15 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
                           printSlim(data[3],lime,xpos = xpos + slmdis ,align = "right")         
                           print("Change",yellowgreen,xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[0],xpos = xpos + chgdis)
+                          try:
+                             print(split(unquote(data[9])," - ")[0],xpos = xpos + chgdis)
+                          except:
+                             print("N/A",xpos = xpos + chgdis)
                           curdn(1)
-                          print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)
+                          try:
+                             print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)
+                          except:
+                             print("N/A",xpos = xpos + chgdis)
                           curdn(1)
                   else  : 
                           print("Error",red,xpos = xpos + 31)              
