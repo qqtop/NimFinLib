@@ -94,7 +94,12 @@ Requirements
                 
       cx  from  https://github.com/qqtop/NimCx  will be pulled in automatically
            
+ 
+Installation 
+
+      nimble install nimFinLib 
       
+      Note : it is always a good idea to remove old packages from the .nimble/pkgs dir  
 
 
 example1.nim 
