@@ -1,8 +1,8 @@
-import os,terminal,sequtils,strutils,times,math,stats,unicode,tables,strfmt,random
+import os,terminal,sequtils,strutils,times,math,stats,unicode,tables,random
 import nimFinLib,cx
 
 # comment next line if tests concerning libFinHk not required
-# import libFinHk
+import libFinHk
 # uncomment next line for compilation with nimprofiler
 # import nimProf
 
@@ -208,11 +208,13 @@ showTimeseries(ts,htable[ohlcva],"tail",5) # oldest on bottom
 
 echo()
 # testing utility procs
+var ts1 = $(ts.dd.head(1)[0])
+var ts2 = $(ts.tx.head(1)[0])
 printLn("Timeseries display test ",lime)
-printLn("{}  {:<10} {}".fmt("first   ",ts.dd.first,ts.tx.first),yellow)
-printLn("{}  {:<10} {}".fmt("head(1) ",ts.dd.head(1),ts.tx.head(1)),yellow)
-printLn("{}  {:<10} {}".fmt("last    ",ts.dd.last,ts.tx.last),yellow)
-printLn("{}  {:<10} {}".fmt("tail(1) ",ts.dd.tail(1),ts.tx.tail(1)),yellow)
+printLn(fmtx(["","","<10","",""],"first   ",spaces(3),ts.dd.first   ,spaces(2) ,ts.tx.first)  ,yellow)
+printLn(fmtx(["","","<10","",""],"head(1) ",spaces(3),ts1,spaces(2) ,ts2),yellow)
+printLn(fmtx(["","","<10","",""],"last    ",spaces(3),ts.dd.last   ,spaces(2),ts.tx.last),yellow)
+printLn(fmtx(["","","<10","",""],"tail(1) ",spaces(3),$(ts.dd.tail(1)[0]),spaces(2),$(ts.tx.tail(1)[0])),yellow)
 
 
 # if we use an orderedtable we also can get a nicely formated display
@@ -317,9 +319,9 @@ var somedates = @["2015-05-10","2015-02-29","3000-15-10","1899-12-31","2018-12-3
                  "2017-02-29","2018-02-29","2019-02-29","2019-01-02",getDateStr()]
 for sd in somedates:
   if cx.validDate(sd) == true:
-      printLn("{:<11} {}".fmt(sd,"true"),yellowgreen)
+      printLn(fmtx(["<11","",""],sd,spaces(1),"true"),yellowgreen)
   else:
-      printLn("{:<11} {}".fmt(sd,"false"),truetomato)
+      printLn(fmtx(["<11","",""],sd,spaces(1),"false"),truetomato)
 echo()
 
 
@@ -335,10 +337,10 @@ printLn(" Testing logistics functions\n",peru)
 # logistic_derivative is the derivative for gradient optm. use
 
 var a = 5
-printLn("{:>15} {:>15}   {:>15}".fmt("Value","logisticf","logistic_derivative"),yellowgreen)
+printLn(fmtx([">15","", ">15" ,"",">15"],"Value",spaces(1),"logisticf",spaces(3),"logistic_derivative"),yellowgreen)
 for x in -a.. a:
   var xx = random.random() * 1.8
-  echo "{:>15.14f} {:>15.14f} {:>15.14f}".fmt(xx,logisticf(xx),logisticf_derivative(xx))
+  echo(fmtx([">15.14f","",">15.14f","",">15.14f"],xx,spaces(1),logisticf(xx),spaces(3),logisticf_derivative(xx)))
 
 
 
@@ -349,7 +351,7 @@ echo ()
 # we can pass a single stock code or multiple stockcodes like so IBM+BP.L+ORCL
 
 # we can pass some stocks from around the world
-showCurrentStocks("AAPL+IBM+BP.L+BAS.DE")
+showCurrentStocks("AAPL+IBM+BP.L+BAS.DE+TEST.DE")
 
 # we also can pass all stocks in a portfolio and display the latest quotes
 # here we use the first portfolio in account
@@ -416,8 +418,8 @@ showCurrentForex(checkcurrencies)
 # use the getcurrentForex proc  , we receive a Cf type for unpacking
 var curs = getCurrentForex(@["EURUSD","EURHKD"])
 echo()
-echo "Current EURUSD Rate : ","{:<8}".fmt(curs.ra.last)
-echo "Current EURHKD Rate : ","{:<8}".fmt(curs.ra.first)
+echo("Current EURUSD Rate : ",fmtx(["<8"],curs.ra.last))
+echo("Current EURHKD Rate : ",fmtx(["<8"],curs.ra.first))
 echo()
 
 
@@ -473,10 +475,10 @@ when declared(libFinHk):
 
           echo()
           printLn("Top 50  List of Hongkong Stock Exchange MainBoard Listed Stocks",green)
-          printLn("{:<5} {:<7} {:<22}  {:<10}".fmt("No.","Code","Name","BoardLot"),cyan)
+          printLn(fmtx(["<5","<7", "<22",  "<10"],"No.","Code ","Name  ","BoardLot"),cyan)
           for x in 0.. <50 :
             try:
-               echo "{:<5} {:<7} {:<22}  {:>6}".fmt(x + 1,hxc[0][x],hxc[1][x],hxc[2][x])
+               echo(fmtx(["<5","","<7","","<22","",">6"],x + 1,spaces(1),hxc[0][x],spaces(1),hxc[1][x],spaces(1),hxc[2][x]))
             except:
                printLn("Problem with item in hkex.csv" & $x,truetomato)
 
@@ -484,7 +486,7 @@ when declared(libFinHk):
           printLn("Bottom 10  List of Hongkong Stock Exchange MainBoard Listed Stocks",green)
           for x in hxc[0].len-10.. <hxc[0].len :
              try:
-                echo "{:<5} {:<7} {:<22}  {:>6}".fmt(x + 1,hxc[0][x],hxc[1][x],hxc[2][x])
+                echo(fmtx(["<5","","<7","","<22","",">6"],x + 1,spaces(1),hxc[0][x],spaces(1),hxc[1][x],spaces(1),hxc[2][x]))
              except:
                 msgr() do : echo "Problem with item in hkex.csv",x
 
@@ -496,7 +498,7 @@ when declared(libFinHk):
         msgy() do : echo "Test for hkexToYhoo - show bottom 10 codes converted to yahoo format"
         if hxc.len > 1:
            for x in hxc[0].len-10.. <hxc[0].len :
-                 echo "{:<7} ==> {}".fmt(hxc[0][x],hkexToYhoo(hxc[0][x]))
+                 echo(fmtx(["<7","",""],hxc[0][x]," --->  ",hkexToYhoo(hxc[0][x])))
 
 
         echo ()
@@ -558,5 +560,5 @@ when isMainModule:
   # show time elapsed for this run
   when declared(libFinHk):
       decho(2)
-      println("{:<15}{} {} - {}".fmt("Library     : ","qqTop libFinHk : ",LIBFINHKVERSION,cx.year(getDateStr())),brightblack)
+      println(fmtx(["<15","","","",""],"Library     : ","qqTop libFinHk : ",LIBFINHKVERSION," - ",cx.year(getDateStr())),brightblack)
   cx.doFinish()

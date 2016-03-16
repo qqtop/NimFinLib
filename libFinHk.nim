@@ -306,7 +306,7 @@ proc showQuoteTableHk*(apfData: Portfolio) =
      decho(2)
      # header for the table
      msgy() do : echo "Kurtosis , StdDev , EMA22 based on close price for ",apfdata.nx," Quote is latest info ex yahoo"
-     msgg() do : echo "{:<8}  {:>9}  {:>9}  {:>9}  {:>9}  {:>15} {:>10} {:>9}".fmt("Stock","Kurtosis","StdDev","EMA22","Close","Company","Quote","BoardLot")
+     msgg() do : echo fmtx(["<8",">9",">9",">9",">9",">15",">10",">9"],"Stock  ","   Kurtosis  ","StdDev  ","EMA22  ","    Close  ","Company  ","     Quote  "," BoardLot  ")
      try:
         for x in 0.. <stkdata.len:
             # to get ema we pass our data to the ema function
@@ -323,7 +323,7 @@ proc showQuoteTableHk*(apfData: Portfolio) =
             # get the latest quote for a stock
             var cquote = getCurrentQuote(stkdata[x].stock)
             # display the data rows
-            echo "{:<8}  {:>9.3f}  {:>9.3f}  {:>9.3f}  {:>9.3f}  {:>15} {:>10} {:>9}".fmt(stkdata[x].stock , kurtosis(stkdata[x].close), stddev,emadata,last(stkdata[x].close),compname,cquote,blot)
+            echo(fmtx(["<8","",">9.3f","",">9.3f","",">9.3f","",">9.3f","",">15","",">10","",">9"],stkdata[x].stock ," ", kurtosis(stkdata[x].close)," ", stddev," ",emadata," ",last(stkdata[x].close)," ",compname," ",cquote," ",blot))
      except IndexError:
          msgr() do: echo "Calculation failed . Insufficient Historical Data"
 

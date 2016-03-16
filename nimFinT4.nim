@@ -1,4 +1,4 @@
-import os,terminal,strfmt,times
+import os,terminal,times
 import nimFinLib,libFinHk,cx
 
 # nimFinT4.nim
@@ -30,5 +30,5 @@ when isMainModule:
   # show time elapsed for this run
   when declared(libFinHk):
       decho(2)
-      msgb() do : echo "{:<15}{} {} - {}".fmt("Library     : ","qqTop libFinHk : ",LIBFINHKVERSION,year(getDateStr()))
-  doFinish()
+      println(fmtx(["<15","","","",""],"Library     : ","qqTop libFinHk : ",LIBFINHKVERSION," - ",cx.year(getDateStr())),brightblack)
+  cx.doFinish()

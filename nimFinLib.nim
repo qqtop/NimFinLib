@@ -6,9 +6,9 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.6.4
+## Version     : 0.2.7.0
 ##
-## Compiler    : nim 0.13.1
+## Compiler    : nim 0.13.1 up dev branch
 ##
 ##
 ## Description : A basic library for financial calculations with Nim
@@ -23,7 +23,7 @@
 ##
 ##               Yahoo forex rates        
 ##
-##               Kitco Metal Prices
+##               Kitco Metal Prices  # currently not working due to website changes
 ##
 ##
 ##               Dataframe like objects for easy working with historical data and dataseries
@@ -41,8 +41,23 @@
 ##
 ##
 ## Notes       : nimFinlib is being developed utilizing cx.nim module
+##
 ##               to improve coloring of data and positioning of output.
+##
 ##               Terminals tested : bash,xterm,st.
+##
+##
+##               strfmt  is now optional , a simple fmtengine was implemented in cx.nim
+##               
+##               as strfmt is often broken due to changes in the evolving compiler
+##               
+##               of course if it works again you also can use strfmt library
+##               
+##               and all/most documentation samples shown use it.
+##               
+##               nfT50 and nfT52 samples have been changed to the fmtengine
+##               
+##               see cx.nim proc fmtx  .
 ##
 ##
 ## Project     : https://github.com/qqtop/NimFinLib
@@ -51,7 +66,7 @@
 ##
 ## ProjectStart: 2015-06-05 / 2015-11-21
 ##
-## ToDo        : Ratios , Covariance , Correlation
+## ToDo        : Ratios , Covariance , Correlation etc.
 ##               improve timeout exception handling if yahoo data fails to be retrieved
 ##               or is temporary unavailable for certain markets
 ##
@@ -59,9 +74,13 @@
 ##
 ## Contributors: reactorMonk
 ##
-## Requires    : strfmt,random modules , statistics.nim and cx.nim
+## Requires    : random and cx.nim
 ##
-##               get cx.nim like so
+##               cx.nim will be automatically installed 
+##               
+##               if you do :  nimble install nimFinLib 
+##
+##               alternatively get cx.nim from the NimCx project like so
 ##               
 ##               git clone https://github.com/qqtop/NimCx.git
 ##               
@@ -69,30 +88,41 @@
 ##
 ##
 ##
-## Notes       : it is assumed that terminal color is black background
+## Notes       : It is assumed that terminal color is black background
 ##
 ##               and white text. Other color schemes may not show all output.
 ##               
 ##               also read notes about terminal compability in cx.nim
 ##               
 ##               Best results with terminals supporting truecolor.
+##               
+##               It is also expected that you have unicode libraries installed
+##               
+##               if you see some unexpected chars then this libraries may be missing
+##               
 ##
-## Tests       : For comprehensive tests and example usage see nfT52.nim and minifin.nim
+## Tests       : For comprehensive tests and example usage see 
+## 
+##               nfT50.nim
+##               
+##               nfT52.nim
+##               
+##               minifin.nim
 ## 
 ##
 ## Installation: git clone https://github.com/qqtop/NimFinLib.git
 ##
-## or
+##               or
 ##
-## nimble install nimFinLib
+##               nimble install nimFinLib
 ##
 ##
 
-import os,cx,strutils,parseutils,sequtils,httpclient,net,strfmt
-import terminal,times,tables,random, parsecsv,streams,algorithm,math,unicode
-import stats  #,statistics
+import os,cx,strutils,parseutils,sequtils,httpclient,net
+import terminal,times,tables,random, parsecsv,streams
+import algorithm,math,unicode,stats  
 
-let NIMFINLIBVERSION* = "0.2.6.4"
+let NIMFINLIBVERSION* = "0.2.7.0"
 
 let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
 
@@ -202,11 +232,6 @@ type
       
 
 
-
-
-
-
-
 proc timeSeries*[T](self:T,ty:string): Ts =
      ## timeseries
      ## returns a Ts type date and one data column based on ty selection
@@ -257,21 +282,20 @@ proc showTimeSeries* (ats:Ts,header,ty:string,N:int,fgr:string = yellowgreen,bgr
    ##
 
 
-   printLn("{:<11} {:>11} ".fmt("Date",header),fgr)
+   printLn(fmtx(["<11","",">11"],"Date",spaces(1),header),fgr)
    if ats.dd.len > 0:
         if ty == "all":
             for x in 0.. <ats.tx.len:
-                echo "{:<11} {:>11} ".fmt(ats.dd[x],ats.tx[x])
+                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ats.tx[x]))
         elif ty == "tail":
             for x in ats.tx.len-N.. <ats.tx.len:
-                echo "{:<11} {:>11} ".fmt(ats.dd[x],ats.tx[x])
-        elif ty == "head":
+                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ats.tx[x]))
             for x in 0.. <N:
-                echo "{:<11} {:>11} ".fmt(ats.dd[x],ats.tx[x])
+                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ats.tx[x]))
         else:
             ## head is the default in case an empty ty string was passed in
             for x in 0.. <N:
-                echo "{:<11} {:>11} ".fmt(ats.dd[x],ats.tx[x])
+                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ats.tx[x]))
 
 
 proc initAccount*():Account =
@@ -402,17 +426,13 @@ proc getCurrentQuote*(stcks:string) : string =
    ##
    ## gets the current price/quote from yahoo for 1 stock code
    var aurl=yahoourl  % stcks
-   #var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
    var data = newSeq[string]()
    var line = getContent(aurl)
    data = line[1..line.high].split(",")
-   #echo "DATA -> : ",data
    if data.len > 1:
       result = data[3]
    else:
       result = "-1"
-
-
 
 
 
@@ -459,28 +479,30 @@ proc currentStocks(aurl:string,xpos:int = 1) =
       var data = line[1..line.high].split(",")
       # even if yahoo servers are down our data.len is still 1 so
       if data.len > 1:
-              printLn("Code : {:<10} Name : {}  Market : {}".fmt(unquote(data[0]),unquote(data[1]),unquote(data[2])),yellowgreen,xpos = xpos)
-              printLn("Date : {:<12}{:<9}    Price  : {:<8} Volume : {:>12}".fmt(unquote(data[4]),unquote(data[5]),data[3],data[8]),white,xpos = xpos)
+              printLn(fmtx(["<8","","","","",""],"Code : ",unquote(data[0])," Name : ",unquote(data[1]),"   Market : ",unquote(data[2])),yellowgreen,xpos = xpos)
+              printLn(fmtx(["<10","<9","","","<9","","","<"],"Date : ",unquote(data[4]),unquote(data[5]),spaces(7),"Price  : ",data[3],"  Volume : ",data[8]),white,xpos = xpos)
               var cc = checkchange(unquote(data[9]))
-              if cc == -1:
-                    printLn("Open : {:<8} High : {:<8} Change :{}{}{}{} Range : {}".fmt(data[6],data[7],red,showRune("FFEC"),white,unquote(data[9]),unquote(data[10])),white,xpos = xpos)
-              elif cc == 0:
-                    printLn("Open : {:<8} High : {:<8} Change : {}{} Range : {}".fmt(data[6],data[7]," ",unquote(data[9]),unquote(data[10])),white,xpos = xpos)
+              if cc == -1:  # down
+                    printLn(fmtx(["","<8","","<8","","","","","","",""],"Open : ",data[6]," High : ",data[7]," Change :",red,showRune("FFEC"),white,unquote(data[9]),"  Range : ",unquote(data[10])),white,xpos = xpos)
+              
+              elif cc == 0: # N/A
+                    printLn(fmtx(["","<8","","<5","","","","","","","","",""],"Open : ",data[6]," High : ",data[7]," Change :",white,".",skyblue,unquote(data[9]),white,"  Range  : ",skyblue,unquote(data[10])),white,xpos = xpos)
        
               else :  # up
-                    printLn("Open : {:<8} High : {:<8} Change :{}{}{}{} Range : {}".fmt(data[6],data[7],lime,showRune("FFEA"),white,unquote(data[9]),unquote(data[10])),white,xpos = xpos)
-       
+                    printLn(fmtx(["","<8","","<8","","","","","","",""],"Open : ",data[6]," High : ",data[7]," Change :",lime,showRune("FFEA"),white,unquote(data[9]),"  Range : ",unquote(data[10])),white,xpos = xpos)
        
               printLn(repeat("-",tw))
       else:
              if data.len == 1 and sflag == false:
                 printLn("Yahoo server maybe unavailable. Try again later",truetomato,xpos = xpos)
                 sflag = true
+
   except HttpRequestError:
       printLn("Yahoo current data could not be retrieved . Try again .",truetomato,xpos = xpos)
       echo()
   finally:
       discard    
+
 
 proc currentIndexes(aurl:string,xpos:int = 1) {.discardable.} =
   ## currentIndexes    currently unused - a different display format still needs to be adjusted for cx
@@ -500,15 +522,17 @@ proc currentIndexes(aurl:string,xpos:int = 1) {.discardable.} =
               var cc = checkChange(unquote(data[9]))
              
               case cc
-                  of -1 : 
-                          printLn("{}{:>7} {}{:<9}  {}{:>7} {}{:<16} {}{:>7} {}{:<6} {}{:<7} {}{:<10}{} {:<8} {}{:>9} {}{}{}{}".fmt(yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , "Index : ",red , showRune("FFEC"),lightskyblue , unquote(data[3])))
-                          printLn("{}Open : {}{:<8}  {}Change : {}{:<2}{}{:>10}  {}Range : {}{} ".fmt(yellowgreen,white,unquote(data[6]),yellowgreen,red , showRune("FFEC") ,white , unquote(data[9]),yellowgreen,white,unquote(data[10])))            
+                  of -1 :                                       
+                          printLn(fmtx(["",">7", " ","<9","  ",">7","","<16","  ",">7", "  ","<6", "","<7", "","<10","", "<8" ,"   ",">9", "","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",red , showRune("FFEC"),lightskyblue , unquote(data[3])))
+                          printLn(fmtx(["","","","<8","","","","<2","",">17",  "", "","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",red , showRune("FFEC") ,white , unquote(data[9]),yellowgreen,"    Range  : ",white,unquote(data[10])))            
+                                            
                   of  0 : 
-                          printLn("{}{:>7} {}{:<9}  {}{:>7} {}{:<16} {}{:>7} {}{:<6} {}{:<7} {}{:<10}{} {:<8} {}{:>9} {}{}{}{}".fmt(yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , "Index : ",white, " ",lightskyblue , unquote(data[3])))
-                          printLn("{}Open : {}{:<8}  {}Change : {}{:<2}{}{:>10}  {}Range : {}{} ".fmt(yellowgreen,white,unquote(data[6]),yellowgreen,white," "              ,white , unquote(data[9]),yellowgreen,white,unquote(data[10])))             
+                          printLn(fmtx(["",">7", " ","<9","  ",">7","","<16","  ",">7", "  ","<6", "","<7", "","<10","", "<8" ,"   ",">9", "","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",white, ".",lightskyblue , unquote(data[3])))
+                          printLn(fmtx(["","","","<8","","","","<2","",">17",  "", "","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",white," ",white , unquote(data[9]),yellowgreen,"    Range   :  ",white,unquote(data[10])))             
+                          
                   of  1 : 
-                          printLn("{}{:>7} {}{:<9}  {}{:>7} {}{:<16} {}{:>7} {}{:<6} {}{:<7} {}{:<10}{} {:<8} {}{:>9} {}{}{}{}".fmt(yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , "Index : ",lime , showRune("FFEA"),lightskyblue , unquote(data[3])))
-                          printLn("{}Open : {}{:<8}  {}Change : {}{:<2}{}{:>10}  {}Range : {}{} ".fmt(yellowgreen,white,unquote(data[6]),yellowgreen,lime ,showRune("FFEA") ,white , unquote(data[9]),yellowgreen,white,unquote(data[10])))
+                          printLn(fmtx(["",">7", " ","<9","  ",">7","","<16","  ",">7", "  ","<6", "","<7", "","<10","", "<8" ,"   ",">9", "","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",lime , showRune("FFEA"),lightskyblue , unquote(data[3])))
+                          printLn(fmtx(["","","","<8","","","","<2","",">17",  "", "","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",lime ,showRune("FFEA") ,white , unquote(data[9]),yellowgreen,"    Range  : ",white,unquote(data[10])))
                     
                   else  : printLn("Data Error",red)
                           
@@ -569,7 +593,7 @@ proc showStocks*(stock:string,xpos:int = 1) =
         printlnBiCol("Name      : " & x.stname)
         printlnBiCol("Market    : " & x.stmarket)
         printlnBiCol("Price     : " & x.stprice)
-        printlnBiCol("Date/Time : " & "{} {}".fmt(x.stdate,x.sttime))
+        printlnBiCol("Date/Time : " & fmtx(["","",""],x.stdate,spaces(1),x.sttime))
         printlnBiCol("Open      : " & x.stopen)
         printlnBiCol("High      : " & x.sthigh)
         printlnBiCol("Volume    : " & x.stVolume)
@@ -593,12 +617,12 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
       for line in ci.splitLines:
         var data = line[1..line.high].split(",")
         if data.len > 1:
-                printBiCol("Code : {:<10}  ".fmt(unquote(data[0])),":",salmon,cyan,xpos = xpos)
-                printLnBiCol("Index : {}".fmt(unquote(data[1])),":",salmon,cyan)
+                printBiCol(fmtx(["","<10"],"Code : ",unquote(data[0])),":",salmon,cyan,xpos = xpos)
+                printLnBiCol(fmtx(["",""],"Index : ",unquote(data[1])),":",salmon,cyan)
                 #curdn(1)                      
-                printLnBiCol("Exch : {:<30}".fmt(unquote(data[2])),":",yellowgreen,goldenrod,xpos = xpos)                   
+                printLnBiCol(fmtx(["","<30"],"Exch : ",unquote(data[2])),":",yellowgreen,goldenrod,xpos = xpos)                   
                 #curdn(1)
-                printLnBiCol("Date : {:<12}{:<9}    ".fmt(unquote(data[4]),unquote(data[5])),":",xpos = xpos)
+                printLnBiCol(fmtx(["","<12","<9"],"Date : ", unquote(data[4]),unquote(data[5])),":",xpos = xpos)
                 curup(1) # needed to position the rune below
                 var cc = checkChange(unquote(data[9]))
                 
@@ -656,12 +680,12 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
                           print("Error",red,xpos = xpos + 31)              
                 
                 curup(1)
-                printLnBiCol("Range: {}".fmt(unquote(data[10])),":",xpos = xpos)
-                printBiCol("Open : {:<8} ".fmt(data[6]),":",xpos = xpos)     
+                printLnBiCol(fmtx(["",""],"Range: ",unquote(data[10])),":",xpos = xpos)
+                printBiCol(fmtx(["","<8"],"Open : ",data[6]),":",xpos = xpos)     
                 if unquote(data[8]) == "0":
-                    printBiCol("  {}".fmt("Vol   : N/A"),":",xpos = xpos + 17)
+                    printBiCol(fmtx([""],"  Vol   : N/A"),":",xpos = xpos + 17)
                 else:
-                    printBiCol("  {}".fmt("Vol   : " & unquote(data[8])),":",xpos = xpos + 17)               
+                    printBiCol(fmtx([""],"  Vol   : " & unquote(data[8])),":",xpos = xpos + 17)               
                 printLn("Yahoo Finance Data",brightblack,xpos = xpos + slmdis - 12)
                 printLn(repeat("_",63),xpos = xpos)
                 
@@ -669,6 +693,7 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
                 if data.len == 1 and sflag == false:
                   printLn("Yahoo Server Fail.",truetomato,xpos = xpos)
                   sflag = true
+                  
     except HttpRequestError:
           printLn("Index Data temporary unavailable" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
     except ValueError:
@@ -792,11 +817,11 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
         var data = line[1..line.high].split(",") 
         
         if data.len > 1:
-                printBiCol  ("Code : {:<9} ".fmt(unquote(data[0])),":",lightskyblue,cyan,xpos = xpos)
-                printLnBiCol("   Name : {:<36} ".fmt(unquote(data[1])),":",lightskyblue,pastelyellowgreen)
-                printLnBiCol("Exch : {} ".fmt(unquote(data[2])),":",yellowgreen,goldenrod,xpos = xpos)
+                printBiCol  (fmtx(["","<9"],"Code : ",unquote(data[0])),":",lightskyblue,cyan,xpos = xpos)
+                printLnBiCol(fmtx(["","<36"],"   Name : ",unquote(data[1])),":",lightskyblue,pastelyellowgreen)
+                printLnBiCol(fmtx(["",""],"Exch : ",unquote(data[2])),":",yellowgreen,goldenrod,xpos = xpos)
                 #curdn(1)
-                printLnBiCol("Date : {:<12}{:<9}    ".fmt(unquote(data[4]),unquote(data[5])),":",xpos = xpos)
+                printLnBiCol(fmtx(["","<12","<9",""],"Date : ",unquote(data[4]),unquote(data[5]),spaces(4)),":",xpos = xpos)
                 curup(1) 
                 var cc = checkChange(unquote(data[9])) 
                 
@@ -830,7 +855,8 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
                              print("N/A",xpos = xpos + chgdis)
                           curdn(1)
                           try:
-                             print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)
+                             #print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)
+                             print("N/A",xpos = xpos + chgdis)  
                           except:
                              print("N/A",xpos = xpos + chgdis)
                           curdn(1)
@@ -854,9 +880,9 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
                           print("Error",red,xpos = xpos + 31)              
                 
                 curup(1)
-                printLnBiCol("Range: {}".fmt(unquote(data[10])),":",xpos = xpos)
-                printBiCol("Open : {:<8} ".fmt(data[6]),":",xpos = xpos)          
-                printBiCol("{}".fmt("   Vol  : " & unquote(data[8])),":",xpos = xpos + 17)               
+                printLnBiCol(fmtx(["",""],"Range: ",unquote(data[10])),":",xpos = xpos)
+                printBiCol(fmtx(["","<8"],"Open : ",unquote(data[6])),":",xpos = xpos)          
+                printBiCol(fmtx([""],"   Vol  : " & unquote(data[8])),":",xpos = xpos + 17)               
                 printLn("Yahoo Finance Data",brightblack,xpos = xpos + slmdis - 12)
                 printLn(repeat("_",63),xpos = xpos)
             
@@ -1006,9 +1032,9 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
 
     if validdate(startDate) and validdate(endDate):
 
-          stdout.write("{:<15}".fmt("Processing   : "))
-          msgg() do: stdout.write("{:<8} ".fmt(symb))
-          stdout.write("{:<11} {:<11}".fmt(startDate,endDate))
+          stdout.write(fmtx(["<15"],"Processing   : "))
+          print(fmtx(["<8"],symb & spaces(1)),green)
+          print(fmtx(["<11","","<11"],startDate,spaces(1),endDate))
           # end feedback line
 
           # set up dates for yahoo
@@ -1324,13 +1350,13 @@ proc showHistData*(adf: Stocks,n:int) =
     ##
     ## Show n recent rows historical stock data
     decho(1)
-    msgg() do: echo "{:<8}{:<11}{:>10}{:>10}{:>10}{:>10}{:>14}{:>10}".fmt("Code","Date","Open","High","Low","Close","Volume","AdjClose")
+    msgg() do: echo(fmtx(["<8","<11",">10",">10",">10",">10",">14",">10"],"Code","Date","Open","High","Low","Close","Volume","AdjClose"))
     if n >= adf.date.len:
       for x in 0.. <adf.date.len:
-        echo "{:<8}{:<11}{:>10}{:>10}{:>10}{:>10}{:>14}{:>10}".fmt(adf.stock,adf.date[x],adf.open[x],adf.high[x],adf.low[x],adf.close[x],adf.vol[x],adf.adjc[x])
+        echo(fmtx(["<8","<11",">10.3",">10.3",">10.3",">10.3",">14",">10.3"],adf.stock,adf.date[x],adf.open[x],adf.high[x],adf.low[x],adf.close[x],adf.vol[x],adf.adjc[x]))
     else:
       for x in 0.. <n:
-        echo "{:<8}{:<11}{:>10}{:>10}{:>10}{:>10}{:>14}{:>10}".fmt(adf.stock,adf.date[x],adf.open[x],adf.high[x],adf.low[x],adf.close[x],adf.vol[x],adf.adjc[x])
+        echo(fmtx(["<8","<11",">10.3",">10.3",">10.3",">10.3",">14",">10.3"],adf.stock,adf.date[x],adf.open[x],adf.high[x],adf.low[x],adf.close[x],adf.vol[x],adf.adjc[x]))
     decho(2)
 
 
@@ -1344,14 +1370,14 @@ proc showHistData*(adf: Stocks,s: string,e:string) =
     # s >= e   ==> 1
     # s <= e   ==> 2
     decho(1)
-    msgg() do: echo "{:<8}{:<11}{:>10}{:>10}{:>10}{:>10}{:>14}{:>10}".fmt("Code","Date","Open","High","Low","Close","Volume","AdjClose")
+    msgg() do: echo(fmtx(["<8","<11",">10",">10",">10",">10",">14",">10"],"Code","Date","Open","High","Low","Close","Volume","AdjClose"))
     for x in 0.. <adf.date.len:
 
       var c1 = compareDates(adf.date[x],s)
       var c2 = compareDates(adf.date[x],e)
       if c1 == 1 or c1 == 0:
           if c2 == 2  or c2 == 0:
-             echo "{:<8}{:<11}{:>10}{:>10}{:>10}{:>10}{:>14}{:>10}".fmt(adf.stock,adf.date[x],adf.open[x],adf.high[x],adf.low[x],adf.close[x],adf.vol[x],adf.adjc[x])
+             echo(fmtx(["<8","<11",">10.3",">10.3",">10.3",">10.3",">14",">10.3"],adf.stock,adf.date[x],adf.open[x],adf.high[x],adf.low[x],adf.close[x],adf.vol[x],adf.adjc[x]))
     decho(2)
 
 
@@ -1441,16 +1467,16 @@ proc showDailyReturnsCl*(self:Stocks , N:int) =
       if dfd.len > 0:
           # now show it with symbol , date and close columns
           echo ""
-          msgg() do: echo "{:<8} {:<11} {:>14}".fmt("Code","Date","Returns")
+          println(fmtx(["<8","","<11","",">14"],"Code",spaces(1),"Date",spaces(1),"Returns"),yellowgreen)
           # show limited rows output if c<>0
           if N == 0:
               for  x in 0.. <dfr.len:
-                      echo "{:<8}{:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
-
+                      println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),dfr[x]))
 
           else:
               for  x in 0.. <N:
-                      echo "{:<8}{:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
+                      println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),dfr[x]))
+
 
 
 proc showDailyReturnsAdCl*(self:Stocks , N:int) =
@@ -1466,14 +1492,15 @@ proc showDailyReturnsAdCl*(self:Stocks , N:int) =
       if dfd.len > 0:
             # now show it with symbol , date and close columns
             echo ""
-            msgg() do: echo "{:<8} {:<11} {:>14}".fmt("Code","Date","Returns")
+            println(fmtx([":<8","","<11","",">14"],"Code",spaces(1),"Date",spaces(1),"Returns"),yellowgreen)
             # show limited output if c<>0
             if N == 0:
-              for  x in 0.. <dfr.len:
-                  echo "{:<8} {:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
+                for  x in 0.. <dfr.len:
+                        println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),dfr[x]))
+
             else:
-              for  x in 0.. <N:
-                  echo "{:<8} {:<11} {:>15.10f}".fmt(self.stock,dfd[x],dfr[x])
+                for  x in 0.. <N:
+                        println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),dfr[x]))
 
 
 proc sumDailyReturnsCl*(self:Stocks) : float =
@@ -1487,7 +1514,7 @@ proc sumDailyReturnsCl*(self:Stocks) : float =
       var dR = self.close.dailyReturns
       var sumdfr = sum(dR)
       # feedback line can be commented out
-      msgy() do: echo "Returns on Close Price calculated : ", dR.len
+      println("Returns on Close Price calculated : " & $dR.len,yellow)
       result = sumdfr
 
 
@@ -1548,13 +1575,13 @@ proc showStatistics*(z : Stocks) =
           z6.add(ohSet[x].min)
 
       decho(1)
-      msgg() do: echo "{:<11}{:>11}{:>11}{:>11}{:>11}{:>14}{:>11}".fmt("Item","Open","High","Low","Close","Volume","Adj Close")
-      echo "{:<11}{:>11}{:>11}{:>11}{:>11}{:>14}{:>11}".fmt(itemset[0],z1[0],z1[1],z1[2],z1[3],z1[4],z1[5])
-      echo "{:<11}{:>11}{:>11}{:>11}{:>11}{:>14}{:>11}".fmt(itemset[1],z2[0],z2[1],z2[2],z2[3],z2[4],z2[5])
-      echo "{:<11}{:>11}{:>11}{:>11}{:>11}{:>14}{:>11}".fmt(itemset[2],z3[0],z3[1],z3[2],z3[3],z3[4],z3[5])
-      echo "{:<11}{:>11}{:>11}{:>11}{:>11}{:>14}{:>11}".fmt(itemset[3],z4[0],z4[1],z4[2],z4[3],z4[4],z4[5])
-      echo "{:<11}{:>11}{:>11}{:>11}{:>11}{:>14}{:>11}".fmt(itemset[4],z5[0],z5[1],z5[2],z5[3],z5[4],z5[5])
-      echo "{:<11}{:>11}{:>11}{:>11}{:>11}{:>14}{:>11}".fmt(itemset[5],z6[0],z6[1],z6[2],z6[3],z6[4],z6[5])
+      println(fmtx(["<11",">11",">11",">11",">11",">14",">11"],"Item","Open","High","Low","Close","Volume","Adj Close"),yellowgreen)
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[0],z1[0],z1[1],z1[2],z1[3],z1[4],z1[5]))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[1],z2[0],z2[1],z2[2],z2[3],z2[4],z2[5]))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[2],z3[0],z3[1],z3[2],z3[3],z3[4],z3[5]))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[3],z4[0],z4[1],z4[2],z4[3],z4[4],z4[5]))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[4],z5[0],z5[1],z5[2],z5[3],z5[4],z5[5]))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[5],z6[0],z6[1],z6[2],z6[3],z6[4],z6[5]))
       decho(2)
 
 
@@ -1569,10 +1596,10 @@ proc showStatisticsT*(z : Stocks) =
       var headerset = @["Open","High","Low","Close","Volume","Adj Close"]
 
       decho(1)
-      msgg() do: echo "{:<11}{:>14}{:>14}{:>14}{:>14}{:>14}{:>14}".fmt("Item","sum","variance","mean","stddev","max","min")
+      printLn(fmtx(["<11",">14",">14",">14",">14",">14",">14"],"Item","sum","variance","mean","stddev","max","min"))
       for x in 0.. <ohSet.len:
-          echo "{:<11}{:>14}{:>14}{:>14}{:>14}{:>14}{:>14}".fmt(headerset[x],ohSet[x].sum,ohSet[x].variance,ohSet[x].mean,
-          ohSet[x].standardDeviation,ohSet[x].max,ohSet[x].min)
+          printLn(fmtx(["<11",">14",">14",">14",">14",">14",">14"],headerset[x],ohSet[x].sum,ohSet[x].variance,ohSet[x].mean,
+          ohSet[x].standardDeviation,ohSet[x].max,ohSet[x].min))
       decho(2)
 
 
@@ -1654,89 +1681,13 @@ proc showEma* (emx:Ts , N:int = 5) =
    ## latest data is on top
    ##
    echo()
-   msgg() do : echo "{:<11} {:>11} ".fmt("Date","EMA")
+   println(fmtx(["<11","",">11"],"Date",spaces(1),"EMA"),yellowgreen)
    if emx.dd.len > 0:
        for x in countdown(emx.dd.len-1,emx.dd.len-N,1) :
-          echo "{:<11} {:>11} ".fmt(emx.dd[x],emx.tx[x])
+          println(fmtx(["<11","",">11"],emx.dd[x],spaces(1),emx.tx[x]))
 
 
-# 
-# proc getCurrentForex*(curs:seq[string],xpos:int = 1):Currencies =
-#   ## getCurrentForex     deprecated version which uses parsecsv and a tempfile
-#   ##
-#   ## get the latest yahoo exchange rate info for a currency pair
-#   ##
-#   ## e.g EURUSD , JPYUSD ,GBPHKD
-#   ##
-#   ## .. code-block:: nim
-#   ##    var curs = getCurrentForex(@["EURUSD","EURHKD"])
-#   ##    echo()
-#   ##    echo "Current EURUSD Rate : ","{:<8}".fmt(curs.ra[0])
-#   ##    echo "Current EURHKD Rate : ","{:<8}".fmt(curs.ra[1])
-#   ##    echo()
-#   ##
-# 
-#   # currently using cvs data url
-#   try:
-#           var aurl = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=c4l1&s="    #  EURUSD=X,GBPUSD=X
-#           for ac in curs:
-#             aurl = aurl & ac & "=X,"
-# 
-#           # init a Currencies object to hold forex data
-#           var rf = initCurrencies()
-# 
-#           var acvsfile = "nimcurmp.csv"  # temporary file
-#           downloadFile(aurl,acvsfile)
-# 
-#           var s = newFileStream(acvsfile, fmRead)
-#           if s == nil:
-#               # in case of problems with the yahoo csv file we show a message
-#               msgr() do : echo "Hello : Forex data file $1 could not be opened " % acvsfile
-# 
-#           # now parse the csv file
-#           var x: CsvParser
-#           var c = 0
-#           open(x, s , acvsfile, separator=',')
-#           while readRow(x):
-#               c = 0 # counter to assign item to correct var
-#               for val in items(x.row):
-#                       c += 1
-# 
-#                       case c
-#                       of 1:
-#                             rf.cu.add(val)
-#                       of 2:
-#                             if val == "N/A":
-#                               rf.ra.add(0.00)
-#                             else:
-#                               rf.ra.add(parseFloat(val))
-#                       else:
-#                             msgr() do : echo "Csv currency data in unexpected format "
-# 
-#           # clean up
-#           removeFile(acvsfile)
-#           result = rf
-#           
-#   except HttpRequestError:
-#           printLn("Forex Data temporary unavailable" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
-#   except ValueError:
-#           discard
-#   except OSError:
-#           discard
-#   except OverflowError:
-#           discard
-#   except  TimeoutError:
-#          println("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
-#   except  ProtocolError:
-#          println("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
-#   except :
-#          discard
-#   finally:
-#         discard  
-#         
-        
-
-proc getCurrentForex*(curs:seq[string],xpos:int = 1):Currencies =
+proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
   ## getCurrentForex
   ##
   ## get the latest yahoo exchange rate info for a currency pair
@@ -1746,8 +1697,8 @@ proc getCurrentForex*(curs:seq[string],xpos:int = 1):Currencies =
   ## .. code-block:: nim
   ##    var curs = getCurrentForex(@["EURUSD","EURHKD"])
   ##    echo()
-  ##    echo "Current EURUSD Rate : ","{:<8}".fmt(curs.ra[0])
-  ##    echo "Current EURHKD Rate : ","{:<8}".fmt(curs.ra[1])
+  ##    println("Current EURUSD Rate : ",fmtx(["<8"],curs.ra[0]))
+  ##    println("Current EURHKD Rate : ",fmtx(["<8"].curs.ra[1]))
   ##    echo()
   ##
 
@@ -1757,7 +1708,7 @@ proc getCurrentForex*(curs:seq[string],xpos:int = 1):Currencies =
   try:
           var aurl = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=c4l1&s="    #  EURUSD=X,GBPUSD=X
           for ac in curs:
-            aurl = aurl & ac & "=X,"
+             aurl = aurl & ac & "=X,"
 
           # init a Currencies object to hold forex data
           var rf = initCurrencies()
@@ -1797,44 +1748,32 @@ proc getCurrentForex*(curs:seq[string],xpos:int = 1):Currencies =
   finally:
         discard  
 
-       
+ 
 
-# proc showCurrentForex*(curs : seq[string]) =
-#        ## showCurrentForex
-#        ##
-#        ## a convenience proc to display exchange rates
-#        ##
-#        ## .. code-block:: nim
-#        ##    
-#        ##    var curs = @["EURUSD","GBPHKD","CADEUR","AUDNZD","GBPCNY","JPYHKD"]
-#        ##    var cursl = curs.len
-#        ##    showCurrentForex(curs,xpos = 5)
-#        ##    curup(cursl + 2)
-#        ##    drawbox(cursl + 2,36,1,2,xpos = 3)
-#        ##    decho(cursl + 5)
-#        ##    doFinish()
-#        ##    
-# 
-#        var cx = getcurrentForex(curs) # we get a Currencies object back
-#        msgg() do : echo "{:<8} {:<4} {}".fmt("Pair","Cur","Rate")
-#        for x in 0.. <cx.cu.len:
-#              echo "{:<8} {:<4} {}".fmt(curs[x],cx.cu[x],cx.ra[x])
 
-proc showCurrentForex*(curs : seq[string],xpos:int = 1) =
+proc showCurrentForex*(curs : openarray[string],xpos:int = 1) =
        ## showCurrentForex
        ##
        ## a convenience proc to display exchange rates with positiong
        ##
        ## .. code-block:: nim
-       ##    showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"],xpos = 10)
+       ##    showCurrentForex(["EURUSD","GBPHKD","CADEUR","AUDNZD"],xpos = 10)
        ##    decho(3)
        ##
-       ##
-
+       ## .. code-block:: nim
+       ##    
+       ##    var curs = ["EURUSD","GBPHKD","CADEUR","AUDNZD","GBPCNY","JPYHKD"]
+       ##    var cursl = curs.len
+       ##    showCurrentForex(curs,xpos = 5)
+       ##    curup(cursl + 2)
+       ##    drawbox(cursl + 2,36,1,2,xpos = 3)
+       ##    decho(cursl + 5)
+       ##    doFinish()
+       ##           
        var cx = getcurrentForex(curs) # we get a Currencies object back
-       printLn("{:<16} {:<4} {}".fmt("Currencies","Cur","Rate"),lime,xpos = xpos)
+       printLn(fmtx(["<14","<4","",">6"],"Currencies","Cur",spaces(1),"Rate"),lime,xpos = xpos)
        for x in 0.. <cx.cu.len:
-            printLn("{:<16} {:<4} {}".fmt(curs[x],cx.cu[x],cx.ra[x]),xpos = xpos)
+            printLn(fmtx(["<14","<4","",">8.4f"],curs[x],cx.cu[x],spaces(1),cx.ra[x]),xpos = xpos)
 
 
 proc showStocksTable*(apfdata: Portfolio,xpos:int = 1) =
@@ -1849,55 +1788,54 @@ proc showStocksTable*(apfdata: Portfolio,xpos:int = 1) =
 
    decho(2)
    # header for the table
-   msgg() do : echo  "{:<8}{:>9}{:>9}{:>9}{:>9}{:>13}{:>9}{:>9}{:>9}{:>9}{:>9}".fmt("Code","Open","High","Low","Close","Volume","AdjClose","StDevHi","StDevLo","StDevCl","StDevClA")
+   println(fmtx(["<8",">9",">9",">9",">9",">13",">9",">9",">9",">9",">9"],"Code","Open","High","Low","Close","Volume","AdjClose","StDevHi","StDevLo","StDevCl","StDevClA"),yellowgreen)
    for x in 0.. <astkdata.len:
        var sx = astkdata[x] # just for less writing ...
        # display the data rows
-       echo "{:<8}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>13}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}".fmt(sx.stock,sx.open.last,sx.high.last,sx.low.last,sx.close.last,sx.vol.last,sx.adjc.last,
-       sx.rh[0].standardDeviation,sx.rl[0].standardDeviation,sx.rc[0].standardDeviation,sx.rca[0].standardDeviation)
+       println(fmtx(["<8",">9.3f",">9.3f",">9.3f",">9.3f",">13",">9.3f",">9.3f",">9.3f",">9.3f",">9.3f"],sx.stock,sx.open.last,sx.high.last,sx.low.last,sx.close.last,sx.vol.last,sx.adjc.last,
+       sx.rh[0].standardDeviation,sx.rl[0].standardDeviation,sx.rc[0].standardDeviation,sx.rca[0].standardDeviation))
 
    echo()
-   msgy() do : echo " NOTE : stdDevOpen and stdDevVol are not shown but available"
+   println(" NOTE : stdDevOpen and stdDevVol are not shown but available",peru)
    decho(2)
 
 
 proc showStockdataTable*(a:Stockdata) =
-     ## showStockdatatable
-     ##
-     ## shows all items of a Stockdata object
-     ##
-     echo "{:<17} : {:>12}".fmt("Price",a.price)
-     echo "{:<17} : {:>12}".fmt("Change",a.change)
-     echo "{:<17} : {:>12}".fmt("Volume",a.volume)
-     echo "{:<17} : {:>12}".fmt("Avg.DailyVolume",a.avgdailyvol)
-     echo "{:<17} : {:>12}".fmt("Market",a.market)
-     echo "{:<17} : {:>12}".fmt("MarketCap",a.marketcap)
-     echo "{:<17} : {:>12}".fmt("BookValue",a.bookvalue)
-     echo "{:<17} : {:>12}".fmt("Ebitda",a.ebitda)
-     echo "{:<17} : {:>12}".fmt("DividendPerShare",a.dividendpershare)
-     echo "{:<17} : {:>12}".fmt("DividendPerYield",a.dividendperyield)
-     echo "{:<17} : {:>12}".fmt("EarningsPerShare",a.earningspershare)
-     echo "{:<17} : {:>12}".fmt("52 Week High",a.week52high)
-     echo "{:<17} : {:>12}".fmt("52 Week Low",a.week52low)
-     echo "{:<17} : {:>12}".fmt("50 Day Mov. Avg",a.movingavg50day)
-     echo "{:<17} : {:>12}".fmt("200 Day Mov. Avg",a.movingavg200day)
-     echo "{:<17} : {:>12}".fmt("P/E",a.priceearingratio)
-     echo "{:<17} : {:>12}".fmt("P/E Growth Ratio",a.priceearninggrowthratio)
-     echo "{:<17} : {:>12}".fmt("Price Sales Ratio",a.pricesalesratio)
-     echo "{:<17} : {:>12}".fmt("Price Book Ratio",a.pricebookratio)
-     echo "{:<17} : {:>12}".fmt("Price Short Ratio",a.shortratio)
-     decho(2)
+      ## showStockdatatable
+      ##
+      ## shows all items of a Stockdata object
+      ##
+      println(fmtx(["<17","",">12"],"Price"," : ",a.price))
+      println(fmtx(["<17","",">12"],"Change"," : ",a.change))
+      println(fmtx(["<17","",">12"],"Volume"," : ",a.volume))
+      println(fmtx(["<17","",">12"],"Avg.DailyVolume"," : ",a.avgdailyvol))
+      println(fmtx(["<17","",">12"],"Market"," : ",a.market))
+      println(fmtx(["<17","",">12"],"MarketCap"," : ",a.marketcap))
+      println(fmtx(["<17","",">12"],"BookValue"," : ",a.bookvalue))
+      println(fmtx(["<17","",">12"],"Ebitda"," : ",a.ebitda))
+      println(fmtx(["<17","",">12"],"DividendPerShare"," : ",a.dividendpershare))
+      println(fmtx(["<17","",">12"],"DividendPerYield"," : ",a.dividendperyield))
+      println(fmtx(["<17","",">12"],"EarningsPerShare"," : ",a.earningspershare))
+      println(fmtx(["<17","",">12"],"52 Week High"," : ",a.week52high))
+      println(fmtx(["<17","",">12"],"52 Week Low"," : ",a.week52low))
+      println(fmtx(["<17","",">12"],"50 Day Mov. Avg"," : ",ff(a.movingavg50day,2)))
+      println(fmtx(["<17","",">12"],"200 Day Mov. Avg"," : ",ff(a.movingavg200day,2)))
+      println(fmtx(["<17","",">12"],"P/E"," : ",ff(a.priceearingratio,2)))
+      println(fmtx(["<17","",">12"],"P/E Growth Ratio"," : ",ff(a.priceearninggrowthratio,2)))
+      println(fmtx(["<17","",">12"],"Price Sales Ratio"," : ",ff(a.pricesalesratio,2)))
+      println(fmtx(["<17","",">12"],"Price Book Ratio"," : ",ff(a.pricebookratio,2)))
+      println(fmtx(["<17","",">12"],"Price Short Ratio"," : ",ff(a.shortratio,2)))
+      decho(2)
 
 
-
-template metal():stmt =
+template metal(dc:int):stmt =
     ## metal
     ## 
     ## utility template to display kitco metal data
     ## 
     ## used by showKitcoMetal
     ## 
-
+    
     if ktd[x].startswith(dl) == true:
       printLn(ktd[x],yellowgreen,xpos = xpos - 3 )
       
@@ -1908,31 +1846,39 @@ template metal():stmt =
        print(strip(ktd[x],true,true),cx.white,xpos = xpos)
     
     elif find(ktd[x],opn) > 0 :
-        printLn(ktd[x],lime)   
-      
+        printLn(spaces(10) & "MARKET IS OPEN",lime)
+              
     elif find(ktd[x],cls) > 0:
-        printLn(ktd[x],truetomato)  
-      
+        printLn(spaces(10) & "MARKET IS CLOSED",truetomato)
+              
     elif find(ktd[x],"Update") > 0:
         printLn(ktd[x] & " New York Time",yellowgreen,xpos = xpos - 3)
                           
     else:
-          printLn(ktd[x],cx.white,xpos = xpos - 3)
-
+                         
+          inc dc
+          if dc < 36:  
+             printLn(ktd[x],cx.white,xpos = xpos - 3)
+     
 
 
 proc showKitcoMetal*(xpos:int = 1) = 
     ## showKitcoMetal
     ## 
+    ## 
+    ## STATUS : under review  - Due to changes at underlying website
+    ## 
+    ## 
     ## get and display kitco metal prices
+    ## 
     ## 
     ##  
     let dl  = "   ----------------------------------------------------------------------"
     let cls = "CLOSED"
     let opn = "OPEN" 
     let url = "http://www.kitco.com/texten/texten.html"
-    
-    printLn("Gold,Silver,Platinum Spot price : New York and Asia / Europe ",peru,xpos = xpos)
+    var dc  = 0 # data counter
+    #printLn("Gold,Silver,Platinum Spot price : New York and Asia / Europe ",peru,xpos = xpos)
     
     try:
             var kt = getContent(url,timeout = 5000)
@@ -1952,7 +1898,7 @@ proc showKitcoMetal*(xpos:int = 1) =
                 if find(ktl,"New York") > 0:
                     addflag = true
                                   
-                if addflag == true:  
+                if addflag == true: 
                     ktd.add(ktl)
                   
           
@@ -1973,20 +1919,32 @@ proc showKitcoMetal*(xpos:int = 1) =
         
             if nymarket == false and asiaeuropemarket == false:
                   printLn("All Metal Markets Closed or Data unavailable",truetomato,xpos = xpos)
-                  for x in 13.. <ktd.len: metal()   
+                  for x in 13.. <ktd.len: 
+                     dc = 6
+                     metal(dc)   
                       
             elif nymarket == true and asiaeuropemarket == true:
                   # both open we show new york gold       
-                  for x in 0.. ktd.len - 18: metal()                                       
+                  dc = 0
+                  for x in 0.. ktd.len - 18: 
+                    inc dc
+                    metal(dc)                                       
           
             elif nymarket == true and asiaeuropemarket == false:
                 # ny  open we show new york gold       
-                  for x in 0.. <ktd.len - 18: metal()                                                                     
+                  dc = 0
+                  for x in 0.. <ktd.len - 18: 
+                    inc dc
+                    metal(dc)                                                                     
 
             elif nymarket == false and asiaeuropemarket == true:
                   # asiaeuropemarket  open we show asiaeuropemarket gold       
-                  for x in 13.. <ktd.len: metal()  
-                  
+                  dc = 0
+                  for x in 13.. <ktd.len:
+                    inc dc
+                    metal(dc)  
+            else :
+                  discard
                   
     except HttpRequestError:
           printLn("Kitco Data temporary unavailable : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
@@ -2098,6 +2056,7 @@ proc logisticf* (z:float):float =
      # good for smaller numbers -10 .. 10
      var lf:float = 1 / (1 + pow(E,-z))
      result = lf
+
 
 proc logisticf_derivative* (z:float): float =
      ## logisticf_derivative

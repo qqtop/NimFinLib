@@ -1,4 +1,4 @@
-import os,terminal,strfmt,times,strutils
+import os,terminal,times,strutils
 import nimFinLib,libFinHk,cx
 
 
@@ -75,7 +75,8 @@ for x in 0.. <master.pf.len:
 # portfolios for which we can show stats,quote,names and historic data
 
 when isMainModule:
-    when declared(libFinHk):
-        decho(2)
-        msgb() do : echo "{:<15}{} {} - {}".fmt("Library     : ","qqTop libFinHk : ",LIBFINHKVERSION,year(getDateStr()))
-    doFinish()
+  # show time elapsed for this run
+  when declared(libFinHk):
+      decho(2)
+      println(fmtx(["<15","","","",""],"Library     : ","qqTop libFinHk : ",LIBFINHKVERSION," - ",cx.year(getDateStr())),brightblack)
+  cx.doFinish()

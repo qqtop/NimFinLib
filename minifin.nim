@@ -78,7 +78,7 @@ proc bottomInfo(lpx:int,mxpos:int,ts:int) =
       print("Updated : " & $lpx & " times ",cx.gray,xpos = mxpos)
       print(" Update Interval " & $ts & " secs.",cx.gray)
       printLn("Next Update: " & $(getLocalTime(getTime()) + initInterval(0,ts,0,0,0)),pastelGreen,xpos = cx.tw - 45)
-      print("{:<14}".fmt("Application :"),pastelgreen,xpos = mxpos)
+      print(fmtx(["<14"],"Application :"),pastelgreen,xpos = mxpos)
       print(extractFileName(getAppFilename()),brightblack)
       print(" | ",brightblack)
       print("Nim : ",lime)
@@ -120,15 +120,15 @@ proc doit(mxpos:int,stock:string) =
     cx.printLn($getTime(),yellowgreen,xpos = cx.tw - 44)
     
     
-    # here we display price and range data for stocks passedf in from command line
+    # here we display price and range data for stocks passed in from command line
     if stock.len > 0:
        decho(3)
-       println("{:<10} {:>10}     {}".fmt("Stock","Current","Range"),lime,xpos = cx.tw - 45)
+       println(fmtx(["<9",">10","",""],"Stock","Current",spaces(2),"Range"),lime,xpos = cx.tw - 45)
        var sxc = 0 # we limit to max 15 stocks displayable
        for x in yahooStocks(stock,xpos = 10):
              inc sxc
              if sxc < 16:
-                printlnBiCol("{:<10} : {:>8}  {} ".fmt(x.stcode,x.stprice,x.strange),xpos = cx.tw - 45)
+                printlnBiCol(fmtx(["<10","",">8","",""],x.stcode,spaces(1),x.stprice,spaces(2),x.strange),xpos = cx.tw - 45)
              
        
     # go back to top left
