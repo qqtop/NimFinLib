@@ -1,5 +1,5 @@
 import nimFinLib,times,strutils
-from cx import decho,cecholn,peru
+from cx import decho,cecholn,peru,fmtx
 
 # show latest stock quotes
 showCurrentStocks("IBM+BP.L+0001.HK")
