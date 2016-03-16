@@ -8,7 +8,7 @@
 ##
 ## Version     : 0.0.7
 ##
-## Compiler    : nim 0.12.1
+## Compiler    : nim 0.13.1
 ##
 ##
 ## Description : A library to support financial calculations with Nim
@@ -37,12 +37,12 @@
 ##               For comprehensive tests and usage see nimFinT3.nim & nimFinT4
 ##
 ##
-import os,strutils,parseutils,sequtils,httpclient,strfmt
+import os,strutils,parseutils,sequtils,httpclient
 import terminal,times,tables,random
 import parsecsv,streams,algorithm,math,unicode
 import stats,nimFinLib,cx
 
-let LIBFINHKVERSION* = "0.0.6"
+let LIBFINHKVERSION* = "0.0.7"
 
 proc hkexToYhoo*(stc:string):string =
    ## hkexToYhoo
