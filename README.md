@@ -150,7 +150,7 @@ Want to try ?
               
          nim c -r -d:ssl testMe
        
-     strfmt module will need to be installed beforehand. 
+      
      
 
 NOTE : 
