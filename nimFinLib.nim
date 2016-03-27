@@ -1918,8 +1918,8 @@ proc showKitcoMetal*(xpos:int = 1) =
                         asiaeuropemarket = true
         
             if nymarket == false and asiaeuropemarket == false:
-                  printLn("All Metal Markets Closed or Data unavailable",truetomato,xpos = xpos)
-                  for x in 13.. <ktd.len: 
+                  printLn("All Metal Markets Closed or Data outdated/unavailable",truetomato,xpos = xpos)
+                  for x in 13.. 25 : 
                      dc = 6
                      metal(dc)   
                       
@@ -1940,7 +1940,7 @@ proc showKitcoMetal*(xpos:int = 1) =
             elif nymarket == false and asiaeuropemarket == true:
                   # asiaeuropemarket  open we show asiaeuropemarket gold       
                   dc = 0
-                  for x in 13.. <ktd.len:
+                  for x in 13.. 25:  # <ktd.len:
                     inc dc
                     metal(dc)  
             else :
