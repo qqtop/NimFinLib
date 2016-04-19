@@ -6,7 +6,7 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.7.0
+## Version     : 0.2.7.5
 ##
 ## Compiler    : nim 0.13.1 up dev branch
 ##
@@ -23,7 +23,7 @@
 ##
 ##               Yahoo forex rates        
 ##
-##               Kitco Metal Prices  # currently not working due to website changes
+##               Kitco Metal Prices  
 ##
 ##
 ##               Dataframe like objects for easy working with historical data and dataseries
@@ -122,7 +122,7 @@ import os,cx,strutils,parseutils,sequtils,httpclient,net
 import terminal,times,tables,random, parsecsv,streams
 import algorithm,math,unicode,stats  
 
-let NIMFINLIBVERSION* = "0.2.7.0"
+let NIMFINLIBVERSION* = "0.2.7.5"
 
 let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
 
@@ -1864,9 +1864,6 @@ template metal(dc:int):stmt =
 
 proc showKitcoMetal*(xpos:int = 1) = 
     ## showKitcoMetal
-    ## 
-    ## 
-    ## STATUS : under review  - Due to changes at underlying website
     ## 
     ## 
     ## get and display kitco metal prices
