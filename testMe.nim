@@ -27,7 +27,7 @@ proc source() =
    # get it
    var afile = "https://raw.githubusercontent.com/qqtop/NimFinLib/master/nimFinLib.nim"
    downloadFile(afile,"nimFinLib.nim")
-   afile = "https://raw.githubusercontent.com/qqtop/NimFinLib/master/example1.nim"
+   afile = "https://raw.githubusercontent.com/qqtop/NimFinLib/master/Examples/example1.nim"
    downloadFile(afile,"example1.nim")
    afile = "https://raw.githubusercontent.com/qqtop/NimCx/master/cx.nim"
    downloadFile(afile,"cx.nim")
