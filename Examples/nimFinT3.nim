@@ -1,4 +1,4 @@
-import os,terminal,times,strutils
+import os,terminal,strfmt,times,strutils
 import nimFinLib,libFinHk,cx
 
 
@@ -33,7 +33,7 @@ var hkexcodes = initHKEX()
 hkportfolio.nx = "HKPortfolio"
 # we take first 5 stockcodes from hkexcodes
 # and load stocks with relevant historical data into hkpool
-for x in 0.. <5:
+for x in 0.. <30:
     # need to convert to hkex code format into yhoo format
     var astock = hkexToYhoo(hkexcodes[0][x])
     hkpool.add(getSymbol2(astock,startDate,endDate))
@@ -51,7 +51,7 @@ var bigMoney = initPortfolio()
 bigMoney.nx = "bigMoneyPortfolio"
 
 #var bigMSymbols  = @["00386","00880","00005"]         # HKEX style
-var bigMSymbolsY = @["0386.HK","0880.HK","0005.HK"]   # yahoo style
+var bigMSymbolsY = @["0386.HK","0880.HK","1766.HK","0555.HK","3888.HK"]   # yahoo style
 
 
 for x in bigMSymbolsY:
@@ -68,6 +68,8 @@ master.pf.add(bigMoney)
 # currently there are only 2 portfolios in our master
 
 for x in 0.. <master.pf.len:
+      echo()
+      println(master.pf[x].nx,yellowgreen)
       showQuoteTableHk(master.pf[x])
       showStocksTable(master.pf[x])
 
@@ -75,8 +77,7 @@ for x in 0.. <master.pf.len:
 # portfolios for which we can show stats,quote,names and historic data
 
 when isMainModule:
-  # show time elapsed for this run
-  when declared(libFinHk):
-      decho(2)
-      println(fmtx(["<15","","","",""],"Library     : ","qqTop libFinHk : ",LIBFINHKVERSION," - ",cx.year(getDateStr())),brightblack)
-  cx.doFinish()
+    when declared(libFinHk):
+        decho(2)
+        msgb() do : echo "{:<15}{} {} - {}".fmt("Library     : ","qqTop libFinHk : ",LIBFINHKVERSION,year(getDateStr()))
+    doFinish()

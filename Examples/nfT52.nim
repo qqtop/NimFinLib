@@ -1,6 +1,6 @@
-import os,terminal,sequtils,strutils,times,math,stats,unicode,tables,random
+import os,terminal,sequtils,strutils,times,math,stats,unicode,tables
 import nimFinLib,cx
-
+import "random-0.5.2/random"
 # comment next line if tests concerning libFinHk not required
 import libFinHk
 # uncomment next line for compilation with nimprofiler
@@ -372,7 +372,6 @@ echo ()
 
 # we can pass some stocks from around the world
 showCurrentSTX("AAPL+IBM+BP.L+BAS.DE")
-
 # we also can pass all stocks in a portfolio and display the latest quotes
 # here we use the first portfolio in account
 showCurrentSTX(account.pf[0])
@@ -503,7 +502,7 @@ when declared(libFinHk):
 
         echo ()
         superheader(" Create a Random Portfolio with 10 stocks   ")
-        echo ()
+        echo ()#import "/home/lxuser/.nimble/pkgs/random-0.5.2/random"
 
         # lets create a portfolio with 10 random hongkong stocks
         # get available stock codes
@@ -518,8 +517,9 @@ when declared(libFinHk):
         # we need a place to put the random stocks to be selected from hkexcodes
         # call it randomstockpool
         var randomstockpool = initPool()
-
-        for x in 0.. <10:
+        
+        var rc = 0
+        while rc < 10:
            # get a random number between 1 and max no of items in hkexcodes[0]
            var rdn = randomInt(1,hkexcodes[stockcodes].len)
            # pick the stock with index number rdn from hxc[stockcodes]
@@ -528,27 +528,26 @@ when declared(libFinHk):
            var astartDate = "2014-01-01"
            var aendDate = getDatestr()
            #load the historic data for arandomstock into our randomstockpool
-           try:
-              randomstockpool.add(getSymbol2(arandomstock,astartDate,aendDate))
-           except:
-              # this may happen if yahoo does not have any data for a stock or faulty data
-              # we just skip it
-              discard
-              echo()
+           if arandomstock.startswith("ERROR") == true:
+                 discard
+           else:
+                 randomstockpool.add(getSymbol2(arandomstock,astartDate,aendDate))
+                 inc rc
+                 
+              
 
         # at this stage the historic data is ready to be used
         # create a portfolio named rpf and call it RandomTestPortfolio
         var rpf = initPortfolio()
         # rpf.nx holds the relevant portfolio name
         rpf.nx = "RandomTestPortfolio"
-        # rpf.dx holds the relevant historic data for all stocks
+        # rpf.dx will hold the relevant historic data for all stocks
         # here we load all data in our randomstockpool into the new portfolio
-        # in this case we could have omitted the pool because we use all stocks
-        # in some cases we just want a subset of stocks in a pool hence this setup
-        for stocksdata in randomstockpool:
-                 rpf.dx.add(stocksdata)   # dx holds the historical data series
-
+        rpf.dx = randomstockpool                             
+        decho(2)
+        println("\nshowQuoteTableHk\n",salmon)
         showQuoteTableHk(rpf)
+        println("\nshowStocksTable\n",salmon)
         showStocksTable(rpf)
 
         # for another more automated example see nimFinT3.nim and nimFinT4.nim

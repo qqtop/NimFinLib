@@ -6,7 +6,7 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.7.5
+## Version     : 0.2.7.6
 ##
 ## Compiler    : nim 0.13.1 up dev branch
 ##
@@ -19,7 +19,11 @@
 ##
 ##               Yahoo current stock quotes
 ##
-##               Yahoo market indexes
+##               Ya##               Recent updates to nim , especially creating a random.nim
+##               
+##               which gets loaded instead of the random.nim available from nimble
+##               
+##               forced us to specify the absolute import path ,see below hoo market indexes
 ##
 ##               Yahoo forex rates        
 ##
@@ -64,7 +68,9 @@
 ##
 ## Tested on   : Linux
 ##
-## ProjectStart: 2015-06-05 / 2015-11-21
+## ProjectStart: 2015-06-05 
+## 
+## Latest      : 2016-05-31
 ##
 ## ToDo        : Ratios , Covariance , Correlation etc.
 ##               improve timeout exception handling if yahoo data fails to be retrieved
@@ -95,10 +101,16 @@
 ##               also read notes about terminal compability in cx.nim
 ##               
 ##               Best results with terminals supporting truecolor.
-##               
+##                
 ##               It is also expected that you have unicode libraries installed
 ##               
 ##               if you see some unexpected chars then this libraries may be missing
+##               
+##               Recent updates to nim , especially creating a random.nim
+##               
+##               which gets loaded instead of the random.nim available from nimble
+##               
+##               forced us to specify the absolute import path ,see below 
 ##               
 ##
 ## Tests       : For comprehensive tests and example usage see 
@@ -119,10 +131,11 @@
 ##
 
 import os,cx,strutils,parseutils,sequtils,httpclient,net
-import terminal,times,tables,random, parsecsv,streams
+import terminal,times,tables, parsecsv,streams
 import algorithm,math,unicode,stats  
+import "random-0.5.2/random"
 
-let NIMFINLIBVERSION* = "0.2.7.5"
+let NIMFINLIBVERSION* = "0.2.7.6"
 
 let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
 
@@ -256,6 +269,7 @@ proc timeSeries*[T](self:T,ty:string): Ts =
      of "c": ts.tx = self.close
      of "v": ts.tx = self.vol
      of "a": ts.tx = self.adjc
+     else  : discard 
      return ts
 
 
@@ -396,10 +410,8 @@ proc initPool*():seq[Stocks] =
   ## .. code-block:: nim
   ##    var mystockPool = initPool()
   ##
+  result  = newSeq[Stocks]()
 
-  var apool = newSeq[Stocks]()
-  apool = @[]
-  result  = apool
 
 proc aline*()  {.discardable.} =
       printLn(repeat("-",tw),xpos = 0)
@@ -1396,11 +1408,11 @@ proc last*[T](self : seq[T]): T =
 
 proc first*[T](self : seq[T]): T =
     ## first means oldest row
-    ##
+    ## still need to improve this in case nothing received
     try:
-      result = self[self.high]
-    except IndexError:
-      discard
+        result = self[self.high]
+    except:
+      result = self[0]
 
 proc tail*[T](self : seq[T] , n: int) : seq[T] =
     ## tail means most recent rows

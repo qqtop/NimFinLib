@@ -21,6 +21,8 @@
 ## Tested on   : Linux
 ##
 ## ProjectStart: 2015-07-07
+## 
+## Latest      : 2016-05-30 
 ##
 ## ToDo        :
 ##
@@ -37,12 +39,20 @@
 ##               For comprehensive tests and usage see nimFinT3.nim & nimFinT4
 ##
 ##
+##               Recent updates to nim , especially creating a random.nim
+##               
+##               which gets loaded instead of the random.nim available from nimble
+##               
+##               forced us to specify the absolute import path ,see below 
+##
 import os,strutils,parseutils,sequtils,httpclient
-import terminal,times,tables,random
+import terminal,times,tables,stats
 import parsecsv,streams,algorithm,math,unicode
-import stats,nimFinLib,cx
+# imports based on modules available via nimble
+import nimFinLib,cx
+import "random-0.5.2/random"
 
-let LIBFINHKVERSION* = "0.0.7"
+let LIBFINHKVERSION* = "0.0.8"
 
 proc hkexToYhoo*(stc:string):string =
    ## hkexToYhoo
@@ -299,13 +309,14 @@ proc showQuoteTableHk*(apfData: Portfolio) =
         companynames = 1
         boardlots    = 2
 
-     var stkdata = apfData.dx
+     var apfd      = apfData 
+     var stkdata   = apfd.dx
      var hkexcodes = initHKEX()
-     var stockseq = hkPfseq(apfData,hkexcodes)
+     var stockseq  = hkPfseq(apfd,hkexcodes)
 
      decho(2)
      # header for the table
-     msgy() do : echo "Kurtosis , StdDev , EMA22 based on close price for ",apfdata.nx," Quote is latest info ex yahoo"
+     msgy() do : echo "Kurtosis , StdDev , EMA22 based on close price for ",apfdata.nx,"\nQuote is latest info ex yahoo"
      msgg() do : echo fmtx(["<8",">9",">9",">9",">9",">15",">10",">9"],"Stock  ","   Kurtosis  ","StdDev  ","EMA22  ","    Close  ","Company  ","     Quote  "," BoardLot  ")
      try:
         for x in 0.. <stkdata.len:
@@ -325,7 +336,7 @@ proc showQuoteTableHk*(apfData: Portfolio) =
             # display the data rows
             echo(fmtx(["<8","",">9.3f","",">9.3f","",">9.3f","",">9.3f","",">15","",">10","",">9"],stkdata[x].stock ," ", kurtosis(stkdata[x].close)," ", stddev," ",emadata," ",last(stkdata[x].close)," ",compname," ",cquote," ",blot))
      except IndexError:
-         msgr() do: echo "Calculation failed . Insufficient Historical Data"
+         println("Calculation failed . Insufficient Historical Data",red)
 
 
 proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:string = getDateStr()):(Portfolio, seq[int]) =
