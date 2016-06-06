@@ -324,7 +324,7 @@ proc showQuoteTableHk*(apfData: Portfolio) =
             # we want 22 days so ..
             # and we just want the newest ema data point which resides in tx[0]
             # ema returns a time series object dx,tx ,but we only need the latest ema value
-            var emadata = ema(stkdata[x],22).tx[0]
+            var emadata = ema(stkdata[x],22).tx.first
             # get the newest stddev of the close price
             var stddev = stkdata[x].rc[0].standardDeviation
             # get the company name
