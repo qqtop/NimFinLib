@@ -3,9 +3,8 @@ import nimFinLib,cx
 import "random-0.5.2/random"
 # comment next line if tests concerning libFinHk not required
 import libFinHk
-# uncomment next line for compilation with nimprofiler
-# import nimProf
-
+# uncomment next line for nimprofiler 
+#import nimProf
 
 
 ## nfT52.nim
@@ -464,7 +463,7 @@ when declared(libFinHk):
         var hxc = initHKEX()
         # at this stage three lists are available for work in hxc
         if hxc.len > 0:
-          # # we can show all 1500 stocks plus too ..
+          # # we can show all 1500+ stocks too ..
           # msgg() do : echo "Full List of Hongkong Stock Exchange MainBoard Listed Stocks" # show all
           # for x in 0.. <hxc[0].len :
           #   try:
@@ -494,15 +493,15 @@ when declared(libFinHk):
              printLn("An error has occured and no valid result set was returned",red)
 
 
-        msgy() do : echo "Test for hkexToYhoo - show bottom 10 codes converted to yahoo format"
+        println("Test for hkexToYhoo - show bottom 10 codes converted to yahoo format",yellow)
         if hxc.len > 1:
-           for x in hxc[0].len-10.. <hxc[0].len :
+           for x in (hxc[0].len - 10).. <hxc[0].len :
                  echo(fmtx(["<7","",""],hxc[0][x]," --->  ",hkexToYhoo(hxc[0][x])))
 
 
         echo ()
         superheader(" Create a Random Portfolio with 10 stocks   ")
-        echo ()#import "/home/lxuser/.nimble/pkgs/random-0.5.2/random"
+        echo ()
 
         # lets create a portfolio with 10 random hongkong stocks
         # get available stock codes
@@ -515,26 +514,33 @@ when declared(libFinHk):
            boardlots    = 2
 
         # we need a place to put the random stocks to be selected from hkexcodes
-        # call it randomstockpool
+        # lets call it randomstockpool
         var randomstockpool = initPool()
         
         var rc = 0
         while rc < 10:
-           # get a random number between 1 and max no of items in hkexcodes[0]
-           var rdn = randomInt(1,hkexcodes[stockcodes].len)
-           # pick the stock with index number rdn from hxc[stockcodes]
-           # and convert to yahoo format then add it to a pool called randomstockpool
-           var arandomstock = hkexToYhoo(hxc[stockcodes][rdn])
-           var astartDate = "2014-01-01"
-           var aendDate = getDatestr()
-           #load the historic data for arandomstock into our randomstockpool
-           if arandomstock.startswith("ERROR") == true:
-                 discard
-           else:
-                 randomstockpool.add(getSymbol2(arandomstock,astartDate,aendDate))
-                 inc rc
-                 
-              
+                  # get a random number between 1 and max no of items in hkexcodes[0]
+                  var rdn = randomInt(1,hkexcodes[stockcodes].len)
+                  
+                  # pick the stock with index number rdn from hxc[stockcodes]
+                  # and convert to yahoo format then add it to a pool called randomstockpool
+                  var arandomstock = hkexToYhoo(hxc[stockcodes][rdn])
+                  
+                  var astartDate = "2014-01-01"
+                  var aendDate = getDatestr()
+                  
+                  #load the historic data for arandomstock into our randomstockpool
+                  if arandomstock.startswith("    ") == true:
+                        discard
+                  else:
+                        var dxz = getSymbol2(arandomstock,astartDate,aendDate)
+                        if dxz.stock.startswith("Error") == false:   # effect of errstflag in nimFinLib
+                          if dxz.stock.startswith("    ") == false:
+                              randomstockpool.add(dxz)
+                              doassert randomstockpool.first.stock == dxz.stock
+                              inc rc
+                    
+    
 
         # at this stage the historic data is ready to be used
         # create a portfolio named rpf and call it RandomTestPortfolio
@@ -553,7 +559,6 @@ when declared(libFinHk):
         # for another more automated example see nimFinT3.nim and nimFinT4.nim
 
 
-# That's it
 
 when isMainModule:
   # show time elapsed for this run
