@@ -133,7 +133,7 @@
 import os,cx,strutils,parseutils,sequtils,httpclient,net
 import terminal,times,tables, parsecsv,streams
 import algorithm,math,unicode,stats  
-import "random-0.5.2/random"
+import "random-0.5.3/random"
 
 let NIMFINLIBVERSION* = "0.2.7.6"
 
@@ -551,10 +551,10 @@ proc currentIndexes(aurl:string,xpos:int = 1) {.discardable.} =
               echo repeat("-",tw)
       else:
               if data.len == 1 and sflag == false:
-                 msgr() do : echo "Yahoo server maybe unavailable. Try again later"
+                 println("Yahoo server maybe unavailable. Try again later",red)
                  sflag = true
   except HttpRequestError:
-      msgr() do : echo "Yahoo current data could not be retrieved . Try again ."
+      println("Yahoo current data could not be retrieved . Try again .",red)
       echo()
 
 
@@ -1104,16 +1104,19 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
           # could also be done to be in memory like /shm/  this file will be auto removed.
 
           var acvsfile = "nimfintmp.csv"
+          var errstflag = false  
           try:
+            
             downloadFile(qurl,acvsfile)
           except HttpRequestError:
             echo()
-            msgr() do : echo "Error : Yahoo currently does not provide historical data for " & symb
-
+            println("Error : Yahoo currently does not provide historical data for " & symb,red)
+            errstflag = true  
+            
           var s = newFileStream(acvsfile, fmRead)
           if s == nil:
              # in case of problems with the yahoo csv file we show a message
-             msgr() do : echo "Error : Data file for $1 could not be opened " % symb
+             println("Error : Data file for $1 could not be opened " % symb,red)
 
           # now parse the csv file
           var x: CsvParser
@@ -1167,18 +1170,22 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
                           adjclosdf.add(adjclosx)
 
                     else :
-                          msgr() do : echo "Csv Data in unexpected format for Stocks :",symb
+                          println("Csv Data in unexpected format for Stocks :" & symb,red)
 
           # feedbacklines can be commented out
-          msgc() do:
-                    stdout.writeln(" --> Rows processed : ",processedRows(x))
+          println(" --> Rows processed : " & $processedRows(x),salmon)
 
 
           # close CsvParser
           close(x)
 
           # put the collected data into Stocks type
-          astock.stock = symb
+          # if errstflag == true the stock name will be changed to Error for further handling
+          # this occures if yahoo does not have data for a given stock
+          if errstflag == false:
+             astock.stock = symb
+          else:
+             astock.stock = "Error " & symb
           astock.date  = datdf
           astock.open  = opedf
           astock.high  = higdf
@@ -1206,8 +1213,8 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
           result = astock
 
     else:
-          msgr() do : echo  "Date error. : " &  startDate,"/",endDate,"  Format yyyy-MM-dd expected"
-          msgr() do : echo  "proc getSymbol2"
+          println("Date error     : " &  startDate &  "/" & endDate & "  Format yyyy-MM-dd expected",red)
+          println("Error location : proc getSymbol2",red)
           result = initStocks() # return an empty df
 
 
@@ -1362,7 +1369,7 @@ proc showHistData*(adf: Stocks,n:int) =
     ##
     ## Show n recent rows historical stock data
     decho(1)
-    msgg() do: echo(fmtx(["<8","<11",">10",">10",">10",">10",">14",">10"],"Code","Date","Open","High","Low","Close","Volume","AdjClose"))
+    println(fmtx(["<8","<11",">10",">10",">10",">10",">14",">10"],"Code","Date","Open","High","Low","Close","Volume","AdjClose"),green)
     if n >= adf.date.len:
       for x in 0.. <adf.date.len:
         echo(fmtx(["<8","<11",">10.3",">10.3",">10.3",">10.3",">14",">10.3"],adf.stock,adf.date[x],adf.open[x],adf.high[x],adf.low[x],adf.close[x],adf.vol[x],adf.adjc[x]))
@@ -1382,9 +1389,8 @@ proc showHistData*(adf: Stocks,s: string,e:string) =
     # s >= e   ==> 1
     # s <= e   ==> 2
     decho(1)
-    msgg() do: echo(fmtx(["<8","<11",">10",">10",">10",">10",">14",">10"],"Code","Date","Open","High","Low","Close","Volume","AdjClose"))
+    println(fmtx(["<8","<11",">10",">10",">10",">10",">14",">10"],"Code","Date","Open","High","Low","Close","Volume","AdjClose"),green)
     for x in 0.. <adf.date.len:
-
       var c1 = compareDates(adf.date[x],s)
       var c2 = compareDates(adf.date[x],e)
       if c1 == 1 or c1 == 0:
@@ -1541,7 +1547,7 @@ proc sumDailyReturnsAdCl*(self:Stocks) : float =
       var dR = self.adjc.dailyReturns
       var sumdfr = sum(dR)
       # feedback line can be commented out
-      msgy() do: echo "Returns on Close Price calculated : ", dR.len
+      println("Returns on Close Price calculated : " & $dR.len,peru)
       result = sumdfr
 
 
@@ -1650,7 +1656,7 @@ proc ema* (dx : Stocks , N: int = 14) : Ts =
     m_emaSeries.tx = @[]
     if dx.close.len < ( 5 * N):
        emaflag = true
-       msgr() do : echo dx.stock,": Insufficient data for valid ema calculation, need min. $1 data points" % $(5 * N)
+       println(dx.stock & ": Insufficient data for ema calculation, need min. $1 data points" % $(5 * N),red)
 
     else:
 

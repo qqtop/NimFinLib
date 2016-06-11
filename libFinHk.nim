@@ -50,7 +50,7 @@ import terminal,times,tables,stats
 import parsecsv,streams,algorithm,math,unicode
 # imports based on modules available via nimble
 import nimFinLib,cx
-import "random-0.5.2/random"
+import "random-0.5.3/random"
 
 let LIBFINHKVERSION* = "0.0.8"
 
@@ -254,7 +254,8 @@ proc initHKEX*():seq[seq[string]]  =
        # does not exist so scrap data
        nhkexcodes = getHKEXcodes()
   # file exists so read data in
-  else: nhkexcodes = getHKEXcodesFromFile(fn)
+  else: 
+       nhkexcodes = getHKEXcodesFromFile(fn)
 
   result = nhkexcodes
 
@@ -316,8 +317,7 @@ proc showQuoteTableHk*(apfData: Portfolio) =
 
      decho(2)
      # header for the table
-     msgy() do : echo "Kurtosis , StdDev , EMA22 based on close price for ",apfdata.nx,"\nQuote is latest info ex yahoo"
-     msgg() do : echo fmtx(["<8",">9",">9",">9",">9",">15",">10",">9"],"Stock  ","   Kurtosis  ","StdDev  ","EMA22  ","    Close  ","Company  ","     Quote  "," BoardLot  ")
+     println(fmtx(["<8",">9",">9",">9",">9",">15",">10",">9"],"Stock  ","   Kurtosis  ","StdDev  ","EMA22  ","    Close  ","Company  ","     Quote  "," BoardLot  "),green)
      try:
         for x in 0.. <stkdata.len:
             # to get ema we pass our data to the ema function
@@ -355,7 +355,7 @@ proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:stri
   var maxstocks = sz
   if maxstocks > hl:
      echo()
-     msgr() do : echo "Max Stocks Available : ",hl
+     println("Max Stocks Available : " & $hl,red)
      echo()
      maxstocks = hl
 
@@ -382,5 +382,23 @@ proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:stri
 
   pf1.dx = pfpool
   result = (pf1,pfseq)
+
+
+proc quickPortfolioHk*(n:int = 5) =
+   ## quickPortfolioHk
+   ## 
+   ## just show a random portfolio of Hongkong stocks for quick demoing
+   ## 
+   ## n = number of stocks in portfolio
+   ## 
+   ## .. code-block:: nim
+   ##    import cx, libFinHk
+   ##    quickPortfolioHk()
+   ##    doFinish()
+   ## 
+   ## 
+   showQuoteTableHk(hkRandomPortfolio(n)[0])
+
+
 
 # end of HK Stock Exchange specific procs

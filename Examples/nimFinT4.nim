@@ -1,4 +1,4 @@
-import os,terminal,times
+import os,terminal,strfmt,times
 import nimFinLib,libFinHk,cx
 
 # nimFinT4.nim
@@ -17,12 +17,11 @@ msgy() do : echo "# Testing nimFinLib                  nimFinT4 #"
 msgy() do : echo "###############################################"
 echo ()
 # create a random HK stock portfolio with 5 stocks and default start,end dates
-var somePf = hkRandomPortfolio(5)
+var myPf = hkRandomPortfolio(5)[0]
 decho(2)
-# somePf now holds a Nf object and a seq[int],we only need the Nf object
+# myPf now holds a Nf object and a seq[int],we only need the Nf object
 # anything else will be taken care of automatically
-var myPf = somePf[0]
-msgg() do: echo "Portfolio Name    : ",myPf.nx
+println("Portfolio Name    : " & myPf.nx,yellowgreen)
 showQuoteTableHk(myPf)
 showStocksTable(myPf)
 
@@ -30,5 +29,5 @@ when isMainModule:
   # show time elapsed for this run
   when declared(libFinHk):
       decho(2)
-      println(fmtx(["<15","","","",""],"Library     : ","qqTop libFinHk : ",LIBFINHKVERSION," - ",cx.year(getDateStr())),brightblack)
-  cx.doFinish()
+      msgb() do : echo "{:<15}{} {} - {}".fmt("Library     : ","qqTop libFinHk : ",LIBFINHKVERSION,year(getDateStr()))
+  doFinish()
