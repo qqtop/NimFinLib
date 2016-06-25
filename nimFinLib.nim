@@ -130,25 +130,19 @@
 ##
 ##
 
-import os,cx,strutils,parseutils,sequtils,httpclient,net
-import terminal,times,tables, parsecsv,streams
-import algorithm,math,unicode,stats  
-import "random-0.5.3/random"
+import
+
+       os,cx,strutils,parseutils,sequtils,httpclient,net,
+       terminal,times,tables, parsecsv,streams,
+       algorithm,math,unicode,stats,  
+       "random-0.5.3/random"
 
 let NIMFINLIBVERSION* = "0.2.7.6"
 
 let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
 
-
 type
-
-  Account*  = object
-        ## Account type
-        ## holds all portfolios similar to a master account
-        ## portfolios are Portfolio objects
-        pf* : seq[Portfolio]  ## pf holds all Portfolio type portfolios for an account
-
-
+  
 
   Portfolio* {.inheritable.} = object
         ## Portfolio type
@@ -156,8 +150,15 @@ type
         nx* : string   ## nx  holds portfolio name  e.g. MyGetRichPortfolio
         dx* : seq[Stocks]  ## dx  holds all stocks with historical data
 
+ 
 
+  Account*  = object
+        ## Account type
+        ## holds all portfolios similar to a master account
+        ## portfolios are Portfolio objects
+        pf* : seq[Portfolio]  ## pf holds all Portfolio type portfolios for an account
 
+  
   Stocks* {.inheritable.} = object of Portfolio
         ## Stocks type
         ## holds individual stocks history data and RunningStat for ohlcva columns
@@ -178,8 +179,7 @@ type
         rv*    : seq[Runningstat]  ## RunningStat for volume price
         rca*   : seq[Runningstat]  ## RunningStat for adjusted close price
 
-
-
+  
   Stockdata*  {.inheritable.} = object
         ## Stockdata type
         ## holds additional stock data and statistics as currently available from yahoo
@@ -206,6 +206,7 @@ type
         shortratio*       : float
 
 
+  
   Ts* {.inheritable.} = object
        ## Ts type
        ## is a simple timeseries object which can hold one
@@ -214,7 +215,7 @@ type
        dd* : seq[string]  # date
        tx* : seq[float]   # data
 
-
+  
   Currencies* {.inheritable.} = object
        ## Currencies type
        ## a simple object to hold current currency data
@@ -223,10 +224,8 @@ type
        ra* : seq[float]   # relevant rate  e.g 1.354
 
 
-
-type 
  
-   YHobject* {.inheritable.} = object
+  YHobject* {.inheritable.} = object
         ## YHobject type
         ## a simple object to hold certain yahoo stock data 
         ## 
