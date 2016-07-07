@@ -112,6 +112,7 @@
 ##               
 ##               forced us to specify the absolute import path ,see below 
 ##               
+##               
 ##
 ## Tests       : For comprehensive tests and example usage see 
 ## 
@@ -150,7 +151,6 @@ type
         nx* : string   ## nx  holds portfolio name  e.g. MyGetRichPortfolio
         dx* : seq[Stocks]  ## dx  holds all stocks with historical data
 
- 
 
   Account*  = object
         ## Account type
