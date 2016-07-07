@@ -8,7 +8,7 @@
 ##
 ## Version     : 0.2.7.6
 ##
-## Compiler    : nim 0.13.1 up dev branch
+## Compiler    : nim 0.14.2 up dev branch
 ##
 ##
 ## Description : A basic library for financial calculations with Nim
@@ -17,13 +17,7 @@
 ##
 ##               Yahoo additional stock data
 ##
-##               Yahoo current stock quotes
-##
-##               Ya##               Recent updates to nim , especially creating a random.nim
-##               
-##               which gets loaded instead of the random.nim available from nimble
-##               
-##               forced us to specify the absolute import path ,see below hoo market indexes
+##               Yahoo current stock quotes           
 ##
 ##               Yahoo forex rates        
 ##
@@ -42,26 +36,6 @@
 ##
 ##
 ##               Documention was created with : nim doc nimFinLib
-##
-##
-## Notes       : nimFinlib is being developed utilizing cx.nim module
-##
-##               to improve coloring of data and positioning of output.
-##
-##               Terminals tested : bash,xterm,st.
-##
-##
-##               strfmt  is now optional , a simple fmtengine was implemented in cx.nim
-##               
-##               as strfmt is often broken due to changes in the evolving compiler
-##               
-##               of course if it works again you also can use strfmt library
-##               
-##               and all/most documentation samples shown use it.
-##               
-##               nfT50 and nfT52 samples have been changed to the fmtengine
-##               
-##               see cx.nim proc fmtx  .
 ##
 ##
 ## Project     : https://github.com/qqtop/NimFinLib
@@ -92,9 +66,25 @@
 ##               
 ##               then copy cx.nim into your dev directory or path
 ##
+## Notes       : nimFinlib is being developed utilizing cx.nim module
 ##
+##               to improve coloring of data and positioning of output.
 ##
-## Notes       : It is assumed that terminal color is black background
+##               Terminals tested : bash,xterm,st.
+##
+##               strfmt  is now optional , a simple fmtengine was implemented in cx.nim
+##               
+##               as strfmt is often broken due to changes in the evolving compiler
+##               
+##               of course if it works again you also can use strfmt library
+##               
+##               and all/most documentation samples shown use it.
+##               
+##               nfT50 and nfT52 samples have been changed to the fmtengine
+##               
+##               see cx.nim proc fmtx  .
+##
+##               It is assumed that terminal color is black background
 ##
 ##               and white text. Other color schemes may not show all output.
 ##               
