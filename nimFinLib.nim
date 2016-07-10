@@ -1693,7 +1693,6 @@ proc showEma* (emx:Ts , N:int = 5) =
        for x in countdown(emx.dd.len-1,emx.dd.len-N,1) :
           println(fmtx(["<11","",">11"],emx.dd[x],spaces(1),emx.tx[x]))
 
-
 proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
   ## getCurrentForex
   ##
@@ -1717,18 +1716,24 @@ proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
           for ac in curs:
              aurl = aurl & ac & "=X,"
 
+          var cc = 0
           # init a Currencies object to hold forex data
           var rf = initCurrencies()
           var zs = splitlines(unquote(getcontent(aurl)))  # get data
           var c = 0
           for zl in zs:
+              
               var x = split(zl,",")
               c = 0 # counter to assign item to correct var
               for val in x:
                        c += 1
                        case c
                         of 1:
-                             rf.cu.add(val)
+                             if val == "N/A":  # that is we do not get the currency like HKD from EURHKD
+                                 var acur = curs[cc][3..6]
+                                 rf.cu.add(acur)
+                             else:    
+                                 rf.cu.add(val)
                         of 2:
                              if val == "N/A":
                                 rf.ra.add(0.00)
@@ -1736,6 +1741,8 @@ proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
                                rf.ra.add(parseFloat(val))
                         else:
                              println("Csv currency data in unexpected format ",truetomato,xpos = xpos)
+              inc cc
+          
           result = rf
           
   except HttpRequestError:
@@ -1756,12 +1763,15 @@ proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
         discard  
 
  
+ 
 
 
 proc showCurrentForex*(curs : openarray[string],xpos:int = 1) =
        ## showCurrentForex
        ##
-       ## a convenience proc to display exchange rates with positiong
+       ## a convenience proc to display exchange rates with positioning
+       ## 
+       ## see note of yahoo outages in getcurrentForex
        ##
        ## .. code-block:: nim
        ##    showCurrentForex(["EURUSD","GBPHKD","CADEUR","AUDNZD"],xpos = 10)
@@ -1835,7 +1845,7 @@ proc showStockdataTable*(a:Stockdata) =
       decho(2)
 
 
-template metal(dc:int):stmt =
+template metal(dc:int):typed =
     ## metal
     ## 
     ## utility template to display kitco metal data
