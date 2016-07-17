@@ -775,8 +775,9 @@ proc showCurrentIDX*(adf:seq[Stocks],xpos:int = 1,header:bool = false){.discarda
    ## 
    ## compact view
    ##
+   
    var idxs = buildStockString(adf)
-   if header == true: hdx(println("Index Data ",yellowgreen,termblack),width = 64,xpos = xpos)
+   if header == true: hdx(println("Index Data ",yellowgreen,termblack),width = 64,nxpos = xpos)
    var qurl=yahoourl  % idxs
    currentIDX(qurl,xpos = xpos)
 
@@ -796,7 +797,8 @@ proc showCurrentIDX*(idxs:string,xpos:int = 1,header:bool = false){.discardable.
     ##     showCurrentIDX("^HSI+^GDAXI+^FTSE+^NYA",xpos = 5)
     ## xpos allows x positioning
     #
-    if header == true: hdx(println("Index Quote ",yellowgreen,termblack),width = 64,xpos = xpos)
+    
+    if header == true: hdx(println("Index Quote ",yellowgreen,termblack),width = 64,nxpos = xpos)
     var qurl=yahoourl  % idxs
     currentIDX(qurl,xpos = xpos)
 
@@ -927,9 +929,8 @@ proc showCurrentStocks*(apf:Portfolio,xpos:int = 1,header:bool = false){.discard
    ##
    ## for full example see nimFinT5.nim
    ##
-
    var stcks = buildStockString(apf)
-   if header == true : hdx(println("Stocks Current Quote for $1" % apf.nx,yellowgreen,termblack,xpos = xpos + 2),width = 64,xpos = xpos)         
+   if header == true : hdx(println("Stocks Current Quote for $1" % apf.nx,yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)         
    var qurl=yahoourl  % stcks
    currentStocks(qurl,xpos = xpos)
 
@@ -950,8 +951,8 @@ proc showCurrentStocks*(stcks:string,xpos:int = 1,header:bool = false){.discarda
    ##
    ## Just wait a bit and try again. Stay calm ! Do not panic !
    ##
-
-   if header == true : hdx(println("Stocks Current Quote ",yellowgreen,termblack,xpos = xpos + 2),width = 64,xpos = xpos)         
+   
+   if header == true : hdx(println("Stocks Current Quote ",yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)         
    var qurl=yahoourl  % stcks
    currentStocks(qurl,xpos = xpos)
 
@@ -974,9 +975,9 @@ proc showCurrentSTX*(apf:Portfolio,xpos:int = 1,header:bool = false){.discardabl
    ##
    ## for full example see nimFinT5.nim
    ##
-
+   
    var stcks = buildStockString(apf)
-   if header == true: hdx(println("Stocks Current Quote for $1" % apf.nx,yellowgreen,termblack,xpos = xpos + 2),width = 64,xpos = xpos)
+   if header == true: hdx(println("Stocks Current Quote for $1" % apf.nx,yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)
    var qurl=yahoourl  % stcks
    currentSTX(qurl,xpos = xpos)
 
@@ -997,7 +998,8 @@ proc showCurrentSTX*(stcks:string,xpos:int = 1,header:bool = false){.discardable
    ##
    ## Just wait a bit and try again. Stay calm ! Do not panic !
    ##
-   if header == true :  hdx(println("Stocks Quote ",yellowgreen,termblack,xpos = xpos + 2),width = 64,xpos = xpos)
+   
+   if header == true :  hdx(println("Stocks Quote ",yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)
    var qurl=yahoourl  % stcks
    currentSTX(qurl,xpos = xpos)
  
@@ -1583,13 +1585,13 @@ proc showStatistics*(z : Stocks) =
 
       decho(1)
       println(fmtx(["<11",">11",">11",">11",">11",">14",">11"],"Item","Open","High","Low","Close","Volume","Adj Close"),yellowgreen)
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[0],z1[0],z1[1],z1[2],z1[3],z1[4],z1[5]))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[1],z2[0],z2[1],z2[2],z2[3],z2[4],z2[5]))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[2],z3[0],z3[1],z3[2],z3[3],z3[4],z3[5]))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[3],z4[0],z4[1],z4[2],z4[3],z4[4],z4[5]))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[4],z5[0],z5[1],z5[2],z5[3],z5[4],z5[5]))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[5],z6[0],z6[1],z6[2],z6[3],z6[4],z6[5]))
-      decho(2)
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[0],ff(z1[0],2),ff(z1[1],2),ff(z1[2],2),ff(z1[3],0),ff(z1[4],2),ff(z1[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[1],ff(z2[0],2),ff(z2[1],2),ff(z2[2],2),ff(z2[3],0),ff(z2[4],2),ff(z2[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[2],ff(z3[0],2),ff(z3[1],2),ff(z3[2],2),ff(z3[3],0),ff(z3[4],2),ff(z3[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[3],ff(z4[0],2),ff(z4[1],2),ff(z4[2],2),ff(z4[3],0),ff(z4[4],2),ff(z4[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[4],ff(z5[0],2),ff(z5[1],2),ff(z5[2],2),ff(z5[3],0),ff(z5[4],2),ff(z5[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[5],ff(z6[0],2),ff(z6[1],2),ff(z6[2],2),ff(z6[3],0),ff(z6[4],2),ff(z6[5],2)))
+      decho(2)                                                                     
 
 
 proc showStatisticsT*(z : Stocks) =
@@ -1601,7 +1603,6 @@ proc showStatisticsT*(z : Stocks) =
       ##
       var ohSet = @[z.ro[0],z.rh[0],z.rl[0],z.rc[0],z.rv[0],z.rca[0]]
       var headerset = @["Open","High","Low","Close","Volume","Adj Close"]
-
       decho(1)
       printLn(fmtx(["<11",">14",">14",">14",">14",">14",">14"],"Item","sum","variance","mean","stddev","max","min"))
       for x in 0.. <ohSet.len:

@@ -1,5 +1,5 @@
-import nimFinLib,times
-from cx import hdx,decho,printLn
+import nimFinLib
+import cx
 # example to quickly display var. data items for one stock code and forex
 
 
@@ -9,7 +9,7 @@ var symb = "EWG"
 z = getsymbol2(symb,"2010-01-01",getDateStr())
 
 var days = 100
-hdx() do : echo "EMA-" & $days & " for " & symb
+hdx(echo("EMA-" & $days & " for " & symb))
 showEma(ema(z,days),5)
 
 hdx() do : echo "Historical Data for " & symb
