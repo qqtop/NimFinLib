@@ -22,7 +22,7 @@
 ##
 ## ProjectStart: 2015-07-07
 ## 
-## Latest      : 2016-05-30 
+## Latest      : 2016-08-04 
 ##
 ## ToDo        :
 ##
@@ -169,16 +169,15 @@ proc getHKEXcodes*(): seq[seq[string]] =
    if (stockcodes.len == companynames.len) and (companynames.len == boardlots.len):
           # save data, also overwrites any existing hkex.csv file
 
-          var hkx = "hkex.csv"
-          open(hkx, fmWrite).close()
-
-          withFile(f, hkx, fmWrite):
-             for x in 0.. <stockcodes.len:
+          let hkx = "hkex.csv"
+          var f = open(hkx,fmWrite)  
+          for x in 0.. <stockcodes.len:
                  f.write(stockcodes[x])
                  f.write(",")
                  f.write(companynames[x])
                  f.write(",")
                  f.writeln(boardlots[x])
+          f.close() 
 
           result = @[stockcodes,companynames,boardlots]
    else:

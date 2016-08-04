@@ -44,7 +44,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2016-05-31
+## Latest      : 2016-08-04
 ##
 ## ToDo        : Ratios , Covariance , Correlation etc.
 ##               improve timeout exception handling if yahoo data fails to be retrieved
@@ -820,7 +820,7 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
         var data = line[1..line.high].split(",") 
         
         if data.len > 1:
-                printBiCol  (fmtx(["","<9"],"Code : ",unquote(data[0])),":",lightskyblue,cyan,xpos = xpos)
+                printBiCol(fmtx(["","<9"],"Code : ",unquote(data[0])),":",lightskyblue,cyan,xpos = xpos)
                 printLnBiCol(fmtx(["","<36"],"   Name : ",unquote(data[1])),":",lightskyblue,pastelyellowgreen)
                 printLnBiCol(fmtx(["",""],"Exch : ",unquote(data[2])),":",yellowgreen,goldenrod,xpos = xpos)
                 #curdn(1)
