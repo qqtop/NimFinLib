@@ -289,16 +289,16 @@ proc showTimeSeries* (ats:Ts,header,ty:string,N:int,fgr:string = yellowgreen,bgr
    if ats.dd.len > 0:
         if ty == "all":
             for x in 0.. <ats.tx.len:
-                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ats.tx[x]))
+                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)))
         elif ty == "tail":
             for x in ats.tx.len-N.. <ats.tx.len:
-                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ats.tx[x]))
+                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)))
             for x in 0.. <N:
-                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ats.tx[x]))
+                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)))
         else:
             ## head is the default in case an empty ty string was passed in
             for x in 0.. <N:
-                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ats.tx[x]))
+                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)))
 
 
 proc initAccount*():Account =
@@ -1480,11 +1480,11 @@ proc showDailyReturnsCl*(self:Stocks , N:int) =
           # show limited rows output if c<>0
           if N == 0:
               for  x in 0.. <dfr.len:
-                      println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),dfr[x]))
+                      println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),ff2(dfr[x],6)))
 
           else:
               for  x in 0.. <N:
-                      println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),dfr[x]))
+                      println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),ff2(dfr[x],6)))
 
 
 
@@ -1505,11 +1505,11 @@ proc showDailyReturnsAdCl*(self:Stocks , N:int) =
             # show limited output if c<>0
             if N == 0:
                 for  x in 0.. <dfr.len:
-                        println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),dfr[x]))
+                        println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),ff2(dfr[x],6)))
 
             else:
                 for  x in 0.. <N:
-                        println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),dfr[x]))
+                        println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),ff2(dfr[x],6)))
 
 
 proc sumDailyReturnsCl*(self:Stocks) : float =
@@ -1585,12 +1585,12 @@ proc showStatistics*(z : Stocks) =
 
       decho(1)
       println(fmtx(["<11",">11",">11",">11",">11",">14",">11"],"Item","Open","High","Low","Close","Volume","Adj Close"),yellowgreen)
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[0],ff(z1[0],2),ff(z1[1],2),ff(z1[2],2),ff(z1[3],0),ff(z1[4],2),ff(z1[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[1],ff(z2[0],2),ff(z2[1],2),ff(z2[2],2),ff(z2[3],0),ff(z2[4],2),ff(z2[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[2],ff(z3[0],2),ff(z3[1],2),ff(z3[2],2),ff(z3[3],0),ff(z3[4],2),ff(z3[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[3],ff(z4[0],2),ff(z4[1],2),ff(z4[2],2),ff(z4[3],0),ff(z4[4],2),ff(z4[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[4],ff(z5[0],2),ff(z5[1],2),ff(z5[2],2),ff(z5[3],0),ff(z5[4],2),ff(z5[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[5],ff(z6[0],2),ff(z6[1],2),ff(z6[2],2),ff(z6[3],0),ff(z6[4],2),ff(z6[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[0],ff(z1[0],2),ff(z1[1],2),ff(z1[2],2),ff(z1[3],2),ff2(z1[4],0),ff(z1[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[1],ff(z2[0],2),ff(z2[1],2),ff(z2[2],2),ff(z2[3],2),ff2(z2[4],0),ff(z2[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[2],ff(z3[0],2),ff(z3[1],2),ff(z3[2],2),ff(z3[3],2),ff2(z3[4],0),ff(z3[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[3],ff(z4[0],2),ff(z4[1],2),ff(z4[2],2),ff(z4[3],2),ff2(z4[4],0),ff(z4[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[4],ff(z5[0],2),ff(z5[1],2),ff(z5[2],2),ff(z5[3],2),ff2(z5[4],0),ff(z5[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[5],ff(z6[0],2),ff(z6[1],2),ff(z6[2],2),ff(z6[3],2),ff2(z6[4],0),ff(z6[5],2)))
       decho(2)                                                                     
 
 
@@ -1606,8 +1606,8 @@ proc showStatisticsT*(z : Stocks) =
       decho(1)
       printLn(fmtx(["<11",">14",">14",">14",">14",">14",">14"],"Item","sum","variance","mean","stddev","max","min"))
       for x in 0.. <ohSet.len:
-          printLn(fmtx(["<11",">14",">14",">14",">14",">14",">14"],headerset[x],ohSet[x].sum,ohSet[x].variance,ohSet[x].mean,
-          ohSet[x].standardDeviation,ohSet[x].max,ohSet[x].min))
+          printLn(fmtx(["<11",">14",">14",">14",">14",">14",">14"],headerset[x],ff(ohSet[x].sum,2),ff(ohSet[x].variance,2),ff(ohSet[x].mean,4),
+          ff(ohSet[x].standardDeviation,4),ff(ohSet[x].max,4),ff(ohSet[x].min,4)))
       decho(2)
 
 
@@ -1692,7 +1692,7 @@ proc showEma* (emx:Ts , N:int = 5) =
    println(fmtx(["<11","",">11"],"Date",spaces(1),"EMA"),yellowgreen)
    if emx.dd.len > 0:
        for x in countdown(emx.dd.len-1,emx.dd.len-N,1) :
-          println(fmtx(["<11","",">11"],emx.dd[x],spaces(1),emx.tx[x]))
+          println(fmtx(["<11","",">11"],emx.dd[x],spaces(1),ff2(emx.tx[x],6)))
 
 proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
   ## getCurrentForex
