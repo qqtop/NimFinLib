@@ -481,7 +481,7 @@ proc currentStocks(aurl:string,xpos:int = 1) =
       # even if yahoo servers are down our data.len is still 1 so
       if data.len > 1:
               printLn(fmtx(["<8","","","","",""],"Code : ",unquote(data[0])," Name : ",unquote(data[1]),"   Market : ",unquote(data[2])),yellowgreen,xpos = xpos)
-              printLn(fmtx(["<10","<9","","","<9","","","<"],"Date : ",unquote(data[4]),unquote(data[5]),spaces(7),"Price  : ",data[3],"  Volume : ",data[8]),white,xpos = xpos)
+              printLn(fmtx(["<10","<11","","","<9","","","<"],"Date : ",unquote(data[4]),unquote(data[5]),spaces(5),"Price  : ",data[3],"  Volume : ",data[8]),white,xpos = xpos)
               var cc = checkchange(unquote(data[9]))
               if cc == -1:  # down
                     printLn(fmtx(["","<8","","<8","","","","","","",""],"Open : ",data[6]," High : ",data[7]," Change :",red,showRune("FFEC"),white,unquote(data[9]),"  Range : ",unquote(data[10])),white,xpos = xpos)
