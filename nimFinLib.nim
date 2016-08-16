@@ -1845,17 +1845,16 @@ proc showStockdataTable*(a:Stockdata) =
       println(fmtx(["<17","",">12"],"Price Short Ratio"," : ",ff(a.shortratio,2)))
       decho(2)
 
-
 template metal(dc:int):typed =
     ## metal
     ## 
-    ## utility template to display kitco metal data
+    ## utility template to display Kitco metal data
     ## 
     ## used by showKitcoMetal
     ## 
     
     if ktd[x].startswith(dl) == true:
-      printLn(ktd[x],yellowgreen,xpos = xpos - 3 )
+      printLn(ktd[x],yellowgreen,xpos = xpos - 2 )
       
     elif find(ktd[x],"Asia / Europe") > 0:
        print(strip(ktd[x],true,true),cx.white,xpos = xpos)
@@ -1870,14 +1869,31 @@ template metal(dc:int):typed =
         printLn(spaces(10) & "MARKET IS CLOSED",truetomato)
               
     elif find(ktd[x],"Update") > 0:
-        printLn(ktd[x] & " New York Time",yellowgreen,xpos = xpos - 3)
-                          
+        printLn(ktd[x] & " New York Time",yellowgreen,xpos = xpos - 2)                    
+
     else:
-                         
-          inc dc
-          if dc < 36:  
-             printLn(ktd[x],cx.white,xpos = xpos - 3)
-     
+           
+          if dc < 36:
+               try:
+                 var ks = ktd[x].split(" ")
+                 if ktd[x].contains("Metals") == true:
+                    printLn(ktd[x],cx.white,xpos = xpos - 1)
+                 else: 
+                    
+                    kss = @[]
+                    if ks.len > 0:
+                      for x in 0.. <ks.len:
+                        if ks[x].len > 0:
+                          kss.add(ks[x].strip(false,true))
+                      if kss[0].startswith("Gold") or kss[0].startswith("Silver") or kss[0].startswith("Platinum") or kss[0].startswith("Palladium") == true:                    
+                          if dc > 18 :
+                              print(spaces(4) & rightarrow,peru,xpos = 1)  
+                          else:  
+                              print(spaces(4) & rightarrow,dodgerblue,xpos = 1)
+                          println(fmtx(["<9",">11",">12",">10",">8",">10",">10"],kss[0],kss[1],kss[2],kss[3],kss[4],kss[5],kss[6]))                  
+          
+               except:
+                  discard
 
 
 proc showKitcoMetal*(xpos:int = 1) = 
@@ -1893,6 +1909,7 @@ proc showKitcoMetal*(xpos:int = 1) =
     let opn = "OPEN" 
     let url = "http://www.kitco.com/texten/texten.html"
     var dc  = 0 # data counter
+    var kss = newSeq[string]()
     #printLn("Gold,Silver,Platinum Spot price : New York and Asia / Europe ",peru,xpos = xpos)
     
     try:
