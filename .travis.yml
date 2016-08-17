@@ -39,6 +39,13 @@ install:
 before_script:
     - export PATH="nim-$BRANCH/bin${PATH:+:$PATH}"
 script:
+  
+    - nim e install_nimble.nims
+    - nim e tests/test_nimscript.nims
+    - nimble update
+    - nimble install random
+    - nimble install nimFinLib
+  
     # Replace uppercase strings!
     - nim c --cc:$CC --verbosity:0 -r nfT52.nim
     # Optional: build docs.
