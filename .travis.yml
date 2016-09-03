@@ -51,6 +51,7 @@ install:
 before_script:
   # `$nim_branch` is used here as well, to add the specific compiler to PATH
   - export PATH="nim-$nim_branch/bin${PATH:+:$PATH}"
+
 script:
   # Specify the C compiler to Nim
   # (the `compiler` option of the build matrix sets the `$CC` variable)
