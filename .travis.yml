@@ -7,8 +7,6 @@
 #          idea is to install nimble to pull in nimFinlib which pulls in cx
 #          install random
 #
-sudo: 
-  - false
 language: 
   - c
 os:
