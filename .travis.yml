@@ -53,16 +53,7 @@ before_script:
   - export PATH="nim-$nim_branch/bin${PATH:+:$PATH}"
 
 script:
-  # Specify the C compiler to Nim
-  # (the `compiler` option of the build matrix sets the `$CC` variable)
-  
-    #- nim e install_nimble.nims
-    #- nim e tests/test_nimscript.nims
-    #- nimble update
-    #- nimble install random
-    #- nimble install nimFinLib
-  
-    # Replace uppercase strings!
+    # Specify the C compiler to Nim
     - nim c --cc:$CC --verbosity:0 -r Examples/nfT52
     # Optional: build docs.
     #- nim doc --docSeeSrcUrl:https://github.com/AUTHOR/MYPROJECT/blob/master --project MYFILE.nim
