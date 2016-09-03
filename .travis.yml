@@ -1,5 +1,3 @@
-
-
 # Copied from https://github.com/nim-lang/Nim/wiki/TravisCI
 # 
 # Work in progress 2016-08-17
@@ -9,11 +7,11 @@
 #          idea is to install nimble to pull in nimFinlib which pulls in cx
 #          install random
 #
-
 sudo: false
-language: c
+language: 
+  - c
 os:
-- linux
+  - linux
 # Run builds with 2 different values of the `nim_branch` environment variable
 env:
 #  - nim_branch=master
