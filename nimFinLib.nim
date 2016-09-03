@@ -44,7 +44,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2016-08-04
+## Latest      : 2016-08-17
 ##
 ## ToDo        : Ratios , Covariance , Correlation etc.
 ##               improve timeout exception handling if yahoo data fails to be retrieved
@@ -1887,9 +1887,24 @@ template metal(dc:int):typed =
                           kss.add(ks[x].strip(false,true))
                       if kss[0].startswith("Gold") or kss[0].startswith("Silver") or kss[0].startswith("Platinum") or kss[0].startswith("Palladium") == true:                    
                           if dc > 18 :
-                              print(spaces(4) & rightarrow,peru,xpos = 1)  
-                          else:  
-                              print(spaces(4) & rightarrow,dodgerblue,xpos = 1)
+                                  
+                                if parsefloat(kss[3]) > 0.00 :
+                                    print(spaces(4) & showRune("FFEa"),lime,xpos = 1)
+                                elif  parsefloat(kss[3]) == 0.00:
+                                    print(spaces(4) & leftrightarrow,dodgerblue,xpos = 1)
+                                else:
+                                    print(spaces(4) & showRune("FFEC"),red,xpos = 1)                            
+                                
+                          else: 
+                                if parsefloat(kss[3]) > 0.00 :
+                                    print(spaces(4) & showRune("FFEa"),lime,xpos = 1)
+                                elif  parsefloat(kss[3]) == 0.00:
+                                    print(spaces(4) & leftrightarrow,dodgerblue,xpos = 1)
+                                else:
+                                    print(spaces(4) & showRune("FFEC"),red,xpos = 1)
+                                
+                              
+                                
                           println(fmtx(["<9",">11",">12",">10",">8",">10",">10"],kss[0],kss[1],kss[2],kss[3],kss[4],kss[5],kss[6]))                  
           
                except:

@@ -1,26 +1,38 @@
 
 
 # Copied from https://github.com/nim-lang/Nim/wiki/TravisCI
+# 
+# Work in progress 2016-08-17
+# and currently trying to get it working .... 
+# 
+# Issues : Install nimble fails -->
+#          idea is to install nimble to pull in nimFinlib which pulls in cx
+#          install random
+#          
 language: c
+# Run builds with 2 different values of the `nim_branch` environment variable
 env:
-  # Build and test against the master and devel branches of Nim
-  - BRANCH=master
-  #- BRANCH=devel
+  - nim_branch=master
+  - nim_branch=devel
+# Run builds with 2 different choices of a C compiler
 compiler:
-  # Build and test using both gcc and clang
   - gcc
   - clang
+# This meams we get a 2x2 build matrix, with a total of 4 builds
 matrix:
+  # It's OK if our project fails to build with Nim devel, but we still want to check it
   allow_failures:
-    # Ignore failures when building against the devel Nim branch
-    - env: BRANCH=devel
+    - env: nim_branch=devel
+  # Call the commit successful as soon as the builds with master branch complete.
   fast_finish: true
-install:
-  - |
-    if [ ! -x nim-$BRANCH/bin/nim ]; then
-      git clone -b $BRANCH --depth 1 git://github.com/nim-lang/nim nim-$BRANCH/
-      cd nim-$BRANCH
-      git clone -b $BRANCH --depth 1 git://github.com/nim-lang/csources csources/
+install:  
+- |
+    # Simply replacing "master" with `$nim_branch` everywhere means we can reuse
+    # this installation script for both branches.
+    if [ ! -x nim-$nim_branch/bin/nim ]; then
+      git clone -b $nim_branch --depth 1 git://github.com/nim-lang/nim nim-$nim_branch/
+      cd nim-$nim_branch
+      git clone -b $nim_branch --depth 1 git://github.com/nim-lang/csources csources/
       cd csources
       sh build.sh
       cd ..
@@ -28,7 +40,7 @@ install:
       bin/nim c koch
       ./koch boot -d:release
     else
-      cd nim-$BRANCH
+      cd nim-$nim_branch
       git fetch origin
       if ! git merge FETCH_HEAD | grep "Already up-to-date"; then
         bin/nim c koch
@@ -37,9 +49,13 @@ install:
     fi
     cd ..
 before_script:
-    - export PATH="nim-$BRANCH/bin${PATH:+:$PATH}"
+  # `$nim_branch` is used here as well, to add the specific compiler to PATH
+  - export PATH="nim-$nim_branch/bin${PATH:+:$PATH}"
 script:
-  
+  # Specify the C compiler to Nim
+  # (the `compiler` option of the build matrix sets the `$CC` variable)
+  - nim compile --cc:$CC --verbosity:0 --run tests/main
+
     - nim e install_nimble.nims
     - nim e tests/test_nimscript.nims
     - nimble update
@@ -47,14 +63,16 @@ script:
     - nimble install nimFinLib
   
     # Replace uppercase strings!
-    - nim c --cc:$CC --verbosity:0 -r nfT52.nim
+    - nim c --cc:$CC --verbosity:0 -r Examples/nfT52
     # Optional: build docs.
     #- nim doc --docSeeSrcUrl:https://github.com/AUTHOR/MYPROJECT/blob/master --project MYFILE.nim
 cache:
+  # Cache both compilers easily
   directories:
     - nim-master
     - nim-devel
 branches:
   except:
-    - gh-pages
+- gh-pages
 
+  
