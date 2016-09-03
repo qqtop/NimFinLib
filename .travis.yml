@@ -9,7 +9,7 @@
 #          idea is to install nimble to pull in nimFinlib which pulls in cx
 #          install random
 #          
-language: c
+language: nim
 # Run builds with 2 different values of the `nim_branch` environment variable
 env:
   - nim_branch=master
