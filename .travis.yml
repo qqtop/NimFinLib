@@ -55,8 +55,7 @@ before_script:
 script:
   # Specify the C compiler to Nim
   # (the `compiler` option of the build matrix sets the `$CC` variable)
-  - nim compile --cc:$CC --verbosity:0 --run tests/main
-
+  
     - nim e install_nimble.nims
     - nim e tests/test_nimscript.nims
     - nimble update
