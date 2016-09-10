@@ -1,11 +1,13 @@
 # Copied from https://github.com/nim-lang/Nim/wiki/TravisCI
 # 
-# Work in progress 2016-08-17
+# Work in progress 2016-09-03
 # and currently trying to get it working .... 
+# unfortunately it fails with a crappy excuse or another
 # 
 # Issues : Install nimble fails -->
 #          idea is to install nimble to pull in nimFinlib which pulls in cx
 #          install random
+#         
 #
 language: c
 os:

@@ -6,14 +6,14 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.0.7
+## Version     : 0.0.8
 ##
-## Compiler    : nim 0.13.1
+## Compiler    : nim 0.14.3
 ##
 ##
 ## Description : A library to support financial calculations with Nim
 ##
-##               with focus on Hongkong Stock Exchange data
+##               with focus on Hongkong Stock Exchange data 
 ##
 ##
 ## Project     : https://github.com/qqtop/NimFinLib
@@ -22,7 +22,7 @@
 ##
 ## ProjectStart: 2015-07-07
 ## 
-## Latest      : 2016-08-04 
+## Latest      : 2016-09-10 
 ##
 ## ToDo        :
 ##
@@ -297,6 +297,46 @@ proc hkPfseq*(anf: Portfolio;hkexcodes:seq[seq[string]]):seq[int]=
   result = pfseq
 
 
+proc getCompanyName*(astock:Stocks):string = 
+      ## getCompanyName
+      ## 
+      ## get the actual hk stock company name as registered in HKEX
+      ##  
+      ## 
+      var hkexcodes = initHKEX()
+      var stockseq = newSeq[int]()
+      var dastock = $(astock.stock)
+      dastock.removesuffix(".HK")
+      if dastock.len < 5:
+        dastock = "0" & dastock
+      stockseq.add(getHKEXseq(hkexcodes[0],dastock))
+      var compname = hkexcodes[1][stockseq[0]]
+      result = compname
+      
+
+
+proc getBoardLot*(astock:Stocks):string = 
+      ## getCompanyName
+      ## 
+      ## get the actual hk stock company name as registered in HKEX
+      ##  
+      ## 
+      var hkexcodes = initHKEX()
+      var stockseq = newSeq[int]()
+      var dastock = $(astock.stock)
+      dastock.removesuffix(".HK")
+      if dastock.len < 5:
+        dastock = "0" & dastock
+      stockseq.add(getHKEXseq(hkexcodes[0],dastock))
+      var boardlot = hkexcodes[2][stockseq[0]]
+      result = boardlot
+      
+
+
+
+
+
+
 proc showQuoteTableHk*(apfData: Portfolio) =
      ## showQuoteTable
      ##
@@ -363,7 +403,7 @@ proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:stri
       var z = randomInt(0,hl)
       discard rndpf.haskeyorput(z,$(hkexcodes[0][z]))
 
-  decho(2)
+  decho(1)
   var pf1 = initPortfolio()
   pf1.nx = "RandomPortfolio - HK"
   var pfpool = initPool()
@@ -383,7 +423,7 @@ proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:stri
   result = (pf1,pfseq)
 
 
-proc quickPortfolioHk*(n:int = 5) =
+proc quickPortfolioHk*(n:int = 5) : Portfolio =
    ## quickPortfolioHk
    ## 
    ## just show a random portfolio of Hongkong stocks for quick demoing
@@ -396,7 +436,29 @@ proc quickPortfolioHk*(n:int = 5) =
    ##    doFinish()
    ## 
    ## 
-   showQuoteTableHk(hkRandomPortfolio(n)[0])
+   var z = hkRandomPortfolio(n)[0]
+   showQuoteTableHk(z)
+   result = z
+
+
+proc doFinishHk*() =
+    ## doFinish
+    ##
+    ## a end of program routine which displays some information
+    ##
+    ## can be changed to anything desired
+    ##
+    ## and should be the last line of the application
+    ##
+    decho(2)
+    infoLine()
+    printLn(" - " & year(getDateStr()),brightblack)
+    print(fmtx(["","","","",""],"Library     : ","libFinHk : ",LIBFINHKVERSION," - " ,"qqTop "),dodgerblue)
+    printLn(" - " & year(getDateStr()),brightblack)
+    print(fmtx(["<14"],"Elapsed     : "),yellowgreen)
+    printLn(fmtx(["<",">5"],ff(epochtime() - cx.start,3),"secs"),goldenrod)
+    echo()
+    quit(0)
 
 
 

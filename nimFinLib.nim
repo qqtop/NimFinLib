@@ -6,7 +6,7 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.7.6
+## Version     : 0.2.7.7
 ##
 ## Compiler    : nim 0.14.2 up dev branch
 ##
@@ -128,7 +128,7 @@ import
        algorithm,math,unicode,stats,  
        "random-0.5.3/random"
 
-let NIMFINLIBVERSION* = "0.2.7.6"
+let NIMFINLIBVERSION* = "0.2.7.7"
 
 let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
 
@@ -276,7 +276,7 @@ proc showTimeSeries* (ats:Ts,header,ty:string,N:int,fgr:string = yellowgreen,bgr
    ##
    ## .. code-block:: nim
    ##     # show adj. close price , 5 rows head and tail 372 days apart
-   ##     var myD =initStocks()
+   ##     var myD = initStocks()
    ##     myD = getSymbol2("AAPL",minusdays(getDateStr(),372),getDateStr())
    ##     var mydT = timeseries(myD,"a") # adjusted close
    ##     echo()
@@ -285,20 +285,19 @@ proc showTimeSeries* (ats:Ts,header,ty:string,N:int,fgr:string = yellowgreen,bgr
    ##
 
 
-   printLn(fmtx(["<11","",">11"],"Date",spaces(1),header),fgr)
+   printLn(fmtx(["<11","",">11"],"Date",spaces(1),header),fgr,xpos = xpos)
    if ats.dd.len > 0:
         if ty == "all":
             for x in 0.. <ats.tx.len:
-                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)))
+                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)),xpos = xpos)
         elif ty == "tail":
-            for x in ats.tx.len-N.. <ats.tx.len:
-                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)))
-            for x in 0.. <N:
-                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)))
+            for x in (ats.tx.len - N).. <ats.tx.len:
+                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)),xpos = xpos)
+         
         else:
             ## head is the default in case an empty ty string was passed in
             for x in 0.. <N:
-                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)))
+                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)),xpos = xpos)
 
 
 proc initAccount*():Account =
@@ -1021,7 +1020,7 @@ proc ymonth*(aDate:string) : string =
 
 
 
-proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
+proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Stocks =
     ## getSymbol2
     ##
     ## the work horse proc for getting yahoo data in csv format
@@ -1034,12 +1033,14 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
     # together with an error message
 
     if validdate(startDate) and validdate(endDate):
-
-          stdout.write(fmtx(["<15"],"Processing   : "))
-          print(fmtx(["<8"],symb & spaces(1)),green)
-          print(fmtx(["<11","","<11"],startDate,spaces(1),endDate))
-          # end feedback line
-
+          if processFlag == true:
+             stdout.write(fmtx(["<15"],"Processing   : "))
+             print(fmtx(["<8"],symb & spaces(1)),green)
+             print(fmtx(["<11","","<11"],startDate,spaces(1),endDate))
+             # end feedback line
+          else:
+              println("Processing... ",lightskyblue)
+              curup(1)
           # set up dates for yahoo
           var sdy = year(startDate)
           var sdm = ymonth(startDate)
@@ -1110,6 +1111,7 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
              println("Error : Data file for $1 could not be opened " % symb,red)
 
           # now parse the csv file
+         
           var x: CsvParser
           open(x, s , acvsfile, separator=',')
           while readRow(x):
@@ -1163,9 +1165,10 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
                     else :
                           println("Csv Data in unexpected format for Stocks :" & symb,red)
 
-          # feedbacklines can be commented out
-          println(" --> Rows processed : " & $processedRows(x),salmon)
-
+          # feedbacklines can be shown with processFlag set to true
+          if processFlag == true:
+             println(" --> Rows processed : " & $processedRows(x),salmon)
+          
 
           # close CsvParser
           close(x)
