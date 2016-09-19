@@ -81,6 +81,8 @@ Tests and Examples
       
       examplex    short examples 
       
+      minifin     small application showing index,stock,currency and metal data
+      
       nfT52       the main raw testing suite
       
       nfT50       stock and index display test
@@ -89,6 +91,7 @@ Tests and Examples
       
 
 Requirements
+------------
 
       strfmt and random can be installed with nimble
                 
@@ -96,6 +99,7 @@ Requirements
            
  
 Installation 
+============
 
       nimble install nimFinLib 
       
@@ -103,7 +107,7 @@ Installation
 
 
 example1.nim 
-------------
+
 
 ```nimrod         
 import nimFinLib,times,strutils
@@ -161,3 +165,5 @@ NOTE :
      
      Tested Ubuntu 14.04 LTS , openSuse 13.2 , openSuse Leap42.1 ,openSuse TumbleWeed
               
+
+![Image](http://qqtop.github.io/qqtop-small.png?raw=true)
