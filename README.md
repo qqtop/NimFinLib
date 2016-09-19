@@ -99,7 +99,7 @@ Requirements
            
  
 Installation 
-============
+------------
 
       nimble install nimFinLib 
       
