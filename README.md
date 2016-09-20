@@ -73,6 +73,7 @@ API Docs
       for a library pertaining to Hongkong Stocks see
 
       http://qqtop.github.io/libFinHk.html
+      
 
 Tests and Examples
 ------------------
@@ -93,9 +94,12 @@ Tests and Examples
 Requirements
 ------------
 
-      strfmt and random can be installed with nimble
-                
-      cx  from  https://github.com/qqtop/NimCx  will be pulled in automatically
+            
+      random    nimble install random
+      
+      cx        nimble install https://github.com/qqtop/NimCx.git
+      
+      strfmt    nimble install strfmt   (optional as a basic format engine available in cx)
            
  
 Installation 
@@ -103,7 +107,9 @@ Installation
 
       nimble install nimFinLib 
       
-      Note : it is always a good idea to remove old packages from the .nimble/pkgs dir  
+      Note : it is always a good idea to remove old packages from the .nimble/pkgs dir 
+      
+             as version numbers may not be updated often. 
 
 
 example1.nim 

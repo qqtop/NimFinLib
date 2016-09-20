@@ -44,7 +44,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2016-08-17
+## Latest      : 2016-09-20
 ##
 ## ToDo        : Ratios , Covariance , Correlation etc.
 ##               improve timeout exception handling if yahoo data fails to be retrieved
@@ -54,7 +54,9 @@
 ##
 ## Contributors: reactorMonk
 ##
-## Requires    : random and cx.nim
+## Requires    :
+## 
+##               random and cx.nim
 ##
 ##               cx.nim will be automatically installed 
 ##               
@@ -66,7 +68,9 @@
 ##               
 ##               then copy cx.nim into your dev directory or path
 ##
-## Notes       : nimFinlib is being developed utilizing cx.nim module
+## Notes       :
+## 
+##               nimFinlib is being developed utilizing cx.nim module
 ##
 ##               to improve coloring of data and positioning of output.
 ##
@@ -104,7 +108,9 @@
 ##               
 ##               
 ##
-## Tests       : For comprehensive tests and example usage see 
+## Tests       : 
+## 
+##               For comprehensive tests and example usage see 
 ## 
 ##               nfT50.nim
 ##               
@@ -113,7 +119,9 @@
 ##               minifin.nim
 ## 
 ##
-## Installation: git clone https://github.com/qqtop/NimFinLib.git
+## Installation: 
+## 
+##               git clone https://github.com/qqtop/NimFinLib.git
 ##
 ##               or
 ##
@@ -483,13 +491,13 @@ proc currentStocks(aurl:string,xpos:int = 1) =
               printLn(fmtx(["<10","<11","","","<9","","","<"],"Date : ",unquote(data[4]),unquote(data[5]),spaces(5),"Price  : ",data[3],"  Volume : ",data[8]),white,xpos = xpos)
               var cc = checkchange(unquote(data[9]))
               if cc == -1:  # down
-                    printLn(fmtx(["","<8","","<8","","","","","","",""],"Open : ",data[6]," High : ",data[7]," Change :",red,showRune("FFEC"),white,unquote(data[9]),"  Range : ",unquote(data[10])),white,xpos = xpos)
+                    printLn(fmtx(["","<8","","<8","","","","","","",""],"Open : ",data[6]," High : ",data[7]," Change :",red,downarrow,white,unquote(data[9]),"  Range : ",unquote(data[10])),white,xpos = xpos)
               
               elif cc == 0: # N/A
                     printLn(fmtx(["","<8","","<5","","","","","","","","",""],"Open : ",data[6]," High : ",data[7]," Change :",white,".",skyblue,unquote(data[9]),white,"  Range  : ",skyblue,unquote(data[10])),white,xpos = xpos)
        
               else :  # up
-                    printLn(fmtx(["","<8","","<8","","","","","","",""],"Open : ",data[6]," High : ",data[7]," Change :",lime,showRune("FFEA"),white,unquote(data[9]),"  Range : ",unquote(data[10])),white,xpos = xpos)
+                    printLn(fmtx(["","<8","","<8","","","","","","",""],"Open : ",data[6]," High : ",data[7]," Change :",lime,uparrow,white,unquote(data[9]),"  Range : ",unquote(data[10])),white,xpos = xpos)
        
               printLn(repeat("-",tw))
       else:
@@ -520,19 +528,19 @@ proc currentIndexes(aurl:string,xpos:int = 1) {.discardable.} =
       var data = line[1..line.high].split(",")
       if data.len > 1:
               var cc = checkChange(unquote(data[9]))
-             
+              
               case cc
                   of -1 :                                       
-                          printLn(fmtx(["",">7", " ","<9","  ",">7","","<16","  ",">7", "  ","<6", "","<7", "","<10","", "<8" ,"   ",">9", "","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",red , showRune("FFEC"),lightskyblue , unquote(data[3])))
-                          printLn(fmtx(["","","","<8","","","","<2","",">17",  "", "","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",red , showRune("FFEC") ,white , unquote(data[9]),yellowgreen,"    Range  : ",white,unquote(data[10])))            
+                          printLn(fmtx(["",">7"," ","<9","  ",">7","","<16","  ",">7","  ","<6","","<7","","<10","", "<8" ,"   ",">9", "","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",red , downarrow,lightskyblue , unquote(data[3])))
+                          printLn(fmtx(["","","","<8","","","","","",">17","","","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",red,downarrow,white , unquote(data[9]),yellowgreen,"    Range  : ",white,unquote(data[10])))            
                                             
                   of  0 : 
-                          printLn(fmtx(["",">7", " ","<9","  ",">7","","<16","  ",">7", "  ","<6", "","<7", "","<10","", "<8" ,"   ",">9", "","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",white, ".",lightskyblue , unquote(data[3])))
-                          printLn(fmtx(["","","","<8","","","","<2","",">17",  "", "","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",white," ",white , unquote(data[9]),yellowgreen,"    Range   :  ",white,unquote(data[10])))             
+                          printLn(fmtx(["",">7"," ","<9","  ",">7","","<16","  ",">7","  ","<6","","<7","","<10","","<8","   ",">9","","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",white, ".",lightskyblue , unquote(data[3])))
+                          printLn(fmtx(["","","","<8","","","","<2","",">17","","","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",white," ",white , unquote(data[9]),yellowgreen,"    Range   :  ",white,unquote(data[10])))             
                           
                   of  1 : 
-                          printLn(fmtx(["",">7", " ","<9","  ",">7","","<16","  ",">7", "  ","<6", "","<7", "","<10","", "<8" ,"   ",">9", "","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",lime , showRune("FFEA"),lightskyblue , unquote(data[3])))
-                          printLn(fmtx(["","","","<8","","","","<2","",">17",  "", "","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",lime ,showRune("FFEA") ,white , unquote(data[9]),yellowgreen,"    Range  : ",white,unquote(data[10])))
+                          printLn(fmtx(["",">7"," ","<9","  ",">7","","<16","  ",">7","  ","<6","","<7","","<10","","<8","   ",">9","","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",lime , uparrow,lightskyblue , unquote(data[3])))
+                          printLn(fmtx(["","","","<8","","","","","",">17","","","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",lime,uparrow,white , unquote(data[9]),yellowgreen,"    Range  : ",white,unquote(data[10])))
                     
                   else  : printLn("Data Error",red)
                           
@@ -630,7 +638,7 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
                 var chgdis = slmdis + 1   # used for fine alignment of change data xpos
                 case cc
                   of -1 : 
-                          print(showRune("FFEC"),red,xpos = xpos + 31)
+                          print(downarrow,red,xpos = xpos + 31)
                           curup(1)
                           printSlim(data[3],truetomato,xpos = xpos + slmdis,align = "right")
                           print("Change",red,xpos = xpos + chgdis)
@@ -661,7 +669,7 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
                              print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)
                              curdn(1)
                   of  1 : 
-                          print(showRune("FFEA"),lime,xpos = xpos + 31)
+                          print(uparrow,lime,xpos = xpos + 31)
                           curup(1)
                           printSlim(data[3],lime,xpos = xpos + slmdis ,align = "right")         
                           print("Change",yellowgreen,xpos = xpos + chgdis)
@@ -760,7 +768,7 @@ proc showCurrentIndexes*(idxs:string,xpos:int = 1){.discardable.} =
     ## wide view
     ##
     ## .. code-block:: nim
-    ##     showCurrentIDX("^HSI+^GDAXI+^FTSE+^NYA",xpos = 5)
+    ##     showCurrentIndexes("^HSI+^GDAXI+^FTSE+^NYA",xpos = 5)
     ## xpos allows x positioning
     #
     var qurl=yahoourl  % idxs
@@ -831,7 +839,7 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
                 var chgdis = slmdis + 1   # used for fine alignment of change data xpos
                 case cc
                   of -1 : 
-                          print(showRune("FFEC"),red,xpos = xpos + 31)
+                          print(downarrow,red,xpos = xpos + 31)
                           curup(1)
                           printSlim(data[3],truetomato,xpos = xpos + slmdis,align = "right")
                           print("Change",red,xpos = xpos + chgdis)
@@ -863,7 +871,7 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
                              print("N/A",xpos = xpos + chgdis)
                           curdn(1)
                   of  1 : 
-                          print(showRune("FFEA"),lime,xpos = xpos + 31)
+                          print(uparrow,lime,xpos = xpos + 31)
                           curup(1)
                           printSlim(data[3],lime,xpos = xpos + slmdis ,align = "right")         
                           print("Change",yellowgreen,xpos = xpos + chgdis)
@@ -1892,19 +1900,19 @@ template metal(dc:int):typed =
                           if dc > 18 :
                                   
                                 if parsefloat(kss[3]) > 0.00 :
-                                    print(spaces(4) & showRune("FFEa"),lime,xpos = 1)
+                                    print(spaces(4) & uparrow,lime,xpos = 1)
                                 elif  parsefloat(kss[3]) == 0.00:
                                     print(spaces(4) & leftrightarrow,dodgerblue,xpos = 1)
                                 else:
-                                    print(spaces(4) & showRune("FFEC"),red,xpos = 1)                            
+                                    print(spaces(4) & downarrow,red,xpos = 1)                            
                                 
                           else: 
                                 if parsefloat(kss[3]) > 0.00 :
-                                    print(spaces(4) & showRune("FFEa"),lime,xpos = 1)
+                                    print(spaces(4) & uparrow,lime,xpos = 1)
                                 elif  parsefloat(kss[3]) == 0.00:
                                     print(spaces(4) & leftrightarrow,dodgerblue,xpos = 1)
                                 else:
-                                    print(spaces(4) & showRune("FFEC"),red,xpos = 1)
+                                    print(spaces(4) & downarrow,red,xpos = 1)
                                 
                               
                                 
