@@ -64,9 +64,9 @@
 ##
 ##               alternatively get cx.nim from the NimCx project like so
 ##               
-##               git clone https://github.com/qqtop/NimCx.git
+##               nimble install https://github.com/qqtop/NimCx.git
 ##               
-##               then copy cx.nim into your dev directory or path
+##               
 ##
 ## Notes       :
 ## 
