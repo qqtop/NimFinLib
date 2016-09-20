@@ -46,9 +46,10 @@
 ## 
 ## Latest      : 2016-09-20
 ##
-## ToDo        : Ratios , Covariance , Correlation etc.
-##               improve timeout exception handling if yahoo data fails to be retrieved
-##               or is temporary unavailable for certain markets
+## ToDo        : 
+## 
+##               Ratios , Covariance , Correlation , Plotting advanced functions etc.
+##               
 ##
 ## Programming : qqTop
 ##
