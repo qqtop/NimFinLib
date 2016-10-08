@@ -1,6 +1,6 @@
 import os,terminal,sequtils,strutils,times,math,stats,unicode,tables
 import nimFinLib,cx
-import "random-0.5.2/random"
+import "random-0.5.3/random"
 # comment next line if tests concerning libFinHk not required
 import libFinHk
 # uncomment next line for nimprofiler 
@@ -25,12 +25,9 @@ import libFinHk
 ## kcachegrind
 
 
-var start = epochTime()
-
-
-echo ()
+echo()
 superheader(" Testing nimFinLib  ")
-echo ()
+echo()
 
 
 # symbols holds a list of yahoo type stock codes
@@ -113,9 +110,9 @@ for stockdata in stockpool:
 account.pf.add(portfolio)
 
 # now all is set and data can be used
-echo ()
+echo()
 superheader(" Tests for Account , Portfolio ,Stocks types ")
-echo ()
+echo()
 
 # access the first portfolio inside of account and show name of this portfolio
 echo account.pf[0].nx
@@ -153,9 +150,9 @@ echo "Show hist. stock data between 2 dates incl. if available"
 showhistdata(data,"2015-10-12","2015-11-15")
 echo()
 
-echo ()
+echo()
 superheader(" Tests for dailyReturns ")
-echo ()
+echo()
 
 
 # now we can use our data for some basic calculations
@@ -169,7 +166,7 @@ msgy() do: echo "Most recent 5 dailyreturns based on adjc price"
 showdailyReturnsAdCl(data,5)
 
 
-echo ()
+echo()
 msgy() do: echo "Show tail 2 rows = most recent dailyreturns based on adjc"
 # if we need the actual returnseries for further use we need to save it
 # Note : we need to pass the desired data column
@@ -181,14 +178,14 @@ for x in 0.. <rets.tail(2).len :
 # we also can use the convenient show proc to display data
 showdailyReturnsAdCl(data,2)
 
-echo ()
+echo()
 # we can show the sum of dailyreturns
 echo "DailyReturns sum based on Close Price     : ",Rune(ord(11593))," ",sumdailyReturnsCl(data)
 echo "DailyReturns sum based on AdjClose Price  : ",Rune(ord(11593))," ",sumdailyReturnsAdCl(data)
 
-echo ()
+echo()
 superheader(" Tests for timeseries ")
-echo ()
+echo()
 
 # this returns a date column and one of the ohlcva data columns
 msgy() do : echo "\nTest timeseries - show recent 5 rows for $1\n" % data.stock
@@ -220,7 +217,7 @@ printLn(fmtx(["","","<10","",""],"tail(1) ",spaces(3),$(ts.dd.tail(1)[0]),spaces
 # so a table with its many options can be a good choice too
 # http://nim-lang.org/docs/tables.html#OrderedTable
 # for reference:
-# echo ()
+# echo()
 # msgy() do : echo"Test OrderedTable"
 # msgg() do : echo "{:<11} {:>11} ".fmt("Date",htable[ohlcva])
 # # init table
@@ -235,9 +232,9 @@ printLn(fmtx(["","","<10","",""],"tail(1) ",spaces(3),$(ts.dd.tail(1)[0]),spaces
 # echo "Keys : ",atable.len
 
 
-echo ()
+echo()
 superheader(" Tests for ema (exponential moving average)  ")
-echo ()
+echo()
 
 # for ema  we need a df object and number of days , maybe 22  <-- N
 # we get back a Ts object
@@ -249,9 +246,9 @@ echo "EMA for : ", data.stock
 showEma(ema22,5)
 
 
-echo ()
+echo()
 superheader(" Tests for statistics on Stocks type         ")
-echo ()
+echo()
 
 # remember that : data = account.pf[0].dx[0]
 # so we can get all the statistics for this stock like so
@@ -273,9 +270,9 @@ showStatisticsT(data)
 
 # these tests work with statistics.nim
 when declared(statistics.quantile):
-    echo ()
+    echo()
     superheader(" Tests for quantile , kurtosis & skewness   ")
-    echo ()
+    echo()
     echo "0.25  : ",abs(quantile(data.open, 0.25))
     echo "0.50  : ",abs(quantile(data.open, 0.5))
     echo "0.75  : ",abs(quantile(data.open, 0.75))
@@ -289,9 +286,9 @@ when declared(statistics.quantile):
 
 
 
-echo ()
+echo()
 superheader(" Tests for date and logistic helper procs  ")
-echo ()
+echo()
 
 if ts.dd.len > 0:
     var s = ts.dd.min  # note we use the date series from the timeseries test above
@@ -307,7 +304,7 @@ if ts.dd.len > 0:
     echo "Mins       : ", cx.intervalmins(s,e)
     echo "Secs       : ", cx.intervalsecs(s,e)
 
-    echo ()
+    echo()
     echo "Extract items from date string ",s
     echo cx.year(s)," ",cx.month(s)," ",cx.day(s)
     decho(2)
@@ -343,9 +340,9 @@ for x in -a.. a:
 
 
 
-echo ()
+echo()
 superheader(" Tests for Current Stocks and Indexes  - Wide View")
-echo ()
+echo()
 
 # we can pass a single stock code or multiple stockcodes like so IBM+BP.L+ORCL
 
@@ -365,9 +362,9 @@ showCurrentIndexes(indexpool)
 
 
 
-echo ()
+echo()
 superheader(" Tests for Current Stocks and Indexes  - Compact View")
-echo ()
+echo()
 
 # we can pass some stocks from around the world
 showCurrentSTX("AAPL+IBM+BP.L+BAS.DE")
@@ -388,9 +385,9 @@ showCurrentIDX(indexpool)
 decho(2)
 
 
-echo ()
+echo()
 superheader(" Testing getSymbol3 - Additional stock info ")
-echo ()
+echo()
 
 var symb = "AAPL"
 var sx = getSymbol3(symb)
@@ -401,9 +398,9 @@ showStockdatatable(sx)
 decho(2)
 
 
-echo ()
+echo()
 superHeader(" Tests for Forex rates ")
-echo ()
+echo()
 
 # look at "current" exchange rates as supplied from yahoo
 echo()
@@ -422,15 +419,15 @@ echo()
 
 
 
-echo ()
+echo()
 superHeader(" Test for Kitco Metal Prices ")
 showKitcoMetal()
-echo ()
+echo()
 
 
-echo ()
+echo()
 superheader(" Testing Utility Procs ")
-echo ()
+echo()
 
 var FV : float = 10000
 var PV : float = 0.0
@@ -455,9 +452,9 @@ PV = presentValueFV(FV,0.0625,10.0)
 echo PV
 
 when declared(libFinHk):
-        echo ()
+        echo()
         superheader(" Testing HKEX related procs  requires libFinHk ")
-        echo ()
+        echo()
 
 
         var hxc = initHKEX()
@@ -499,9 +496,9 @@ when declared(libFinHk):
                  echo(fmtx(["<7","",""],hxc[0][x]," --->  ",hkexToYhoo(hxc[0][x])))
 
 
-        echo ()
+        echo()
         superheader(" Create a Random Portfolio with 10 stocks   ")
-        echo ()
+        echo()
 
         # lets create a portfolio with 10 random hongkong stocks
         # get available stock codes

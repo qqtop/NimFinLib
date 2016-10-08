@@ -91,7 +91,6 @@ proc yhooToHKEX*(stc:string):string =
     result = rst
 
 
-
 proc getHKEXcodes*(): seq[seq[string]] =
    ## getHKEXcodes
    ##
@@ -114,7 +113,8 @@ proc getHKEXcodes*(): seq[seq[string]] =
 
 
    let hx ="http://www.hkex.com.hk/eng/market/sec_tradinfo/stockcode/eisdeqty_pf.htm"
-   let html = getContent(hx)
+   let zcli = newHttpClient(timeout = 5000)
+   let html = zcli.getContent(hx)
    var stockcodes   = newSeq[string]()
    var companynames = newSeq[string]()
    var boardlots    = newSeq[string]()
@@ -176,7 +176,7 @@ proc getHKEXcodes*(): seq[seq[string]] =
                  f.write(",")
                  f.write(companynames[x])
                  f.write(",")
-                 f.writeln(boardlots[x])
+                 f.writeLine(boardlots[x])
           f.close() 
 
           result = @[stockcodes,companynames,boardlots]
@@ -207,7 +207,7 @@ proc getHKEXcodesFromFile*(fname : string):seq[seq[string]] =
           # another file check , maybe not necessary , but check if we can read fom stream
           var s = newFileStream(fname, fmRead)
           if s == nil:
-              msgr() do: echo ("Cannot open file : " & fname)
+              msgr() do: echo("Cannot open file : " & fname)
               result = @[]
           else:
               var x: CsvParser

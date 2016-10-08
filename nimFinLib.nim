@@ -436,7 +436,8 @@ proc getCurrentQuote*(stcks:string) : string =
    ## gets the current price/quote from yahoo for 1 stock code
    var aurl=yahoourl  % stcks
    var data = newSeq[string]()
-   var line = getContent(aurl)
+   let zcli = newHttpClient()
+   var line = zcli.getContent(aurl)
    data = line[1..line.high].split(",")
    if data.len > 1:
       result = data[3]
@@ -461,7 +462,8 @@ proc getStocks*(aurl:string,xpos:int = 1):seq[string] =
   var data3 = newSeq[string]()
     
   try:
-       let zz = splitLines(getContent(aurl,timeout = 5000))
+       let zcli = newHttpClient(timeout = 5000)
+       let zz = splitLines(zcli.getContent(aurl))
        for zs in 0.. <zz.len-1: data3.add(zz[zs])    
       
   except HttpRequestError:
@@ -483,7 +485,8 @@ proc currentStocks(aurl:string,xpos:int = 1) =
 
   var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
   try:
-    var ci = getContent(aurl,timeout = 5000)
+    let zcli = newHttpClient(timeout = 5000)
+    var ci = zcli.getContent(aurl)
     for line in ci.splitLines:
       var data = line[1..line.high].split(",")
       # even if yahoo servers are down our data.len is still 1 so
@@ -524,7 +527,8 @@ proc currentIndexes(aurl:string,xpos:int = 1) {.discardable.} =
 
   var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
   try:
-    var ci = getContent(aurl)
+    let zcli = newHttpClient()
+    var ci = zcli.getContent(aurl)
     for line in ci.splitLines:
       var data = line[1..line.high].split(",")
       if data.len > 1:
@@ -622,7 +626,8 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
 
     var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
     try:
-      var ci = getContent(aurl)
+      let zcli = newHttpClient()
+      var ci = zcli.getContent(aurl)
       for line in ci.splitLines:
         var data = line[1..line.high].split(",")
         if data.len > 1:
@@ -823,7 +828,8 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
 
     var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
     try:
-      var ci = getContent(aurl)
+      let zcli = newHttpClient()
+      var ci = zcli.getContent(aurl)
       for line in ci.splitLines:
         var data = line[1..line.high].split(",") 
         
@@ -1281,7 +1287,8 @@ proc getSymbol3*(symb:string):Stockdata =
      var qz : Stockdata
      var stx = "l1c1va2xj1b4j4dyekjm3m4rr5p5p6s7"
      var qurl = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=$2" % [symb, stx]
-     var rx = getcontent(qurl)
+     let zcli = newHttpClient()
+     var rx = zcli.getcontent(qurl)
      var rxs = rx.split(",")
      try:
         qz.price             = parseFloat(strip(rxs[0]))
@@ -1611,15 +1618,15 @@ proc showStatisticsT*(z : Stocks) =
       ##
       ## shows all statistics from a Stocks objects ohlcva columns
       ##
-      ## transposed display  , needs full terminal width
+      ## transposed display  , needs full terminal width , precision set to 2
       ##
       var ohSet = @[z.ro[0],z.rh[0],z.rl[0],z.rc[0],z.rv[0],z.rca[0]]
       var headerset = @["Open","High","Low","Close","Volume","Adj Close"]
       decho(1)
       printLn(fmtx(["<11",">14",">14",">14",">14",">14",">14"],"Item","sum","variance","mean","stddev","max","min"))
       for x in 0.. <ohSet.len:
-          printLn(fmtx(["<11",">14",">14",">14",">14",">14",">14"],headerset[x],ff(ohSet[x].sum,2),ff(ohSet[x].variance,2),ff(ohSet[x].mean,4),
-          ff(ohSet[x].standardDeviation,4),ff(ohSet[x].max,4),ff(ohSet[x].min,4)))
+          printLn(fmtx(["<11",">14",">14",">14",">14",">14",">14"],headerset[x],ff(ohSet[x].sum,2),ff(ohSet[x].variance,2),ff(ohSet[x].mean,2),
+          ff(ohSet[x].standardDeviation,2),ff(ohSet[x].max,2),ff(ohSet[x].min,2)))
       decho(2)
 
 
@@ -1732,7 +1739,8 @@ proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
           var cc = 0
           # init a Currencies object to hold forex data
           var rf = initCurrencies()
-          var zs = splitlines(unquote(getcontent(aurl)))  # get data
+          let zcli = newHttpClient()
+          var zs = splitlines(unquote(zcli.getcontent(aurl)))  # get data
           var c = 0
           for zl in zs:
               
@@ -1940,7 +1948,8 @@ proc showKitcoMetal*(xpos:int = 1) =
     #printLn("Gold,Silver,Platinum Spot price : New York and Asia / Europe ",peru,xpos = xpos)
     
     try:
-            var kt = getContent(url,timeout = 5000)
+            let zcli = newHttpClient(timeout = 5000)
+            var kt = zcli.getContent(url)
   
             var kts = splitlines(kt)
             var ktd = newSeq[string]()
