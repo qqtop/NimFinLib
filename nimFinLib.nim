@@ -6,9 +6,9 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.7.7
+## Version     : 0.2.7.8
 ##
-## Compiler    : nim 0.14.2 up dev branch
+## Compiler    : nim 0.15+  dev branch
 ##
 ##
 ## Description : A basic library for financial calculations with Nim
@@ -44,7 +44,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2016-09-20
+## Latest      : 2016-10-08
 ##
 ## ToDo        : 
 ## 
@@ -137,7 +137,7 @@ import
        algorithm,math,unicode,stats,  
        "random-0.5.3/random"
 
-let NIMFINLIBVERSION* = "0.2.7.7"
+let NIMFINLIBVERSION* = "0.2.7.8"
 
 let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
 
