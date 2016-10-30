@@ -35,10 +35,7 @@
 ##
 ##               Data display procs
 ##
-##
-##               Documention was created with : nim doc nimFinLib
-##
-##
+##               
 ## Project     : https://github.com/qqtop/NimFinLib
 ##
 ## Tested on   : Linux
@@ -285,16 +282,18 @@ proc showTimeSeries* (ats:Ts,header,ty:string,N:int,fgr:string = yellowgreen,bgr
    ## Example
    ##
    ## .. code-block:: nim
-   ##     # show adj. close price , 5 rows head and tail 372 days apart
-   ##     var myD = initStocks()
-   ##     myD = getSymbol2("AAPL",minusdays(getDateStr(),372),getDateStr())
-   ##     var mydT = timeseries(myD,"a") # adjusted close
-   ##     echo()
-   ##     showTimeSeries(mydT,"AdjClose","head",5)
-   ##     showTimeSeries(mydT,"AdjClose","tail",5)
-   ##
-
-
+   ##    import cx,nimFinLib
+   ##    # show adj. close price , 5 rows head and tail 374 days apart
+   ##    var myD = initStocks()
+   ##    myD = getSymbol2("0386.HK",minusdays(getDateStr(),374),getDateStr())
+   ##    var mydT = timeseries(myD,"a") # adjusted close
+   ##    curup(1)
+   ##    echo()
+   ##    showTimeSeries(mydT,"AdjClose","head",5)
+   ##    curup(6)
+   ##    showTimeSeries(mydT,"AdjClose","tail",5,xpos = 30)
+   ##    doFinish()
+   ##    
    printLn(fmtx(["<11","",">11"],"Date",spaces(1),header),fgr,xpos = xpos)
    if ats.dd.len > 0:
         if ty == "all":
@@ -1800,12 +1799,12 @@ proc showCurrentForex*(curs : openarray[string],xpos:int = 1) =
        ##    decho(3)
        ##
        ## .. code-block:: nim
-       ##    
-       ##    var curs = ["EURUSD","GBPHKD","CADEUR","AUDNZD","GBPCNY","JPYHKD"]
+       ##    import cx,nimFinLib
+       ##    var curs = ["EURUSD","GBPHKD","CADEUR","AUDNZD","USDCNY","GBPCNY","JPYHKD"]
        ##    var cursl = curs.len
        ##    showCurrentForex(curs,xpos = 5)
        ##    curup(cursl + 2)
-       ##    drawbox(cursl + 2,36,1,2,xpos = 3)
+       ##    drawbox(cursl + 2,38,1,2,xpos = 3)
        ##    decho(cursl + 5)
        ##    doFinish()
        ##           
