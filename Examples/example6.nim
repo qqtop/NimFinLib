@@ -18,8 +18,8 @@ showEma(ema22,5) # shows ema table with newest on top
 decho(2)
 
 println("Oldest EMA  and Newest EMA  $1 days" % $ndays,peru)
-printlnbicol(ema22.dd.last  & " :  " & $ema22.tx.last)   # oldest last in seq
-printlnbicol(ema22.dd.first & " :  " & $ema22.tx.first)  # newest first in seq
+printlnbicol(ema22.dd.seqlast  & " :  " & $ema22.tx.seqlast)   # oldest last in seq
+printlnbicol(ema22.dd.seqfirst & " :  " & $ema22.tx.seqfirst)  # newest first in seq
              
              
 doFinish()             

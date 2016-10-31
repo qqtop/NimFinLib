@@ -363,7 +363,7 @@ proc showQuoteTableHk*(apfData: Portfolio) =
             # we want 22 days so ..
             # and we just want the newest ema data point which resides in tx[0]
             # ema returns a time series object dx,tx ,but we only need the latest ema value
-            var emadata = ema(stkdata[x],22).tx.first
+            var emadata = ema(stkdata[x],22).tx.seqfirst
             # get the newest stddev of the close price
             var stddev = stkdata[x].rc[0].standardDeviation
             # get the company name
@@ -373,7 +373,7 @@ proc showQuoteTableHk*(apfData: Portfolio) =
             # get the latest quote for a stock
             var cquote = getCurrentQuote(stkdata[x].stock)
             # display the data rows
-            echo(fmtx(["<8","",">9.3f","",">9.3f","",">9.3f","",">9.3f","",">15","",">10","",">9"],stkdata[x].stock ," ", kurtosis(stkdata[x].close)," ", stddev," ",emadata," ",last(stkdata[x].close)," ",compname," ",cquote," ",blot))
+            echo(fmtx(["<8","",">9.3f","",">9.3f","",">9.3f","",">9.3f","",">15","",">10","",">9"],stkdata[x].stock ," ", kurtosis(stkdata[x].close)," ", stddev," ",emadata," ",seqlast(stkdata[x].close)," ",compname," ",cquote," ",blot))
      except IndexError:
          println("Calculation failed . Insufficient Historical Data",red)
 

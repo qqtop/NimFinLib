@@ -116,8 +116,8 @@ example1.nim
 
 
 ```nimrod         
-import nimFinLib,times,strutils
-from cx import decho,cecholn,peru,fmtx
+import nimFinLib,times,strfmt,strutils
+from cx import decho,cecholn,peru
 
 # show latest stock quotes
 showCurrentStocks("IBM+BP.L+0001.HK")
@@ -137,18 +137,19 @@ showhistdata(ibm,"2015-01-12","2015-01-19")
 showdailyReturnsCl(ibm,5)
 decho(3)
 
+# show EMA 14 days
+showEMA(ema(ibm,14),5)
+decho(3)
 
 # show stock name and latest adjusted close
-cecholn(peru,fmtx(["<8","<11",">15"],"Code ","Date ","Adj.Close"))
-echo  fmtx(["<8","","<11","",">15"],ibm.stock,spaces(1),ibm.date.last,spaces(1),ibm.adjc.last)
+cecholn(peru,"{:<8} {:<11} {:>15}".fmt("Code","Date","Adj.Close"))
+echo  "{:<8} {:<11} {:>15}".fmt(ibm.stock,ibm.date.seqlast,ibm.adjc.seqlast)
 decho(1)
-
 
 # show some forex data
 
 showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"])
 decho(3)
-
 
 ```
 

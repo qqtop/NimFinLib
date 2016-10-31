@@ -123,12 +123,12 @@ echo account.pf[0].nx
 
 # access the first stock in the first portfolio in account and show some data
 echo "Name    : ",account.pf[0].dx[0].stock
-echo "Open    : ",account.pf[0].dx[0].open.last
-echo "High    : ",account.pf[0].dx[0].high.last
-echo "Low     : ",account.pf[0].dx[0].low.last
-echo "Close   : ",account.pf[0].dx[0].close.last
-echo "Volume  : ",account.pf[0].dx[0].vol.last
-echo "AdjClose: ",account.pf[0].dx[0].adjc.last
+echo "Open    : ",account.pf[0].dx[0].open.seqlast
+echo "High    : ",account.pf[0].dx[0].high.seqlast
+echo "Low     : ",account.pf[0].dx[0].low.seqlast
+echo "Close   : ",account.pf[0].dx[0].close.seqlast
+echo "Volume  : ",account.pf[0].dx[0].vol.seqlast
+echo "AdjClose: ",account.pf[0].dx[0].adjc.seqlast
 echo "StDevOp : ",account.pf[0].dx[0].ro[0].standardDeviation
 echo "StDevHi : ",account.pf[0].dx[0].rh[0].standardDeviation
 echo "StDevLo : ",account.pf[0].dx[0].rl[0].standardDeviation
@@ -140,10 +140,10 @@ echo "StDevClA: ",account.pf[0].dx[0].rca[0].standardDeviation
 # note last ==> last in from the left or from top
 # so we also can write :
 # data = account.pf[0].dx[0] or
-var data = account.pf.last.dx.last
+var data = account.pf.seqlast.dx.seqlast
 echo()
 echo "Using shortcut to display most recent open value"
-echo data.open.last
+echo data.open.seqlast
 decho(2) # print 2 blank lines
 
 echo "Show hist. stock data between 2 dates incl. if available"
@@ -172,7 +172,7 @@ msgy() do: echo "Show tail 2 rows = most recent dailyreturns based on adjc"
 # Note : we need to pass the desired data column
 var rets = dailyreturns(data.adjc)
 # display last 2 lines of our rets series
-for x in 0.. <rets.tail(2).len :
+for x in 0.. <rets.seqtail(2).len :
    echo data.date[x],"  ",rets[x]
 
 # we also can use the convenient show proc to display data
@@ -195,22 +195,22 @@ var ohlcva = "a"  # here we choose adjclose column
 var ts = data.timeseries(ohlcva)
 # once we have the timeseries it can be displayed with the showTimeseries function
 msgy() do : echo "Head"
-showTimeseries(ts,htable[ohlcva],"head",5) # newest on top
+showTimeseries(ts,htable[ohlcva],head,5) # newest on top
 msgy() do : echo "Tail"
-showTimeseries(ts,htable[ohlcva],"tail",5) # oldest on bottom
+showTimeseries(ts,htable[ohlcva],tail,5) # oldest on bottom
 # to see all rows
 #msgy() do : echo "All"
-#showTimeseries(ts,htable[ohlcva],"all",5) # also available , the 5 here has no effect
+#showTimeseries(ts,htable[ohlcva],all,5) # also available , the 5 here has no effect
 
 echo()
 # testing utility procs
-var ts1 = $(ts.dd.head(1)[0])
-var ts2 = $(ts.tx.head(1)[0])
+var ts1 = $(ts.dd.seqhead(1)[0])
+var ts2 = $(ts.tx.seqhead(1)[0])
 printLn("Timeseries display test ",lime)
-printLn(fmtx(["","","<10","",""],"first   ",spaces(3),ts.dd.first   ,spaces(2) ,ts.tx.first)  ,yellow)
+printLn(fmtx(["","","<10","",""],"seqfirst   ",spaces(3),ts.dd.seqfirst   ,spaces(2) ,ts.tx.seqfirst)  ,yellow)
 printLn(fmtx(["","","<10","",""],"head(1) ",spaces(3),ts1,spaces(2) ,ts2),yellow)
-printLn(fmtx(["","","<10","",""],"last    ",spaces(3),ts.dd.last   ,spaces(2),ts.tx.last),yellow)
-printLn(fmtx(["","","<10","",""],"tail(1) ",spaces(3),$(ts.dd.tail(1)[0]),spaces(2),$(ts.tx.tail(1)[0])),yellow)
+printLn(fmtx(["","","<10","",""],"seqlast    ",spaces(3),ts.dd.seqlast   ,spaces(2),ts.tx.seqlast),yellow)
+printLn(fmtx(["","","<10","",""],"tail(1) ",spaces(3),$(ts.dd.seqtail(1)[0]),spaces(2),$(ts.tx.seqtail(1)[0])),yellow)
 
 
 # if we use an orderedtable we also can get a nicely formated display
@@ -413,8 +413,8 @@ showCurrentForex(checkcurrencies)
 # use the getcurrentForex proc  , we receive a Cf type for unpacking
 var curs = getCurrentForex(@["EURUSD","EURHKD"])
 echo()
-echo("Current EURUSD Rate : ",fmtx(["<8"],curs.ra.last))
-echo("Current EURHKD Rate : ",fmtx(["<8"],curs.ra.first))
+echo("Current EURUSD Rate : ",fmtx(["<8"],curs.ra.seqlast))
+echo("Current EURHKD Rate : ",fmtx(["<8"],curs.ra.seqfirst))
 echo()
 
 
@@ -534,7 +534,7 @@ when declared(libFinHk):
                         if dxz.stock.startswith("Error") == false:   # effect of errstflag in nimFinLib
                           if dxz.stock.startswith("    ") == false:
                               randomstockpool.add(dxz)
-                              doassert randomstockpool.first.stock == dxz.stock
+                              doassert randomstockpool.seqfirst.stock == dxz.stock
                               inc rc
                     
     

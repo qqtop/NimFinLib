@@ -139,6 +139,12 @@ let NIMFINLIBVERSION* = "0.2.7.8"
 
 let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
 
+
+const
+      tail* = "tail"
+      head* = "head"
+      all*  = "all"  
+
 type
   
 
@@ -207,7 +213,7 @@ type
   Ts* {.inheritable.} = object
        ## Ts type
        ## is a simple timeseries object which can hold one
-       ## column of any OHLCVA data
+       ## column of any OHLCVA data and corresponding dates
 
        dd* : seq[string]  # date
        tx* : seq[float]   # data
@@ -239,7 +245,14 @@ type
         stdate*   : string
         sttime*   : string
       
-
+proc initTs*():Ts=
+     ## initTs
+     ##
+     ## init a timeseries object
+     var ats : Ts
+     ats.dd = @[]
+     ats.tx = @[]
+     result = ats
 
 proc timeSeries*[T](self:T,ty:string): Ts =
      ## timeseries
@@ -269,6 +282,34 @@ proc timeSeries*[T](self:T,ty:string): Ts =
      return ts
 
 
+proc timeSeriesHead*(ats:Ts,n:int = 5):Ts =
+     ## timeSeriesHead
+     ## 
+     ## returns a timeseries with n elements of the newest data
+     ## 
+     var nats = initTs() 
+     for x in 0.. <n:
+         nats.dd.add($(ats.dd[x]))
+         nats.tx.add(ats.tx[x])
+     result = nats
+
+
+proc timeSeriesTail*(ats:Ts,n:int = 5):Ts =
+     ## timeSeriesTail
+     ## 
+     ## returns a timeseries with n elements of the oldest data
+     ## 
+     var nats = initTs()
+     for x in (ats.tx.len - n).. <ats.tx.len:
+         nats.dd.add($(ats.dd[x]))
+         nats.tx.add(ats.tx[x])
+     result = nats
+
+
+
+
+
+
 proc showTimeSeries* (ats:Ts,header,ty:string,N:int,fgr:string = yellowgreen,bgr:string = black,xpos:int = 0)  =
    ## showTimeseries
    ## takes a Ts object as input as well as a header string
@@ -296,10 +337,10 @@ proc showTimeSeries* (ats:Ts,header,ty:string,N:int,fgr:string = yellowgreen,bgr
    ##    
    printLn(fmtx(["<11","",">11"],"Date",spaces(1),header),fgr,xpos = xpos)
    if ats.dd.len > 0:
-        if ty == "all":
+        if ty == all:
             for x in 0.. <ats.tx.len:
                 println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)),xpos = xpos)
-        elif ty == "tail":
+        elif ty == tail:
             for x in (ats.tx.len - N).. <ats.tx.len:
                 println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)),xpos = xpos)
          
@@ -390,14 +431,7 @@ proc initCurrencies*():Currencies=
      acf.ra = @[]
      result = acf
 
-proc initTs*():Ts=
-     ## initTs
-     ##
-     ## init a timeseries object
-     var ats : Ts
-     ats.dd = @[]
-     ats.tx = @[]
-     result = ats
+
 
 proc initPool*():seq[Stocks] =
   ## initPool
@@ -1409,7 +1443,7 @@ proc showHistData*(adf: Stocks,s: string,e:string) =
     decho(2)
 
 
-proc last*[T](self : seq[T]): T =
+proc seqlast*[T](self : seq[T]): T =
     ## Various data navigation routines
     ##
     ## first,last,head,tail
@@ -1422,7 +1456,7 @@ proc last*[T](self : seq[T]): T =
       discard
 
 
-proc first*[T](self : seq[T]): T =
+proc seqfirst*[T](self : seq[T]): T =
     ## first means oldest row
     ## still need to improve this in case nothing received
     try:
@@ -1430,7 +1464,7 @@ proc first*[T](self : seq[T]): T =
     except:
       result = self[0]
 
-proc tail*[T](self : seq[T] , n: int) : seq[T] =
+proc seqtail*[T](self : seq[T] , n: int) : seq[T] =
     ## tail means most recent rows
     ##
     try:
@@ -1442,15 +1476,15 @@ proc tail*[T](self : seq[T] , n: int) : seq[T] =
        discard
 
 
-proc head*[T](self : seq[T] , n: int) : seq[T] =
+proc seqhead*[T](self : seq[T] , n: int) : seq[T] =
     ## head means oldest rows
     ##
     var self2 = reversed(self)
     try:
         if len(self2) >= n:
-            result = self2[0.. <n].tail(n)
+            result = self2[0.. <n].seqtail(n)
         else:
-            result = self2[0.. <len(self2)].tail(n)
+            result = self2[0.. <len(self2)].seqtail(n)
     except RangeError:
        discard
 
@@ -1698,7 +1732,7 @@ proc ema* (dx : Stocks , N: int = 14) : Ts =
     result = m_emaSeries
 
 
-proc showEma* (emx:Ts , N:int = 5) =
+proc showEma* (emx:Ts , n:int = 5,xpos:int = 1) =
    ## showEma
    ##
    ## convenience proc to display ema series with dates
@@ -1708,10 +1742,10 @@ proc showEma* (emx:Ts , N:int = 5) =
    ## latest data is on top
    ##
    echo()
-   println(fmtx(["<11","",">11"],"Date",spaces(1),"EMA"),yellowgreen)
+   println(fmtx(["<11","",">11"],"Date",spaces(1),"EMA"),yellowgreen,xpos = xpos)
    if emx.dd.len > 0:
-       for x in countdown(emx.dd.len-1,emx.dd.len-N,1) :
-          println(fmtx(["<11","",">11"],emx.dd[x],spaces(1),ff2(emx.tx[x],6)))
+       for x in countdown(emx.dd.len - 1,emx.dd.len - n,1) :  
+          println(fmtx(["<11","",">11"],emx.dd[x],spaces(1),ff2(emx.tx[x],6)),xpos = xpos)
 
 proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
   ## getCurrentForex
@@ -1830,7 +1864,7 @@ proc showStocksTable*(apfdata: Portfolio,xpos:int = 1) =
    for x in 0.. <astkdata.len:
        var sx = astkdata[x] # just for less writing ...
        # display the data rows
-       println(fmtx(["<8",">9.3f",">9.3f",">9.3f",">9.3f",">13",">9.3f",">9.3f",">9.3f",">9.3f",">9.3f"],sx.stock,sx.open.last,sx.high.last,sx.low.last,sx.close.last,sx.vol.last,sx.adjc.last,
+       println(fmtx(["<8",">9.3f",">9.3f",">9.3f",">9.3f",">13",">9.3f",">9.3f",">9.3f",">9.3f",">9.3f"],sx.stock,sx.open.seqlast,sx.high.seqlast,sx.low.seqlast,sx.close.seqlast,sx.vol.seqlast,sx.adjc.seqlast,
        sx.rh[0].standardDeviation,sx.rl[0].standardDeviation,sx.rc[0].standardDeviation,sx.rca[0].standardDeviation))
 
    echo()
