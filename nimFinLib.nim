@@ -1732,20 +1732,35 @@ proc ema* (dx : Stocks , N: int = 14) : Ts =
     result = m_emaSeries
 
 
-proc showEma* (emx:Ts , n:int = 5,xpos:int = 1) =
+proc showEma* (emx:Ts , n:int = 5,ty:string = head,xpos:int = 1) =
    ## showEma
    ##
    ## convenience proc to display ema series with dates
    ##
    ## input is a ema series Ts object and rows to display and N number of rows to display default = 5
    ##
-   ## latest data is on top
+   ## ty parameter enables head,tail or all data to be shown
+   ## 
+   ## note that data shown is in descending order , this may or may not change in the future
    ##
    echo()
    println(fmtx(["<11","",">11"],"Date",spaces(1),"EMA"),yellowgreen,xpos = xpos)
    if emx.dd.len > 0:
-       for x in countdown(emx.dd.len - 1,emx.dd.len - n,1) :  
-          println(fmtx(["<11","",">11"],emx.dd[x],spaces(1),ff2(emx.tx[x],6)),xpos = xpos)
+       case ty 
+        of head :  
+          for x in countdown(emx.dd.len - 1,emx.dd.len - n,1) :  
+              println(fmtx(["<11","",">11"],emx.dd[x],spaces(1),ff2(emx.tx[x],6)),xpos = xpos)
+
+        of tail :
+           for x in countdown(n - 1,0,1) :  
+              println(fmtx(["<11","",">11"],emx.dd[x],spaces(1),ff2(emx.tx[x],6)),xpos = xpos)
+        
+        of all :
+           for x in countdown(emx.dd.len - 1,0,1) :  
+              println(fmtx(["<11","",">11"],emx.dd[x],spaces(1),ff2(emx.tx[x],6)),xpos = xpos)
+
+          
+        else : discard  
 
 proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
   ## getCurrentForex
