@@ -356,7 +356,7 @@ proc showQuoteTableHk*(apfData: Portfolio) =
 
      decho(2)
      # header for the table
-     println(fmtx(["<8",">9",">9",">9",">9",">15",">10",">9"],"Stock  ","   Kurtosis  ","StdDev  ","EMA22  ","    Close  ","Company  ","     Quote  "," BoardLot  "),green)
+     println(fmtx(["<8",">10",">10",">10",">10",">16",">11",">10"],"Stock","Kurtosis","StdDev","EMA22","Close","Company","Quote","BoardLot"),green)
      try:
         for x in 0.. <stkdata.len:
             # to get ema we pass our data to the ema function
