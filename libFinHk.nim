@@ -6,14 +6,14 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.0.7
+## Version     : 0.0.8
 ##
-## Compiler    : nim 0.13.1
+## Compiler    : nim 0.14.3
 ##
 ##
 ## Description : A library to support financial calculations with Nim
 ##
-##               with focus on Hongkong Stock Exchange data
+##               with focus on Hongkong Stock Exchange data 
 ##
 ##
 ## Project     : https://github.com/qqtop/NimFinLib
@@ -22,7 +22,7 @@
 ##
 ## ProjectStart: 2015-07-07
 ## 
-## Latest      : 2016-05-30 
+## Latest      : 2016-09-10 
 ##
 ## ToDo        :
 ##
@@ -91,7 +91,6 @@ proc yhooToHKEX*(stc:string):string =
     result = rst
 
 
-
 proc getHKEXcodes*(): seq[seq[string]] =
    ## getHKEXcodes
    ##
@@ -114,7 +113,8 @@ proc getHKEXcodes*(): seq[seq[string]] =
 
 
    let hx ="http://www.hkex.com.hk/eng/market/sec_tradinfo/stockcode/eisdeqty_pf.htm"
-   let html = getContent(hx)
+   let zcli = newHttpClient(timeout = 5000)
+   let html = zcli.getContent(hx)
    var stockcodes   = newSeq[string]()
    var companynames = newSeq[string]()
    var boardlots    = newSeq[string]()
@@ -169,16 +169,15 @@ proc getHKEXcodes*(): seq[seq[string]] =
    if (stockcodes.len == companynames.len) and (companynames.len == boardlots.len):
           # save data, also overwrites any existing hkex.csv file
 
-          var hkx = "hkex.csv"
-          open(hkx, fmWrite).close()
-
-          withFile(f, hkx, fmWrite):
-             for x in 0.. <stockcodes.len:
+          let hkx = "hkex.csv"
+          var f = open(hkx,fmWrite)  
+          for x in 0.. <stockcodes.len:
                  f.write(stockcodes[x])
                  f.write(",")
                  f.write(companynames[x])
                  f.write(",")
-                 f.writeln(boardlots[x])
+                 f.writeLine(boardlots[x])
+          f.close() 
 
           result = @[stockcodes,companynames,boardlots]
    else:
@@ -208,7 +207,7 @@ proc getHKEXcodesFromFile*(fname : string):seq[seq[string]] =
           # another file check , maybe not necessary , but check if we can read fom stream
           var s = newFileStream(fname, fmRead)
           if s == nil:
-              msgr() do: echo ("Cannot open file : " & fname)
+              msgr() do: echo("Cannot open file : " & fname)
               result = @[]
           else:
               var x: CsvParser
@@ -298,6 +297,46 @@ proc hkPfseq*(anf: Portfolio;hkexcodes:seq[seq[string]]):seq[int]=
   result = pfseq
 
 
+proc getCompanyName*(astock:Stocks):string = 
+      ## getCompanyName
+      ## 
+      ## get the actual hk stock company name as registered in HKEX
+      ##  
+      ## 
+      var hkexcodes = initHKEX()
+      var stockseq = newSeq[int]()
+      var dastock = $(astock.stock)
+      dastock.removesuffix(".HK")
+      if dastock.len < 5:
+        dastock = "0" & dastock
+      stockseq.add(getHKEXseq(hkexcodes[0],dastock))
+      var compname = hkexcodes[1][stockseq[0]]
+      result = compname
+      
+
+
+proc getBoardLot*(astock:Stocks):string = 
+      ## getCompanyName
+      ## 
+      ## get the actual hk stock company name as registered in HKEX
+      ##  
+      ## 
+      var hkexcodes = initHKEX()
+      var stockseq = newSeq[int]()
+      var dastock = $(astock.stock)
+      dastock.removesuffix(".HK")
+      if dastock.len < 5:
+        dastock = "0" & dastock
+      stockseq.add(getHKEXseq(hkexcodes[0],dastock))
+      var boardlot = hkexcodes[2][stockseq[0]]
+      result = boardlot
+      
+
+
+
+
+
+
 proc showQuoteTableHk*(apfData: Portfolio) =
      ## showQuoteTable
      ##
@@ -317,14 +356,14 @@ proc showQuoteTableHk*(apfData: Portfolio) =
 
      decho(2)
      # header for the table
-     printLn(fmtx(["<8",">9",">9",">9",">9",">15",">10",">9"],"Stock  ","   Kurtosis  ","StdDev  ","EMA22  ","    Close  ","Company  ","     Quote  "," BoardLot  "),green)
+     printLn(fmtx(["<8",">10",">10",">10",">10",">16",">11",">10"],"Stock","Kurtosis","StdDev","EMA22","Close","Company","Quote","BoardLot"),green)
      try:
         for x in 0.. <stkdata.len:
             # to get ema we pass our data to the ema function
             # we want 22 days so ..
             # and we just want the newest ema data point which resides in tx[0]
             # ema returns a time series object dx,tx ,but we only need the latest ema value
-            var emadata = ema(stkdata[x],22).tx.first
+            var emadata = ema(stkdata[x],22).tx.seqfirst
             # get the newest stddev of the close price
             var stddev = stkdata[x].rc[0].standardDeviation
             # get the company name
@@ -334,7 +373,7 @@ proc showQuoteTableHk*(apfData: Portfolio) =
             # get the latest quote for a stock
             var cquote = getCurrentQuote(stkdata[x].stock)
             # display the data rows
-            echo(fmtx(["<8","",">9.3f","",">9.3f","",">9.3f","",">9.3f","",">15","",">10","",">9"],stkdata[x].stock ," ", kurtosis(stkdata[x].close)," ", stddev," ",emadata," ",last(stkdata[x].close)," ",compname," ",cquote," ",blot))
+            echo(fmtx(["<8","",">9.3f","",">9.3f","",">9.3f","",">9.3f","",">15","",">10","",">9"],stkdata[x].stock ," ", kurtosis(stkdata[x].close)," ", stddev," ",emadata," ",seqlast(stkdata[x].close)," ",compname," ",cquote," ",blot))
      except IndexError:
          printLn("Calculation failed . Insufficient Historical Data",red)
 
@@ -364,7 +403,7 @@ proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:stri
       var z = randomInt(0,hl)
       discard rndpf.haskeyorput(z,$(hkexcodes[0][z]))
 
-  decho(2)
+  decho(1)
   var pf1 = initPortfolio()
   pf1.nx = "RandomPortfolio - HK"
   var pfpool = initPool()
@@ -384,7 +423,7 @@ proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:stri
   result = (pf1,pfseq)
 
 
-proc quickPortfolioHk*(n:int = 5) =
+proc quickPortfolioHk*(n:int = 5) : Portfolio =
    ## quickPortfolioHk
    ## 
    ## just show a random portfolio of Hongkong stocks for quick demoing
@@ -397,7 +436,29 @@ proc quickPortfolioHk*(n:int = 5) =
    ##    doFinish()
    ## 
    ## 
-   showQuoteTableHk(hkRandomPortfolio(n)[0])
+   var z = hkRandomPortfolio(n)[0]
+   showQuoteTableHk(z)
+   result = z
+
+
+proc doFinishHk*() =
+    ## doFinish
+    ##
+    ## a end of program routine which displays some information
+    ##
+    ## can be changed to anything desired
+    ##
+    ## and should be the last line of the application
+    ##
+    decho(2)
+    infoLine()
+    printLn(" - " & year(getDateStr()),brightblack)
+    print(fmtx(["","","","",""],"Library     : ","libFinHk : ",LIBFINHKVERSION," - " ,"qqTop "),dodgerblue)
+    printLn(" - " & year(getDateStr()),brightblack)
+    print(fmtx(["<14"],"Elapsed     : "),yellowgreen)
+    printLn(fmtx(["<",">5"],ff(epochtime() - cx.start,3),"secs"),goldenrod)
+    echo()
+    quit(0)
 
 
 

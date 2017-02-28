@@ -40,7 +40,7 @@ Example screen from minifin.nim
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|
-| nimFinLib  | Development | 0.2.7.x | MIT opensource | Linux  | Nim >= 0.14.3  |
+| nimFinLib  | Development | 0.2.7.x | MIT opensource | Linux  | Nim >= 0.15    |
 
 
 
@@ -73,6 +73,7 @@ API Docs
       for a library pertaining to Hongkong Stocks see
 
       http://qqtop.github.io/libFinHk.html
+      
 
 Tests and Examples
 ------------------
@@ -80,6 +81,8 @@ Tests and Examples
       nimFinTxx   are test programs to show use of the library .
       
       examplex    short examples 
+      
+      minifin     small application showing index,stock,currency and metal data
       
       nfT52       the main raw testing suite
       
@@ -89,25 +92,32 @@ Tests and Examples
       
 
 Requirements
+------------
 
-      strfmt and random can be installed with nimble
-                
-      cx  from  https://github.com/qqtop/NimCx  will be pulled in automatically
+            
+      random    nimble install random
+      
+      cx        nimble install https://github.com/qqtop/NimCx.git
+      
+      strfmt    nimble install strfmt   (optional as a basic format engine available in cx)
            
  
 Installation 
+------------
 
       nimble install nimFinLib 
       
-      Note : it is always a good idea to remove old packages from the .nimble/pkgs dir  
+      Note : it is always a good idea to remove old packages from the .nimble/pkgs dir 
+      
+             as version numbers may not be updated often. 
 
 
 example1.nim 
-------------
+
 
 ```nimrod         
-import nimFinLib,times,strutils
-from cx import decho,cecholn,peru,fmtx
+import nimFinLib,times,strfmt,strutils
+from cx import decho,cecholn,peru
 
 # show latest stock quotes
 showCurrentStocks("IBM+BP.L+0001.HK")
@@ -127,18 +137,19 @@ showhistdata(ibm,"2015-01-12","2015-01-19")
 showdailyReturnsCl(ibm,5)
 decho(3)
 
+# show EMA 14 days
+showEMA(ema(ibm,14),5)
+decho(3)
 
 # show stock name and latest adjusted close
-cecholn(peru,fmtx(["<8","<11",">15"],"Code ","Date ","Adj.Close"))
-echo  fmtx(["<8","","<11","",">15"],ibm.stock,spaces(1),ibm.date.last,spaces(1),ibm.adjc.last)
+cecholn(peru,"{:<8} {:<11} {:>15}".fmt("Code","Date","Adj.Close"))
+echo  "{:<8} {:<11} {:>15}".fmt(ibm.stock,ibm.date.seqlast,ibm.adjc.seqlast)
 decho(1)
-
 
 # show some forex data
 
 showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"])
 decho(3)
-
 
 ```
 
@@ -161,3 +172,5 @@ NOTE :
      
      Tested Ubuntu 14.04 LTS , openSuse 13.2 , openSuse Leap42.1 ,openSuse TumbleWeed
               
+
+![Image](http://qqtop.github.io/qqtop-small.png?raw=true)
