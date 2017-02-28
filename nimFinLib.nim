@@ -1,4 +1,5 @@
 
+##::
 ##
 ## Program     : nimFinLib
 ##
@@ -6,9 +7,9 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.7.6
+## Version     : 0.2.7.8
 ##
-## Compiler    : nim 0.14.2 up dev branch
+## Compiler    : nim 0.15+  dev branch
 ##
 ##
 ## Description : A basic library for financial calculations with Nim
@@ -34,27 +35,27 @@
 ##
 ##               Data display procs
 ##
-##
-##               Documention was created with : nim doc nimFinLib
-##
-##
+##               
 ## Project     : https://github.com/qqtop/NimFinLib
 ##
 ## Tested on   : Linux
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2016-05-31
+## Latest      : 2016-10-08
 ##
-## ToDo        : Ratios , Covariance , Correlation etc.
-##               improve timeout exception handling if yahoo data fails to be retrieved
-##               or is temporary unavailable for certain markets
+## ToDo        : 
+## 
+##               Ratios , Covariance , Correlation , Plotting advanced functions etc.
+##               
 ##
 ## Programming : qqTop
 ##
 ## Contributors: reactorMonk
 ##
-## Requires    : random and cx.nim
+## Requires    :
+## 
+##               random and cx.nim
 ##
 ##               cx.nim will be automatically installed 
 ##               
@@ -62,11 +63,13 @@
 ##
 ##               alternatively get cx.nim from the NimCx project like so
 ##               
-##               git clone https://github.com/qqtop/NimCx.git
+##               nimble install https://github.com/qqtop/NimCx.git
 ##               
-##               then copy cx.nim into your dev directory or path
+##               
 ##
-## Notes       : nimFinlib is being developed utilizing cx.nim module
+## Notes       :
+## 
+##               nimFinlib is being developed utilizing cx.nim module
 ##
 ##               to improve coloring of data and positioning of output.
 ##
@@ -104,7 +107,9 @@
 ##               
 ##               
 ##
-## Tests       : For comprehensive tests and example usage see 
+## Tests       : 
+## 
+##               For comprehensive tests and example usage see 
 ## 
 ##               nfT50.nim
 ##               
@@ -113,7 +118,9 @@
 ##               minifin.nim
 ## 
 ##
-## Installation: git clone https://github.com/qqtop/NimFinLib.git
+## Installation: 
+## 
+##               git clone https://github.com/qqtop/NimFinLib.git
 ##
 ##               or
 ##
@@ -128,9 +135,15 @@ import
        algorithm,math,unicode,stats,  
        "random-0.5.3/random"
 
-let NIMFINLIBVERSION* = "0.2.7.6"
+let NIMFINLIBVERSION* = "0.2.7.8"
 
 let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
+
+
+const
+      tail* = "tail"
+      head* = "head"
+      all*  = "all"  
 
 type
   
@@ -200,7 +213,7 @@ type
   Ts* {.inheritable.} = object
        ## Ts type
        ## is a simple timeseries object which can hold one
-       ## column of any OHLCVA data
+       ## column of any OHLCVA data and corresponding dates
 
        dd* : seq[string]  # date
        tx* : seq[float]   # data
@@ -232,7 +245,17 @@ type
         stdate*   : string
         sttime*   : string
       
-
+proc initTs*():Ts=
+     ## initTs
+     ##
+     ## init a timeseries object
+     var ats : Ts
+     ats.dd = @[]
+     ats.tx = @[]
+     result = ats
+     
+     
+     
 
 proc timeSeries*[T](self:T,ty:string): Ts =
      ## timeseries
@@ -262,6 +285,30 @@ proc timeSeries*[T](self:T,ty:string): Ts =
      return ts
 
 
+proc timeSeriesHead*(ats:Ts,n:int = 5):Ts =
+     ## timeSeriesHead
+     ## 
+     ## returns a timeseries with n elements of the newest data
+     ## 
+     var nats = initTs() 
+     for x in 0.. <n:
+         nats.dd.add($(ats.dd[x]))
+         nats.tx.add(ats.tx[x])
+     result = nats
+
+
+proc timeSeriesTail*(ats:Ts,n:int = 5):Ts =
+     ## timeSeriesTail
+     ## 
+     ## returns a timeseries with n elements of the oldest data
+     ## 
+     var nats = initTs()
+     for x in (ats.tx.len - n).. <ats.tx.len:
+         nats.dd.add($(ats.dd[x]))
+         nats.tx.add(ats.tx[x])
+     result = nats
+
+
 proc showTimeSeries* (ats:Ts,header,ty:string,N:int,fgr:string = yellowgreen,bgr:string = black,xpos:int = 0)  =
    ## showTimeseries
    ## takes a Ts object as input as well as a header string
@@ -275,30 +322,31 @@ proc showTimeSeries* (ats:Ts,header,ty:string,N:int,fgr:string = yellowgreen,bgr
    ## Example
    ##
    ## .. code-block:: nim
-   ##     # show adj. close price , 5 rows head and tail 372 days apart
-   ##     var myD =initStocks()
-   ##     myD = getSymbol2("AAPL",minusdays(getDateStr(),372),getDateStr())
-   ##     var mydT = timeseries(myD,"a") # adjusted close
-   ##     echo()
-   ##     showTimeSeries(mydT,"AdjClose","head",5)
-   ##     showTimeSeries(mydT,"AdjClose","tail",5)
-   ##
-
-
-   printLn(fmtx(["<11","",">11"],"Date",spaces(1),header),fgr)
+   ##    import cx,nimFinLib
+   ##    # show adj. close price , 5 rows head and tail 374 days apart
+   ##    var myD = initStocks()
+   ##    myD = getSymbol2("0386.HK",minusdays(getDateStr(),374),getDateStr())
+   ##    var mydT = timeseries(myD,"a") # adjusted close
+   ##    curup(1)
+   ##    echo()
+   ##    showTimeSeries(mydT,"AdjClose","head",5)
+   ##    curup(6)
+   ##    showTimeSeries(mydT,"AdjClose","tail",5,xpos = 30)
+   ##    doFinish()
+   ##    
+   printLn(fmtx(["<11","",">11"],"Date",spaces(1),header),fgr,xpos = xpos)
    if ats.dd.len > 0:
-        if ty == "all":
+        if ty == all:
             for x in 0.. <ats.tx.len:
-                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ats.tx[x]))
-        elif ty == "tail":
-            for x in ats.tx.len-N.. <ats.tx.len:
-                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ats.tx[x]))
-            for x in 0.. <N:
-                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ats.tx[x]))
+                printLn(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)),xpos = xpos)
+        elif ty == tail:
+            for x in (ats.tx.len - N).. <ats.tx.len:
+                printLn(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)),xpos = xpos)
+         
         else:
             ## head is the default in case an empty ty string was passed in
             for x in 0.. <N:
-                println(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ats.tx[x]))
+                printLn(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)),xpos = xpos)
 
 
 proc initAccount*():Account =
@@ -382,14 +430,7 @@ proc initCurrencies*():Currencies=
      acf.ra = @[]
      result = acf
 
-proc initTs*():Ts=
-     ## initTs
-     ##
-     ## init a timeseries object
-     var ats : Ts
-     ats.dd = @[]
-     ats.tx = @[]
-     result = ats
+
 
 proc initPool*():seq[Stocks] =
   ## initPool
@@ -428,7 +469,8 @@ proc getCurrentQuote*(stcks:string) : string =
    ## gets the current price/quote from yahoo for 1 stock code
    var aurl=yahoourl  % stcks
    var data = newSeq[string]()
-   var line = getContent(aurl)
+   let zcli = newHttpClient()
+   var line = zcli.getContent(aurl)
    data = line[1..line.high].split(",")
    if data.len > 1:
       result = data[3]
@@ -453,7 +495,8 @@ proc getStocks*(aurl:string,xpos:int = 1):seq[string] =
   var data3 = newSeq[string]()
     
   try:
-       let zz = splitLines(getContent(aurl,timeout = 5000))
+       let zcli = newHttpClient(timeout = 5000)
+       let zz = splitLines(zcli.getContent(aurl))
        for zs in 0.. <zz.len-1: data3.add(zz[zs])    
       
   except HttpRequestError:
@@ -475,22 +518,23 @@ proc currentStocks(aurl:string,xpos:int = 1) =
 
   var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
   try:
-    var ci = getContent(aurl,timeout = 5000)
+    let zcli = newHttpClient(timeout = 5000)
+    var ci = zcli.getContent(aurl)
     for line in ci.splitLines:
       var data = line[1..line.high].split(",")
       # even if yahoo servers are down our data.len is still 1 so
       if data.len > 1:
               printLn(fmtx(["<8","","","","",""],"Code : ",unquote(data[0])," Name : ",unquote(data[1]),"   Market : ",unquote(data[2])),yellowgreen,xpos = xpos)
-              printLn(fmtx(["<10","<9","","","<9","","","<"],"Date : ",unquote(data[4]),unquote(data[5]),spaces(7),"Price  : ",data[3],"  Volume : ",data[8]),white,xpos = xpos)
+              printLn(fmtx(["<10","<11","","","<9","","","<"],"Date : ",unquote(data[4]),unquote(data[5]),spaces(5),"Price  : ",data[3],"  Volume : ",data[8]),white,xpos = xpos)
               var cc = checkchange(unquote(data[9]))
               if cc == -1:  # down
-                    printLn(fmtx(["","<8","","<8","","","","","","",""],"Open : ",data[6]," High : ",data[7]," Change :",red,showRune("FFEC"),white,unquote(data[9]),"  Range : ",unquote(data[10])),white,xpos = xpos)
+                    printLn(fmtx(["","<8","","<8","","","","","","",""],"Open : ",data[6]," High : ",data[7]," Change :",red,downarrow,white,unquote(data[9]),"  Range : ",unquote(data[10])),white,xpos = xpos)
               
               elif cc == 0: # N/A
                     printLn(fmtx(["","<8","","<5","","","","","","","","",""],"Open : ",data[6]," High : ",data[7]," Change :",white,".",skyblue,unquote(data[9]),white,"  Range  : ",skyblue,unquote(data[10])),white,xpos = xpos)
        
               else :  # up
-                    printLn(fmtx(["","<8","","<8","","","","","","",""],"Open : ",data[6]," High : ",data[7]," Change :",lime,showRune("FFEA"),white,unquote(data[9]),"  Range : ",unquote(data[10])),white,xpos = xpos)
+                    printLn(fmtx(["","<8","","<8","","","","","","",""],"Open : ",data[6]," High : ",data[7]," Change :",lime,uparrow,white,unquote(data[9]),"  Range : ",unquote(data[10])),white,xpos = xpos)
        
               printLn(repeat("-",tw))
       else:
@@ -516,34 +560,35 @@ proc currentIndexes(aurl:string,xpos:int = 1) {.discardable.} =
 
   var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
   try:
-    var ci = getContent(aurl)
+    let zcli = newHttpClient()
+    var ci = zcli.getContent(aurl)
     for line in ci.splitLines:
       var data = line[1..line.high].split(",")
       if data.len > 1:
               var cc = checkChange(unquote(data[9]))
-             
+              
               case cc
                   of -1 :                                       
-                          printLn(fmtx(["",">7", " ","<9","  ",">7","","<16","  ",">7", "  ","<6", "","<7", "","<10","", "<8" ,"   ",">9", "","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",red , showRune("FFEC"),lightskyblue , unquote(data[3])))
-                          printLn(fmtx(["","","","<8","","","","<2","",">17",  "", "","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",red , showRune("FFEC") ,white , unquote(data[9]),yellowgreen,"    Range  : ",white,unquote(data[10])))            
+                          printLn(fmtx(["",">7"," ","<9","  ",">7","","<16","  ",">7","  ","<6","","<7","","<10","", "<8" ,"   ",">9", "","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",red , downarrow,lightskyblue , unquote(data[3])))
+                          printLn(fmtx(["","","","<8","","","","","",">17","","","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",red,downarrow,white , unquote(data[9]),yellowgreen,"    Range  : ",white,unquote(data[10])))            
                                             
                   of  0 : 
-                          printLn(fmtx(["",">7", " ","<9","  ",">7","","<16","  ",">7", "  ","<6", "","<7", "","<10","", "<8" ,"   ",">9", "","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",white, ".",lightskyblue , unquote(data[3])))
-                          printLn(fmtx(["","","","<8","","","","<2","",">17",  "", "","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",white," ",white , unquote(data[9]),yellowgreen,"    Range   :  ",white,unquote(data[10])))             
+                          printLn(fmtx(["",">7"," ","<9","  ",">7","","<16","  ",">7","  ","<6","","<7","","<10","","<8","   ",">9","","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",white, ".",lightskyblue , unquote(data[3])))
+                          printLn(fmtx(["","","","<8","","","","<2","",">17","","","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",white," ",white , unquote(data[9]),yellowgreen,"    Range   :  ",white,unquote(data[10])))             
                           
                   of  1 : 
-                          printLn(fmtx(["",">7", " ","<9","  ",">7","","<16","  ",">7", "  ","<6", "","<7", "","<10","", "<8" ,"   ",">9", "","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",lime , showRune("FFEA"),lightskyblue , unquote(data[3])))
-                          printLn(fmtx(["","","","<8","","","","<2","",">17",  "", "","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",lime ,showRune("FFEA") ,white , unquote(data[9]),yellowgreen,"    Range  : ",white,unquote(data[10])))
+                          printLn(fmtx(["",">7"," ","<9","  ",">7","","<16","  ",">7","  ","<6","","<7","","<10","","<8","   ",">9","","","",""],yellowgreen,"Code : ",peru,unquote(data[0]),yellowgreen , "Name : ",peru , unquote(data[1]),yellowgreen , "    Market : ",peru , unquote(data[2]),yellowgreen , "Date : ",peru , unquote(data[4]),peru , unquote(data[5]),yellowgreen , " Index : ",lime , uparrow,lightskyblue , unquote(data[3])))
+                          printLn(fmtx(["","","","<8","","","","","",">17","","","",""],yellowgreen,"Open : ",white,unquote(data[6]),yellowgreen,"  Change : ",lime,uparrow,white , unquote(data[9]),yellowgreen,"    Range  : ",white,unquote(data[10])))
                     
                   else  : printLn("Data Error",red)
                           
               echo repeat("-",tw)
       else:
               if data.len == 1 and sflag == false:
-                 println("Yahoo server maybe unavailable. Try again later",red)
+                 printLn("Yahoo server maybe unavailable. Try again later",red)
                  sflag = true
   except HttpRequestError:
-      println("Yahoo current data could not be retrieved . Try again .",red)
+      printLn("Yahoo current data could not be retrieved . Try again .",red)
       echo()
 
 
@@ -575,7 +620,7 @@ proc yahooStocks*(stock:string,xpos:int = 1):seq[YHobject] =
               myst.strange  = unquote(dn[10])
           else:
               # maybe will never be reached as yahoo may return N/A
-              println("Yahoo returned insufficient data for $1",red % $ss[x],xpos = xpos)   
+              printLn("Yahoo returned insufficient data for $1",red % $ss[x],xpos = xpos)   
               
           result.add(myst)
 
@@ -590,16 +635,16 @@ proc showStocks*(stock:string,xpos:int = 1) =
     ## 
     ##  
     for x in yahooStocks(stock,xpos = 10):
-        printlnBiCol("Code      : " & x.stcode)
-        printlnBiCol("Name      : " & x.stname)
-        printlnBiCol("Market    : " & x.stmarket)
-        printlnBiCol("Price     : " & x.stprice)
-        printlnBiCol("Date/Time : " & fmtx(["","",""],x.stdate,spaces(1),x.sttime))
-        printlnBiCol("Open      : " & x.stopen)
-        printlnBiCol("High      : " & x.sthigh)
-        printlnBiCol("Volume    : " & x.stVolume)
-        printlnBiCol("Change    : " & x.stchange)
-        printlnBiCol("Range     : " & x.strange)    
+        printLnBiCol("Code      : " & x.stcode)
+        printLnBiCol("Name      : " & x.stname)
+        printLnBiCol("Market    : " & x.stmarket)
+        printLnBiCol("Price     : " & x.stprice)
+        printLnBiCol("Date/Time : " & fmtx(["","",""],x.stdate,spaces(1),x.sttime))
+        printLnBiCol("Open      : " & x.stopen)
+        printLnBiCol("High      : " & x.sthigh)
+        printLnBiCol("Volume    : " & x.stVolume)
+        printLnBiCol("Change    : " & x.stchange)
+        printLnBiCol("Range     : " & x.strange)    
         echo()        
 
 
@@ -614,7 +659,8 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
 
     var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
     try:
-      var ci = getContent(aurl)
+      let zcli = newHttpClient()
+      var ci = zcli.getContent(aurl)
       for line in ci.splitLines:
         var data = line[1..line.high].split(",")
         if data.len > 1:
@@ -631,7 +677,7 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
                 var chgdis = slmdis + 1   # used for fine alignment of change data xpos
                 case cc
                   of -1 : 
-                          print(showRune("FFEC"),red,xpos = xpos + 31)
+                          print(downarrow,red,xpos = xpos + 31)
                           curup(1)
                           printSlim(data[3],truetomato,xpos = xpos + slmdis,align = "right")
                           print("Change",red,xpos = xpos + chgdis)
@@ -662,7 +708,7 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
                              print(split(unquote(data[9])," - ")[1],xpos = xpos + chgdis)
                              curdn(1)
                   of  1 : 
-                          print(showRune("FFEA"),lime,xpos = xpos + 31)
+                          print(uparrow,lime,xpos = xpos + 31)
                           curup(1)
                           printSlim(data[3],lime,xpos = xpos + slmdis ,align = "right")         
                           print("Change",yellowgreen,xpos = xpos + chgdis)
@@ -704,9 +750,9 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
     except OverflowError:
           discard
     except  TimeoutError:
-         println("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+         printLn("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
     except  ProtocolError:
-          println("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+          printLn("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
     except :
          discard
     finally:
@@ -761,7 +807,7 @@ proc showCurrentIndexes*(idxs:string,xpos:int = 1){.discardable.} =
     ## wide view
     ##
     ## .. code-block:: nim
-    ##     showCurrentIDX("^HSI+^GDAXI+^FTSE+^NYA",xpos = 5)
+    ##     showCurrentIndexes("^HSI+^GDAXI+^FTSE+^NYA",xpos = 5)
     ## xpos allows x positioning
     #
     var qurl=yahoourl  % idxs
@@ -777,7 +823,7 @@ proc showCurrentIDX*(adf:seq[Stocks],xpos:int = 1,header:bool = false){.discarda
    ##
    
    var idxs = buildStockString(adf)
-   if header == true: hdx(println("Index Data ",yellowgreen,termblack),width = 64,nxpos = xpos)
+   if header == true: hdx(printLn("Index Data ",yellowgreen,termblack),width = 64,nxpos = xpos)
    var qurl=yahoourl  % idxs
    currentIDX(qurl,xpos = xpos)
 
@@ -798,7 +844,7 @@ proc showCurrentIDX*(idxs:string,xpos:int = 1,header:bool = false){.discardable.
     ## xpos allows x positioning
     #
     
-    if header == true: hdx(println("Index Quote ",yellowgreen,termblack),width = 64,nxpos = xpos)
+    if header == true: hdx(printLn("Index Quote ",yellowgreen,termblack),width = 64,nxpos = xpos)
     var qurl=yahoourl  % idxs
     currentIDX(qurl,xpos = xpos)
 
@@ -815,12 +861,13 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
 
     var sflag : bool = false  # a flag to avoid multiple error messages if we are in a loop
     try:
-      var ci = getContent(aurl)
+      let zcli = newHttpClient()
+      var ci = zcli.getContent(aurl)
       for line in ci.splitLines:
         var data = line[1..line.high].split(",") 
         
         if data.len > 1:
-                printBiCol  (fmtx(["","<9"],"Code : ",unquote(data[0])),":",lightskyblue,cyan,xpos = xpos)
+                printBiCol(fmtx(["","<9"],"Code : ",unquote(data[0])),":",lightskyblue,cyan,xpos = xpos)
                 printLnBiCol(fmtx(["","<36"],"   Name : ",unquote(data[1])),":",lightskyblue,pastelyellowgreen)
                 printLnBiCol(fmtx(["",""],"Exch : ",unquote(data[2])),":",yellowgreen,goldenrod,xpos = xpos)
                 #curdn(1)
@@ -832,7 +879,7 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
                 var chgdis = slmdis + 1   # used for fine alignment of change data xpos
                 case cc
                   of -1 : 
-                          print(showRune("FFEC"),red,xpos = xpos + 31)
+                          print(downarrow,red,xpos = xpos + 31)
                           curup(1)
                           printSlim(data[3],truetomato,xpos = xpos + slmdis,align = "right")
                           print("Change",red,xpos = xpos + chgdis)
@@ -864,7 +911,7 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
                              print("N/A",xpos = xpos + chgdis)
                           curdn(1)
                   of  1 : 
-                          print(showRune("FFEA"),lime,xpos = xpos + 31)
+                          print(uparrow,lime,xpos = xpos + 31)
                           curup(1)
                           printSlim(data[3],lime,xpos = xpos + slmdis ,align = "right")         
                           print("Change",yellowgreen,xpos = xpos + chgdis)
@@ -902,9 +949,9 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
     except OverflowError:
           discard
     except  TimeoutError:
-         println("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+         printLn("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
     except  ProtocolError:
-         println("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+         printLn("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
     except :
          discard
     finally:
@@ -930,7 +977,7 @@ proc showCurrentStocks*(apf:Portfolio,xpos:int = 1,header:bool = false){.discard
    ## for full example see nimFinT5.nim
    ##
    var stcks = buildStockString(apf)
-   if header == true : hdx(println("Stocks Current Quote for $1" % apf.nx,yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)         
+   if header == true : hdx(printLn("Stocks Current Quote for $1" % apf.nx,yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)         
    var qurl=yahoourl  % stcks
    currentStocks(qurl,xpos = xpos)
 
@@ -952,7 +999,7 @@ proc showCurrentStocks*(stcks:string,xpos:int = 1,header:bool = false){.discarda
    ## Just wait a bit and try again. Stay calm ! Do not panic !
    ##
    
-   if header == true : hdx(println("Stocks Current Quote ",yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)         
+   if header == true : hdx(printLn("Stocks Current Quote ",yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)         
    var qurl=yahoourl  % stcks
    currentStocks(qurl,xpos = xpos)
 
@@ -977,7 +1024,7 @@ proc showCurrentSTX*(apf:Portfolio,xpos:int = 1,header:bool = false){.discardabl
    ##
    
    var stcks = buildStockString(apf)
-   if header == true: hdx(println("Stocks Current Quote for $1" % apf.nx,yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)
+   if header == true: hdx(printLn("Stocks Current Quote for $1" % apf.nx,yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)
    var qurl=yahoourl  % stcks
    currentSTX(qurl,xpos = xpos)
 
@@ -999,7 +1046,7 @@ proc showCurrentSTX*(stcks:string,xpos:int = 1,header:bool = false){.discardable
    ## Just wait a bit and try again. Stay calm ! Do not panic !
    ##
    
-   if header == true :  hdx(println("Stocks Quote ",yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)
+   if header == true :  hdx(printLn("Stocks Quote ",yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)
    var qurl=yahoourl  % stcks
    currentSTX(qurl,xpos = xpos)
  
@@ -1021,7 +1068,7 @@ proc ymonth*(aDate:string) : string =
 
 
 
-proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
+proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Stocks =
     ## getSymbol2
     ##
     ## the work horse proc for getting yahoo data in csv format
@@ -1034,12 +1081,14 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
     # together with an error message
 
     if validdate(startDate) and validdate(endDate):
-
-          stdout.write(fmtx(["<15"],"Processing   : "))
-          print(fmtx(["<8"],symb & spaces(1)),green)
-          print(fmtx(["<11","","<11"],startDate,spaces(1),endDate))
-          # end feedback line
-
+          if processFlag == true:
+             stdout.write(fmtx(["<15"],"Processing   : "))
+             print(fmtx(["<8"],symb & spaces(1)),green)
+             print(fmtx(["<11","","<11"],startDate,spaces(1),endDate))
+             # end feedback line
+          else:
+              printLn("Processing... ",lightskyblue)
+              curup(1)
           # set up dates for yahoo
           var sdy = year(startDate)
           var sdm = ymonth(startDate)
@@ -1097,19 +1146,20 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
           var acvsfile = "nimfintmp.csv"
           var errstflag = false  
           try:
-            
-            downloadFile(qurl,acvsfile)
+            var htpc = newHttpClient()
+            htpc.downloadFile(qurl,acvsfile)
           except HttpRequestError:
             echo()
-            println("Error : Yahoo currently does not provide historical data for " & symb,red)
+            printLn("Error : Yahoo currently does not provide historical data for " & symb,red)
             errstflag = true  
             
           var s = newFileStream(acvsfile, fmRead)
           if s == nil:
              # in case of problems with the yahoo csv file we show a message
-             println("Error : Data file for $1 could not be opened " % symb,red)
+             printLn("Error : Data file for $1 could not be opened " % symb,red)
 
           # now parse the csv file
+         
           var x: CsvParser
           open(x, s , acvsfile, separator=',')
           while readRow(x):
@@ -1161,11 +1211,12 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
                           adjclosdf.add(adjclosx)
 
                     else :
-                          println("Csv Data in unexpected format for Stocks :" & symb,red)
+                          printLn("Csv Data in unexpected format for Stocks :" & symb,red)
 
-          # feedbacklines can be commented out
-          println(" --> Rows processed : " & $processedRows(x),salmon)
-
+          # feedbacklines can be shown with processFlag set to true
+          if processFlag == true:
+             printLn(" --> Rows processed : " & $processedRows(x),salmon)
+          
 
           # close CsvParser
           close(x)
@@ -1204,8 +1255,8 @@ proc getSymbol2*(symb,startDate,endDate : string) : Stocks =
           result = astock
 
     else:
-          println("Date error     : " &  startDate &  "/" & endDate & "  Format yyyy-MM-dd expected",red)
-          println("Error location : proc getSymbol2",red)
+          printLn("Date error     : " &  startDate &  "/" & endDate & "  Format yyyy-MM-dd expected",red)
+          printLn("Error location : proc getSymbol2",red)
           result = initStocks() # return an empty df
 
 
@@ -1269,7 +1320,8 @@ proc getSymbol3*(symb:string):Stockdata =
      var qz : Stockdata
      var stx = "l1c1va2xj1b4j4dyekjm3m4rr5p5p6s7"
      var qurl = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=$2" % [symb, stx]
-     var rx = getcontent(qurl)
+     let zcli = newHttpClient()
+     var rx = zcli.getcontent(qurl)
      var rxs = rx.split(",")
      try:
         qz.price             = parseFloat(strip(rxs[0]))
@@ -1360,7 +1412,7 @@ proc showHistData*(adf: Stocks,n:int) =
     ##
     ## Show n recent rows historical stock data
     decho(1)
-    println(fmtx(["<8","<11",">10",">10",">10",">10",">14",">10"],"Code","Date","Open","High","Low","Close","Volume","AdjClose"),green)
+    printLn(fmtx(["<8","<11",">10",">10",">10",">10",">14",">10"],"Code","Date","Open","High","Low","Close","Volume","AdjClose"),green)
     if n >= adf.date.len:
       for x in 0.. <adf.date.len:
         echo(fmtx(["<8","<11",">10.3",">10.3",">10.3",">10.3",">14",">10.3"],adf.stock,adf.date[x],adf.open[x],adf.high[x],adf.low[x],adf.close[x],adf.vol[x],adf.adjc[x]))
@@ -1380,7 +1432,7 @@ proc showHistData*(adf: Stocks,s: string,e:string) =
     # s >= e   ==> 1
     # s <= e   ==> 2
     decho(1)
-    println(fmtx(["<8","<11",">10",">10",">10",">10",">14",">10"],"Code","Date","Open","High","Low","Close","Volume","AdjClose"),green)
+    printLn(fmtx(["<8","<11",">10",">10",">10",">10",">14",">10"],"Code","Date","Open","High","Low","Close","Volume","AdjClose"),green)
     for x in 0.. <adf.date.len:
       var c1 = compareDates(adf.date[x],s)
       var c2 = compareDates(adf.date[x],e)
@@ -1390,7 +1442,7 @@ proc showHistData*(adf: Stocks,s: string,e:string) =
     decho(2)
 
 
-proc last*[T](self : seq[T]): T =
+proc seqlast*[T](self : seq[T]): T =
     ## Various data navigation routines
     ##
     ## first,last,head,tail
@@ -1403,7 +1455,7 @@ proc last*[T](self : seq[T]): T =
       discard
 
 
-proc first*[T](self : seq[T]): T =
+proc seqfirst*[T](self : seq[T]): T =
     ## first means oldest row
     ## still need to improve this in case nothing received
     try:
@@ -1411,7 +1463,7 @@ proc first*[T](self : seq[T]): T =
     except:
       result = self[0]
 
-proc tail*[T](self : seq[T] , n: int) : seq[T] =
+proc seqtail*[T](self : seq[T] , n: int) : seq[T] =
     ## tail means most recent rows
     ##
     try:
@@ -1423,15 +1475,15 @@ proc tail*[T](self : seq[T] , n: int) : seq[T] =
        discard
 
 
-proc head*[T](self : seq[T] , n: int) : seq[T] =
+proc seqhead*[T](self : seq[T] , n: int) : seq[T] =
     ## head means oldest rows
     ##
     var self2 = reversed(self)
     try:
         if len(self2) >= n:
-            result = self2[0.. <n].tail(n)
+            result = self2[0.. <n].seqtail(n)
         else:
-            result = self2[0.. <len(self2)].tail(n)
+            result = self2[0.. <len(self2)].seqtail(n)
     except RangeError:
        discard
 
@@ -1476,15 +1528,15 @@ proc showDailyReturnsCl*(self:Stocks , N:int) =
       if dfd.len > 0:
           # now show it with symbol , date and close columns
           echo ""
-          println(fmtx(["<8","","<11","",">14"],"Code",spaces(1),"Date",spaces(1),"Returns"),yellowgreen)
+          printLn(fmtx(["<8","","<11","",">14"],"Code",spaces(1),"Date",spaces(1),"Returns"),yellowgreen)
           # show limited rows output if c<>0
           if N == 0:
               for  x in 0.. <dfr.len:
-                      println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),dfr[x]))
+                      printLn(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),ff2(dfr[x],6)))
 
           else:
               for  x in 0.. <N:
-                      println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),dfr[x]))
+                      printLn(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),ff2(dfr[x],6)))
 
 
 
@@ -1501,15 +1553,15 @@ proc showDailyReturnsAdCl*(self:Stocks , N:int) =
       if dfd.len > 0:
             # now show it with symbol , date and close columns
             echo ""
-            println(fmtx([":<8","","<11","",">14"],"Code",spaces(1),"Date",spaces(1),"Returns"),yellowgreen)
+            printLn(fmtx([":<8","","<11","",">14"],"Code",spaces(1),"Date",spaces(1),"Returns"),yellowgreen)
             # show limited output if c<>0
             if N == 0:
                 for  x in 0.. <dfr.len:
-                        println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),dfr[x]))
+                        printLn(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),ff2(dfr[x],6)))
 
             else:
                 for  x in 0.. <N:
-                        println(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),dfr[x]))
+                        printLn(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),ff2(dfr[x],6)))
 
 
 proc sumDailyReturnsCl*(self:Stocks) : float =
@@ -1523,7 +1575,7 @@ proc sumDailyReturnsCl*(self:Stocks) : float =
       var dR = self.close.dailyReturns
       var sumdfr = sum(dR)
       # feedback line can be commented out
-      println("Returns on Close Price calculated : " & $dR.len,yellow)
+      printLn("Returns on Close Price calculated : " & $dR.len,yellow)
       result = sumdfr
 
 
@@ -1538,7 +1590,7 @@ proc sumDailyReturnsAdCl*(self:Stocks) : float =
       var dR = self.adjc.dailyReturns
       var sumdfr = sum(dR)
       # feedback line can be commented out
-      println("Returns on Close Price calculated : " & $dR.len,peru)
+      printLn("Returns on Close Price calculated : " & $dR.len,peru)
       result = sumdfr
 
 
@@ -1584,13 +1636,13 @@ proc showStatistics*(z : Stocks) =
           z6.add(ohSet[x].min)
 
       decho(1)
-      println(fmtx(["<11",">11",">11",">11",">11",">14",">11"],"Item","Open","High","Low","Close","Volume","Adj Close"),yellowgreen)
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[0],ff(z1[0],2),ff(z1[1],2),ff(z1[2],2),ff(z1[3],0),ff(z1[4],2),ff(z1[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[1],ff(z2[0],2),ff(z2[1],2),ff(z2[2],2),ff(z2[3],0),ff(z2[4],2),ff(z2[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[2],ff(z3[0],2),ff(z3[1],2),ff(z3[2],2),ff(z3[3],0),ff(z3[4],2),ff(z3[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[3],ff(z4[0],2),ff(z4[1],2),ff(z4[2],2),ff(z4[3],0),ff(z4[4],2),ff(z4[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[4],ff(z5[0],2),ff(z5[1],2),ff(z5[2],2),ff(z5[3],0),ff(z5[4],2),ff(z5[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[5],ff(z6[0],2),ff(z6[1],2),ff(z6[2],2),ff(z6[3],0),ff(z6[4],2),ff(z6[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],"Item","Open","High","Low","Close","Volume","Adj Close"),yellowgreen)
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[0],ff(z1[0],2),ff(z1[1],2),ff(z1[2],2),ff(z1[3],2),ff2(z1[4],0),ff(z1[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[1],ff(z2[0],2),ff(z2[1],2),ff(z2[2],2),ff(z2[3],2),ff2(z2[4],0),ff(z2[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[2],ff(z3[0],2),ff(z3[1],2),ff(z3[2],2),ff(z3[3],2),ff2(z3[4],0),ff(z3[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[3],ff(z4[0],2),ff(z4[1],2),ff(z4[2],2),ff(z4[3],2),ff2(z4[4],0),ff(z4[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[4],ff(z5[0],2),ff(z5[1],2),ff(z5[2],2),ff(z5[3],2),ff2(z5[4],0),ff(z5[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[5],ff(z6[0],2),ff(z6[1],2),ff(z6[2],2),ff(z6[3],2),ff2(z6[4],0),ff(z6[5],2)))
       decho(2)                                                                     
 
 
@@ -1599,15 +1651,15 @@ proc showStatisticsT*(z : Stocks) =
       ##
       ## shows all statistics from a Stocks objects ohlcva columns
       ##
-      ## transposed display  , needs full terminal width
+      ## transposed display  , needs full terminal width , precision set to 2
       ##
       var ohSet = @[z.ro[0],z.rh[0],z.rl[0],z.rc[0],z.rv[0],z.rca[0]]
       var headerset = @["Open","High","Low","Close","Volume","Adj Close"]
       decho(1)
       printLn(fmtx(["<11",">14",">14",">14",">14",">14",">14"],"Item","sum","variance","mean","stddev","max","min"))
       for x in 0.. <ohSet.len:
-          printLn(fmtx(["<11",">14",">14",">14",">14",">14",">14"],headerset[x],ohSet[x].sum,ohSet[x].variance,ohSet[x].mean,
-          ohSet[x].standardDeviation,ohSet[x].max,ohSet[x].min))
+          printLn(fmtx(["<11",">14",">14",">14",">14",">14",">14"],headerset[x],ff(ohSet[x].sum,2),ff(ohSet[x].variance,2),ff(ohSet[x].mean,2),
+          ff(ohSet[x].standardDeviation,2),ff(ohSet[x].max,2),ff(ohSet[x].min,2)))
       decho(2)
 
 
@@ -1646,7 +1698,7 @@ proc ema* (dx : Stocks , N: int = 14) : Ts =
     m_emaSeries.tx = @[]
     if dx.close.len < ( 5 * N):
        emaflag = true
-       println(dx.stock & ": Insufficient data for ema calculation, need min. $1 data points" % $(5 * N),red)
+       printLn(dx.stock & ": Insufficient data for ema calculation, need min. $1 data points" % $(5 * N),red)
 
     else:
 
@@ -1679,20 +1731,35 @@ proc ema* (dx : Stocks , N: int = 14) : Ts =
     result = m_emaSeries
 
 
-proc showEma* (emx:Ts , N:int = 5) =
+proc showEma* (emx:Ts , n:int = 5,ty:string = head,xpos:int = 1) =
    ## showEma
    ##
    ## convenience proc to display ema series with dates
    ##
    ## input is a ema series Ts object and rows to display and N number of rows to display default = 5
    ##
-   ## latest data is on top
+   ## ty parameter enables head,tail or all data to be shown
+   ## 
+   ## note that data shown is in descending order , this may or may not change in the future
    ##
    echo()
-   println(fmtx(["<11","",">11"],"Date",spaces(1),"EMA"),yellowgreen)
+   printLn(fmtx(["<11","",">11"],"Date",spaces(1),"EMA"),yellowgreen,xpos = xpos)
    if emx.dd.len > 0:
-       for x in countdown(emx.dd.len-1,emx.dd.len-N,1) :
-          println(fmtx(["<11","",">11"],emx.dd[x],spaces(1),emx.tx[x]))
+       case ty 
+        of head :  
+          for x in countdown(emx.dd.len - 1,emx.dd.len - n,1) :  
+              printLn(fmtx(["<11","",">11"],emx.dd[x],spaces(1),ff2(emx.tx[x],6)),xpos = xpos)
+
+        of tail :
+           for x in countdown(n - 1,0,1) :  
+              printLn(fmtx(["<11","",">11"],emx.dd[x],spaces(1),ff2(emx.tx[x],6)),xpos = xpos)
+        
+        of all :
+           for x in countdown(emx.dd.len - 1,0,1) :  
+              printLn(fmtx(["<11","",">11"],emx.dd[x],spaces(1),ff2(emx.tx[x],6)),xpos = xpos)
+
+          
+        else : discard  
 
 proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
   ## getCurrentForex
@@ -1704,8 +1771,8 @@ proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
   ## .. code-block:: nim
   ##    var curs = getCurrentForex(@["EURUSD","EURHKD"])
   ##    echo()
-  ##    println("Current EURUSD Rate : ",fmtx(["<8"],curs.ra[0]))
-  ##    println("Current EURHKD Rate : ",fmtx(["<8"].curs.ra[1]))
+  ##    printLn("Current EURUSD Rate : ",fmtx(["<8"],curs.ra[0]))
+  ##    printLn("Current EURHKD Rate : ",fmtx(["<8"].curs.ra[1]))
   ##    echo()
   ##
 
@@ -1720,7 +1787,8 @@ proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
           var cc = 0
           # init a Currencies object to hold forex data
           var rf = initCurrencies()
-          var zs = splitlines(unquote(getcontent(aurl)))  # get data
+          let zcli = newHttpClient()
+          var zs = splitlines(unquote(zcli.getcontent(aurl)))  # get data
           var c = 0
           for zl in zs:
               
@@ -1741,7 +1809,7 @@ proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
                              else:
                                rf.ra.add(parseFloat(val))
                         else:
-                             println("Csv currency data in unexpected format ",truetomato,xpos = xpos)
+                             printLn("Csv currency data in unexpected format ",truetomato,xpos = xpos)
               inc cc
           
           result = rf
@@ -1755,9 +1823,9 @@ proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
   except OverflowError:
           discard
   except  TimeoutError:
-         println("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+         printLn("TimeoutError: " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
   except  ProtocolError:
-         println("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+         printLn("Protocol Error" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
   except :
          discard
   finally:
@@ -1779,12 +1847,12 @@ proc showCurrentForex*(curs : openarray[string],xpos:int = 1) =
        ##    decho(3)
        ##
        ## .. code-block:: nim
-       ##    
-       ##    var curs = ["EURUSD","GBPHKD","CADEUR","AUDNZD","GBPCNY","JPYHKD"]
+       ##    import cx,nimFinLib
+       ##    var curs = ["EURUSD","GBPHKD","CADEUR","AUDNZD","USDCNY","GBPCNY","JPYHKD"]
        ##    var cursl = curs.len
        ##    showCurrentForex(curs,xpos = 5)
        ##    curup(cursl + 2)
-       ##    drawbox(cursl + 2,36,1,2,xpos = 3)
+       ##    drawbox(cursl + 2,38,1,2,xpos = 3)
        ##    decho(cursl + 5)
        ##    doFinish()
        ##           
@@ -1806,15 +1874,15 @@ proc showStocksTable*(apfdata: Portfolio,xpos:int = 1) =
 
    decho(2)
    # header for the table
-   println(fmtx(["<8",">9",">9",">9",">9",">13",">9",">9",">9",">9",">9"],"Code","Open","High","Low","Close","Volume","AdjClose","StDevHi","StDevLo","StDevCl","StDevClA"),yellowgreen)
+   printLn(fmtx(["<8",">9",">9",">9",">9",">13",">9",">9",">9",">9",">9"],"Code","Open","High","Low","Close","Volume","AdjClose","StDevHi","StDevLo","StDevCl","StDevClA"),yellowgreen)
    for x in 0.. <astkdata.len:
        var sx = astkdata[x] # just for less writing ...
        # display the data rows
-       println(fmtx(["<8",">9.3f",">9.3f",">9.3f",">9.3f",">13",">9.3f",">9.3f",">9.3f",">9.3f",">9.3f"],sx.stock,sx.open.last,sx.high.last,sx.low.last,sx.close.last,sx.vol.last,sx.adjc.last,
+       printLn(fmtx(["<8",">9.3f",">9.3f",">9.3f",">9.3f",">13",">9.3f",">9.3f",">9.3f",">9.3f",">9.3f"],sx.stock,sx.open.seqlast,sx.high.seqlast,sx.low.seqlast,sx.close.seqlast,sx.vol.seqlast,sx.adjc.seqlast,
        sx.rh[0].standardDeviation,sx.rl[0].standardDeviation,sx.rc[0].standardDeviation,sx.rca[0].standardDeviation))
 
    echo()
-   println(" NOTE : stdDevOpen and stdDevVol are not shown but available",peru)
+   printLn(" NOTE : stdDevOpen and stdDevVol are not shown but available",peru)
    decho(2)
 
 
@@ -1823,39 +1891,38 @@ proc showStockdataTable*(a:Stockdata) =
       ##
       ## shows all items of a Stockdata object
       ##
-      println(fmtx(["<17","",">12"],"Price"," : ",a.price))
-      println(fmtx(["<17","",">12"],"Change"," : ",a.change))
-      println(fmtx(["<17","",">12"],"Volume"," : ",a.volume))
-      println(fmtx(["<17","",">12"],"Avg.DailyVolume"," : ",a.avgdailyvol))
-      println(fmtx(["<17","",">12"],"Market"," : ",a.market))
-      println(fmtx(["<17","",">12"],"MarketCap"," : ",a.marketcap))
-      println(fmtx(["<17","",">12"],"BookValue"," : ",a.bookvalue))
-      println(fmtx(["<17","",">12"],"Ebitda"," : ",a.ebitda))
-      println(fmtx(["<17","",">12"],"DividendPerShare"," : ",a.dividendpershare))
-      println(fmtx(["<17","",">12"],"DividendPerYield"," : ",a.dividendperyield))
-      println(fmtx(["<17","",">12"],"EarningsPerShare"," : ",a.earningspershare))
-      println(fmtx(["<17","",">12"],"52 Week High"," : ",a.week52high))
-      println(fmtx(["<17","",">12"],"52 Week Low"," : ",a.week52low))
-      println(fmtx(["<17","",">12"],"50 Day Mov. Avg"," : ",ff(a.movingavg50day,2)))
-      println(fmtx(["<17","",">12"],"200 Day Mov. Avg"," : ",ff(a.movingavg200day,2)))
-      println(fmtx(["<17","",">12"],"P/E"," : ",ff(a.priceearingratio,2)))
-      println(fmtx(["<17","",">12"],"P/E Growth Ratio"," : ",ff(a.priceearninggrowthratio,2)))
-      println(fmtx(["<17","",">12"],"Price Sales Ratio"," : ",ff(a.pricesalesratio,2)))
-      println(fmtx(["<17","",">12"],"Price Book Ratio"," : ",ff(a.pricebookratio,2)))
-      println(fmtx(["<17","",">12"],"Price Short Ratio"," : ",ff(a.shortratio,2)))
+      printLn(fmtx(["<17","",">12"],"Price"," : ",a.price))
+      printLn(fmtx(["<17","",">12"],"Change"," : ",a.change))
+      printLn(fmtx(["<17","",">12"],"Volume"," : ",a.volume))
+      printLn(fmtx(["<17","",">12"],"Avg.DailyVolume"," : ",a.avgdailyvol))
+      printLn(fmtx(["<17","",">12"],"Market"," : ",a.market))
+      printLn(fmtx(["<17","",">12"],"MarketCap"," : ",a.marketcap))
+      printLn(fmtx(["<17","",">12"],"BookValue"," : ",a.bookvalue))
+      printLn(fmtx(["<17","",">12"],"Ebitda"," : ",a.ebitda))
+      printLn(fmtx(["<17","",">12"],"DividendPerShare"," : ",a.dividendpershare))
+      printLn(fmtx(["<17","",">12"],"DividendPerYield"," : ",a.dividendperyield))
+      printLn(fmtx(["<17","",">12"],"EarningsPerShare"," : ",a.earningspershare))
+      printLn(fmtx(["<17","",">12"],"52 Week High"," : ",a.week52high))
+      printLn(fmtx(["<17","",">12"],"52 Week Low"," : ",a.week52low))
+      printLn(fmtx(["<17","",">12"],"50 Day Mov. Avg"," : ",ff(a.movingavg50day,2)))
+      printLn(fmtx(["<17","",">12"],"200 Day Mov. Avg"," : ",ff(a.movingavg200day,2)))
+      printLn(fmtx(["<17","",">12"],"P/E"," : ",ff(a.priceearingratio,2)))
+      printLn(fmtx(["<17","",">12"],"P/E Growth Ratio"," : ",ff(a.priceearninggrowthratio,2)))
+      printLn(fmtx(["<17","",">12"],"Price Sales Ratio"," : ",ff(a.pricesalesratio,2)))
+      printLn(fmtx(["<17","",">12"],"Price Book Ratio"," : ",ff(a.pricebookratio,2)))
+      printLn(fmtx(["<17","",">12"],"Price Short Ratio"," : ",ff(a.shortratio,2)))
       decho(2)
-
 
 template metal(dc:int):typed =
     ## metal
     ## 
-    ## utility template to display kitco metal data
+    ## utility template to display Kitco metal data
     ## 
     ## used by showKitcoMetal
     ## 
     
     if ktd[x].startswith(dl) == true:
-      printLn(ktd[x],yellowgreen,xpos = xpos - 3 )
+      printLn(ktd[x],yellowgreen,xpos = xpos - 2 )
       
     elif find(ktd[x],"Asia / Europe") > 0:
        print(strip(ktd[x],true,true),cx.white,xpos = xpos)
@@ -1870,17 +1937,49 @@ template metal(dc:int):typed =
         printLn(spaces(10) & "MARKET IS CLOSED",truetomato)
               
     elif find(ktd[x],"Update") > 0:
-        printLn(ktd[x] & " New York Time",yellowgreen,xpos = xpos - 3)
-                          
+        printLn(ktd[x] & " New York Time",yellowgreen,xpos = xpos - 2)                    
+
     else:
-                         
-          inc dc
-          if dc < 36:  
-             printLn(ktd[x],cx.white,xpos = xpos - 3)
-     
+           
+          if dc < 36:
+               try:
+                 var ks = ktd[x].split(" ")
+                 if ktd[x].contains("Metals") == true:
+                    printLn(ktd[x],cx.white,xpos = xpos - 1)
+                 else: 
+                    
+                    kss = @[]
+                    if ks.len > 0:
+                      for x in 0.. <ks.len:
+                        if ks[x].len > 0:
+                          kss.add(ks[x].strip(false,true))
+                      if kss[0].startswith("Gold") or kss[0].startswith("Silver") or kss[0].startswith("Platinum") or kss[0].startswith("Palladium") == true:                    
+                          if dc > 18 :
+                                  
+                                if parsefloat(kss[3]) > 0.00 :
+                                    print(spaces(4) & uparrow,lime,xpos = 1)
+                                elif  parsefloat(kss[3]) == 0.00:
+                                    print(spaces(4) & leftrightarrow,dodgerblue,xpos = 1)
+                                else:
+                                    print(spaces(4) & downarrow,red,xpos = 1)                            
+                                
+                          else: 
+                                if parsefloat(kss[3]) > 0.00 :
+                                    print(spaces(4) & uparrow,lime,xpos = 1)
+                                elif  parsefloat(kss[3]) == 0.00:
+                                    print(spaces(4) & leftrightarrow,dodgerblue,xpos = 1)
+                                else:
+                                    print(spaces(4) & downarrow,red,xpos = 1)
+                                
+                              
+                                
+                          printLn(fmtx(["<9",">11",">12",">10",">8",">10",">10"],kss[0],kss[1],kss[2],kss[3],kss[4],kss[5],kss[6]))                  
+          
+               except:
+                  discard
 
 
-proc showKitcoMetal*(xpos:int = 1) = 
+proc showKitcoMetal*(xpos:int = 1) =
     ## showKitcoMetal
     ## 
     ## 
@@ -1891,13 +1990,15 @@ proc showKitcoMetal*(xpos:int = 1) =
     let dl  = "   ----------------------------------------------------------------------"
     let cls = "CLOSED"
     let opn = "OPEN" 
-    let url = "http://www.kitco.com/texten/texten.html"
-    var dc  = 0 # data counter
-    #printLn("Gold,Silver,Platinum Spot price : New York and Asia / Europe ",peru,xpos = xpos)
-    
-    try:
-            var kt = getContent(url,timeout = 5000)
   
+    var dc  = 0 # data counter
+    var kss = newSeq[string]()
+    #printLn("Gold,Silver,Platinum Spot price : New York and Asia / Europe ",peru,xpos = xpos)
+    var kt = ""
+    try:
+            let zcli = newHttpClient()
+            kt = zcli.getContent("http://www.kitco.com/texten/texten.html")
+
             var kts = splitlines(kt)
             var ktd = newSeq[string]()
                   
@@ -1970,9 +2071,9 @@ proc showKitcoMetal*(xpos:int = 1) =
     except OverflowError:
           discard
     except  TimeoutError:
-         println("TimeoutError : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+         printLn("TimeoutError : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
     except  ProtocolError:
-         println("Protocol Error : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+         printLn("Protocol Error : " & getCurrentExceptionMsg()  & " at : " & $getLocalTime(getTime()),truetomato,xpos = xpos)
     except :
          discard
     finally:

@@ -317,7 +317,7 @@ proc showQuoteTableHk*(apfData: Portfolio) =
 
      decho(2)
      # header for the table
-     println(fmtx(["<8",">9",">9",">9",">9",">15",">10",">9"],"Stock  ","   Kurtosis  ","StdDev  ","EMA22  ","    Close  ","Company  ","     Quote  "," BoardLot  "),green)
+     printLn(fmtx(["<8",">9",">9",">9",">9",">15",">10",">9"],"Stock  ","   Kurtosis  ","StdDev  ","EMA22  ","    Close  ","Company  ","     Quote  "," BoardLot  "),green)
      try:
         for x in 0.. <stkdata.len:
             # to get ema we pass our data to the ema function
@@ -336,7 +336,7 @@ proc showQuoteTableHk*(apfData: Portfolio) =
             # display the data rows
             echo(fmtx(["<8","",">9.3f","",">9.3f","",">9.3f","",">9.3f","",">15","",">10","",">9"],stkdata[x].stock ," ", kurtosis(stkdata[x].close)," ", stddev," ",emadata," ",last(stkdata[x].close)," ",compname," ",cquote," ",blot))
      except IndexError:
-         println("Calculation failed . Insufficient Historical Data",red)
+         printLn("Calculation failed . Insufficient Historical Data",red)
 
 
 proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:string = getDateStr()):(Portfolio, seq[int]) =
@@ -355,7 +355,7 @@ proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:stri
   var maxstocks = sz
   if maxstocks > hl:
      echo()
-     println("Max Stocks Available : " & $hl,red)
+     printLn("Max Stocks Available : " & $hl,red)
      echo()
      maxstocks = hl
 

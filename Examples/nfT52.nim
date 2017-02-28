@@ -493,7 +493,7 @@ when declared(libFinHk):
              printLn("An error has occured and no valid result set was returned",red)
 
 
-        println("Test for hkexToYhoo - show bottom 10 codes converted to yahoo format",yellow)
+        printLn("Test for hkexToYhoo - show bottom 10 codes converted to yahoo format",yellow)
         if hxc.len > 1:
            for x in (hxc[0].len - 10).. <hxc[0].len :
                  echo(fmtx(["<7","",""],hxc[0][x]," --->  ",hkexToYhoo(hxc[0][x])))
@@ -551,9 +551,9 @@ when declared(libFinHk):
         # here we load all data in our randomstockpool into the new portfolio
         rpf.dx = randomstockpool                             
         decho(2)
-        println("\nshowQuoteTableHk\n",salmon)
+        printLn("\nshowQuoteTableHk\n",salmon)
         showQuoteTableHk(rpf)
-        println("\nshowStocksTable\n",salmon)
+        printLn("\nshowStocksTable\n",salmon)
         showStocksTable(rpf)
 
         # for another more automated example see nimFinT3.nim and nimFinT4.nim
@@ -564,5 +564,5 @@ when isMainModule:
   # show time elapsed for this run
   when declared(libFinHk):
       decho(2)
-      println(fmtx(["<15","","","",""],"Library     : ","qqTop libFinHk : ",LIBFINHKVERSION," - ",cx.year(getDateStr())),brightblack)
+      printLn(fmtx(["<15","","","",""],"Library     : ","qqTop libFinHk : ",LIBFINHKVERSION," - ",cx.year(getDateStr())),brightblack)
   cx.doFinish()

@@ -69,7 +69,7 @@ master.pf.add(bigMoney)
 
 for x in 0.. <master.pf.len:
       echo()
-      println(master.pf[x].nx,yellowgreen)
+      printLn(master.pf[x].nx,yellowgreen)
       showQuoteTableHk(master.pf[x])
       showStocksTable(master.pf[x])
 

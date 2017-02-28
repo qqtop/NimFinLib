@@ -51,14 +51,14 @@ proc writeVersion() =
   doFinish()
 
 proc writehelp() = 
-  println("Help",yellow)
+  printLn("Help",yellow)
   printLn("minifin version : " & MINIFINVERSION,lime)
-  println("\nExample command line parameters : ",salmon)
-  println("-t:10             refresh time in secs",yellowgreen)
-  println("-s:0005.HK+AAPL   none ,one or more stock codes yahoo style",yellowgreen)
+  printLn("\nExample command line parameters : ",salmon)
+  printLn("-t:10             refresh time in secs",yellowgreen)
+  printLn("-s:0005.HK+AAPL   none ,one or more stock codes yahoo style",yellowgreen)
   echo()
-  println("\nExample usage : ",salmon)
-  println("minifin -t:10 -s:0386.HK+0880.HK+0555.HK+BP.L+AAPL+BAS.DE",yellowgreen)
+  printLn("\nExample usage : ",salmon)
+  printLn("minifin -t:10 -s:0386.HK+0880.HK+0555.HK+BP.L+AAPL+BAS.DE",yellowgreen)
   doFinish()
 
 
@@ -123,12 +123,12 @@ proc doit(mxpos:int,stock:string) =
     # here we display price and range data for stocks passed in from command line
     if stock.len > 0:
        decho(3)
-       println(fmtx(["<9",">10","",""],"Stock","Current",spaces(2),"Range"),lime,xpos = cx.tw - 45)
+       printLn(fmtx(["<9",">10","",""],"Stock","Current",spaces(2),"Range"),lime,xpos = cx.tw - 45)
        var sxc = 0 # we limit to max 15 stocks displayable
        for x in yahooStocks(stock,xpos = 10):
              inc sxc
              if sxc < 16:
-                printlnBiCol(fmtx(["<10","",">8","",""],x.stcode,spaces(1),x.stprice,spaces(2),x.strange),xpos = cx.tw - 45)
+                printLnBiCol(fmtx(["<10","",">8","",""],x.stcode,spaces(1),x.stprice,spaces(2),x.strange),xpos = cx.tw - 45)
              
        
     # go back to top left

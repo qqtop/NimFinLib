@@ -21,7 +21,7 @@ var myPf = hkRandomPortfolio(5)[0]
 decho(2)
 # myPf now holds a Nf object and a seq[int],we only need the Nf object
 # anything else will be taken care of automatically
-println("Portfolio Name    : " & myPf.nx,yellowgreen)
+printLn("Portfolio Name    : " & myPf.nx,yellowgreen)
 showQuoteTableHk(myPf)
 showStocksTable(myPf)
 
