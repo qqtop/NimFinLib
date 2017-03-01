@@ -9,7 +9,7 @@
 ##
 ## Version     : 0.2.7.8
 ##
-## Compiler    : nim 0.15+  dev branch
+## Compiler    : nim 0.16+  dev branch
 ##
 ##
 ## Description : A basic library for financial calculations with Nim
@@ -36,13 +36,13 @@
 ##               Data display procs
 ##
 ##               
-## Project     : https://github.com/qqtop/NimFinLib
+## Project     :  https://github.com/qqtop/NimFinLib
 ##
-## Tested on   : Linux
+## Tested on   :  Linux
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2016-10-08
+## Latest      : 2017-03-01
 ##
 ## ToDo        : 
 ## 
@@ -53,17 +53,16 @@
 ##
 ## Contributors: reactorMonk
 ##
-## Requires    :
+## Installation:
 ## 
-##               random and cx.nim
+##               nimble install random
 ##
-##               cx.nim will be automatically installed 
-##               
-##               if you do :  nimble install nimFinLib 
+##               nimble install nimcx
 ##
-##               alternatively get cx.nim from the NimCx project like so
+##               nimble install nimFinLib 
+##
 ##               
-##               nimble install https://github.com/qqtop/NimCx.git
+##               
 ##               
 ##               
 ##
@@ -117,14 +116,6 @@
 ##               
 ##               minifin.nim
 ## 
-##
-## Installation: 
-## 
-##               git clone https://github.com/qqtop/NimFinLib.git
-##
-##               or
-##
-##               nimble install nimFinLib
 ##
 ##
 

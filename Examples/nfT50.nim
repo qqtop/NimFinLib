@@ -6,11 +6,8 @@ import cx,nimFinLib
 # Font Size : 9
 
 cleanscreen()
-curset()
-curdn(1)
 showCurrentIDX("^HSI+^GSPC+^FTSE+^GDAXI+^FCHI+^N225+^JKSE",xpos = 5 ,header = true)
-curset()
-curup(1)
-showCurrentSTX("IBM+BP.L+0001.HK+AAPL+0027.HK+BAS.DE+MIE1.F",xpos = 72,header = true)
+decho(2)
+showCurrentSTX("SNP+BP.L+0001.HK+AAPL+0027.HK+BAS.DE+MIE1.F",xpos = 5,header = true)
 curdn(5)
 doFinish()   
