@@ -1865,11 +1865,11 @@ proc showStocksTable*(apfdata: Portfolio,xpos:int = 1) =
 
    decho(2)
    # header for the table
-   printLn(fmtx(["<8",">9",">9",">9",">9",">13",">9",">9",">9",">9",">9"],"Code","Open","High","Low","Close","Volume","AdjClose","StDevHi","StDevLo","StDevCl","StDevClA"),yellowgreen)
+   printLn(fmtx(["<8",">9",">9",">9",">9",">13",">10",">9",">9",">9",">9"],"Code","Open","High","Low","Close","Volume","AdjClose","StDevHi","StDevLo","StDevCl","StDevClA"),yellowgreen)
    for x in 0.. <astkdata.len:
        var sx = astkdata[x] # just for less writing ...
        # display the data rows
-       printLn(fmtx(["<8",">9.3f",">9.3f",">9.3f",">9.3f",">13",">9.3f",">9.3f",">9.3f",">9.3f",">9.3f"],sx.stock,sx.open.seqlast,sx.high.seqlast,sx.low.seqlast,sx.close.seqlast,sx.vol.seqlast,sx.adjc.seqlast,
+       printLn(fmtx(["<8",">9.3f",">9.3f",">9.3f",">9.3f",">13.0",">10.3f",">9.3f",">9.3f",">9.3f",">9.3f"],sx.stock,sx.open.seqlast,sx.high.seqlast,sx.low.seqlast,sx.close.seqlast,sx.vol.seqlast,sx.adjc.seqlast,
        sx.rh[0].standardDeviation,sx.rl[0].standardDeviation,sx.rc[0].standardDeviation,sx.rca[0].standardDeviation))
 
    echo()

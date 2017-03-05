@@ -25,9 +25,8 @@ printLn("Portfolio Name    : " & myPf.nx,yellowgreen)
 showQuoteTableHk(myPf)
 showStocksTable(myPf)
 
-when isMainModule:
-  # show time elapsed for this run
-  when declared(libFinHk):
-      decho(2)
-      msgb() do : echo "{:<15}{} {} - {}".fmt("Library     : ","qqTop libFinHk : ",LIBFINHKVERSION,year(getDateStr()))
-  doFinish()
+
+when declared(libFinHk):
+   printLn("Test for    : ",truetomato)
+   printLnBiCol("{:<15}{} - {}".fmt("Library     : libFinHk ",LIBFINHKVERSION,year(getDateStr())))
+doFinish()

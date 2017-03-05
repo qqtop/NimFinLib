@@ -40,7 +40,7 @@ Example screen from minifin.nim
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|
-| nimFinLib  | Development | 0.2.7.x | MIT opensource | Linux  | Nim >= 0.15    |
+| nimFinLib  | Development | 0.2.7.x | MIT opensource | Linux  | Nim >= 0.16    |
 
 
 
@@ -97,7 +97,7 @@ Requirements
             
       random    nimble install random
       
-      cx        nimble install https://github.com/qqtop/NimCx.git
+      cx        nimble install nimcx
       
       strfmt    nimble install strfmt   (optional as a basic format engine available in cx)
            
