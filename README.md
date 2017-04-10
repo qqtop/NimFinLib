@@ -95,7 +95,7 @@ Requirements
 ------------
 
             
-      random    nimble install random
+      alea      nimble install alea
       
       cx        nimble install nimcx
       
@@ -170,7 +170,7 @@ NOTE :
      Forking ,testing, suggestions ,ideas are welcome.
      This is development code , hence use at your own risk.
      
-     Tested Ubuntu 14.04 LTS , openSuse 13.2 , openSuse Leap42.1 ,openSuse TumbleWeed
+     Tested on openSuse Leap42.1 , openSuse TumbleWeed
               
 
 ![Image](http://qqtop.github.io/qqtop-small.png?raw=true)

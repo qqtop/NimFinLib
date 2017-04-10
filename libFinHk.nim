@@ -52,7 +52,7 @@ import parsecsv,streams,algorithm,math,unicode
 import nimFinLib,cx
 
 
-let LIBFINHKVERSION* = "0.0.9"
+let LIBFINHKVERSION* = "0.1.0"
 
 proc hkexToYhoo*(stc:string):string =
    ## hkexToYhoo

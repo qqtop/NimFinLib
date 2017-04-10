@@ -7,7 +7,7 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.7.8
+## Version     : 0.2.7.9
 ##
 ## Compiler    : nim 0.16+  dev branch
 ##
@@ -54,8 +54,7 @@
 ## Contributors: reactorMonk
 ##
 ## Installation:
-## 
-##               nimble install alea
+##
 ##
 ##               nimble install nimcx
 ##
@@ -104,7 +103,7 @@
 ##               
 ##               forced us to specify the absolute import path ,see below 
 ##               
-##               random numbers are now generated via alea
+##               random numbers are now generated via alea in cx.nim
 ##
 ## Tests       : 
 ## 
@@ -126,7 +125,7 @@ import
        algorithm,math,unicode,stats
        
 
-let NIMFINLIBVERSION* = "0.2.7.8"
+let NIMFINLIBVERSION* = "0.2.7.9"
 
 let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
 
