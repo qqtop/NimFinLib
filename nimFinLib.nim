@@ -42,7 +42,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2017-03-01
+## Latest      : 2017-04-10
 ##
 ## ToDo        : 
 ## 
@@ -55,7 +55,7 @@
 ##
 ## Installation:
 ## 
-##               nimble install random
+##               nimble install alea
 ##
 ##               nimble install nimcx
 ##
@@ -104,7 +104,7 @@
 ##               
 ##               forced us to specify the absolute import path ,see below 
 ##               
-##               
+##               random numbers are now generated via alea
 ##
 ## Tests       : 
 ## 
@@ -123,8 +123,8 @@ import
 
        os,cx,strutils,parseutils,sequtils,httpclient,net,
        terminal,times,tables, parsecsv,streams,
-       algorithm,math,unicode,stats,  
-       "random-0.5.3/random"
+       algorithm,math,unicode,stats
+       
 
 let NIMFINLIBVERSION* = "0.2.7.8"
 

@@ -18,7 +18,7 @@ showEma(ema22,5)
 showdailyReturnsCl(z,5)
 
 echo()
-msgy() do: echo "Close prices for ",z.stock
+printLn("Close prices for ",z.stock,yellowgreen)
 var dada = timeseries(z,"c")
 # show it
 showTimeseries(dada,"Close-HEAD","head",5)

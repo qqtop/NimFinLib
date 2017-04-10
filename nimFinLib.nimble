@@ -7,5 +7,5 @@ license       = "MIT"
 
 
 [Deps]
-Requires:  "nim >= 0.15"
+Requires:  "nim >= 0.16.1"
 Requires:  "https://github.com/qqtop/NimCx >= 0.9.9"

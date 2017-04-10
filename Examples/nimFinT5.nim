@@ -16,22 +16,22 @@ myD = getSymbol2(mystockcode,minusdays(getDateStr(),365 * yrs),getDateStr())
 var mydT = timeseries(myD,"a") # adjusted close
 var boardlot = getBoardlot(myD)
       
-println("Data for : " & myD.stock & " " & getCompanyName(myD),lime)
-println("Boardlot : " & boardlot,peru)
+printLn("Data for : " & myD.stock & " " & getCompanyName(myD),lime)
+printLn("Boardlot : " & boardlot,peru)
 echo()
 
-println("Buying  1 share every day for " & $n & " days")
-println("After " & $yrs & " years")
-println("Selling 1 share every day for " & $n & " days")
+printLn("Buying  1 share every day for " & $n & " days")
+printLn("After " & $yrs & " years")
+printLn("Selling 1 share every day for " & $n & " days")
 echo()
 
-println(fmtx(["",">30"],"Buy","Sell"),salmon,styled={styleUnderscore})
+printLn(fmtx(["",">30"],"Buy","Sell"),salmon,styled={styleUnderscore})
 showTimeSeries(mydT,"AdjClose","tail",th - 2)            # current ,th is terminalheight
 curup(th - 1)
 showTimeSeries(mydT,"AdjClose","head",th - 2,xpos = 30)  # historical
 
 if n > th :
-  println("Displaying only rows which fit into current terminal height",peru)
+  printLn("Displaying only rows which fit into current terminal height",peru)
 
 decho(2)
 var tail = newseq[float]()
@@ -53,7 +53,7 @@ for x in 0.. <n:
 #echo headday.max  # last sell day 
   
 var pl = 0.0   
-println(fmtx(["",">23",">10",">10",">15"],"Day : ","Buy Date / Sell Date","Buy","Sell","P/L"),salmon,styled={styleUnderscore})
+printLn(fmtx(["",">23",">10",">10",">15"],"Day : ","Buy Date / Sell Date","Buy","Sell","P/L"),salmon,styled={styleUnderscore})
 
 for x in 0.. <n:
   
@@ -61,16 +61,16 @@ for x in 0.. <n:
     pl = pl + rs
          
     if rs >= 0:
-       println(fmtx(["",">23",">10",">10",">15"],"Day : ",tailday[x] & "/" & headday[x],ff2(tail[x],4),ff2(head[x],4),ff2(rs,4)),yellowgreen)
+       printLn(fmtx(["",">23",">10",">10",">15"],"Day : ",tailday[x] & "/" & headday[x],ff2(tail[x],4),ff2(head[x],4),ff2(rs,4)),yellowgreen)
     else:
-       println(fmtx(["",">23",">10",">10",">15"],"Day : ",tailday[x] & "/" & headday[x],ff2(tail[x],4),ff2(head[x],4),ff2(rs,4)),red)
+       printLn(fmtx(["",">23",">10",">10",">15"],"Day : ",tailday[x] & "/" & headday[x],ff2(tail[x],4),ff2(head[x],4),ff2(rs,4)),red)
 
 echo()    
 if pl > 0 :
-    printlnbicol("Profit / 1 Share trading    : " & ff2(pl,2))
-    printlnbicol("Profit / 1 Boardlot trading : " & ff2(pl * parsefloat(boardlot),2))
+    printLnBiCol("Profit / 1 Share trading    : " & ff2(pl,2))
+    printLnBiCol("Profit / 1 Boardlot trading : " & ff2(pl * parsefloat(boardlot),2))
 else:
-    printlnbicol("Loss   / 1 Share trading    : " & ff2(pl,2),":",red)
-    printlnbicol("Profit / 1 Boardlot trading : " & ff2(pl * parsefloat(boardlot),2))   
+    printLnBiCol("Loss   / 1 Share trading    : " & ff2(pl,2),":",red)
+    printLnBiCol("Profit / 1 Boardlot trading : " & ff2(pl * parsefloat(boardlot),2))   
 
 doFinishHk()

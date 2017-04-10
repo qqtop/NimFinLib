@@ -1,6 +1,7 @@
-import os,cx,nimFinLib,libFinHk,strutils
+import os,cx,nimFinLib,libFinHk,strutils,nimdataframe
 
 # Example nimFinT6   
+# requires nimdataframe
 # 
 # FOR HONGKONG HKEX STOCK CODES
 # 
@@ -29,30 +30,38 @@ proc quickStock(mystockcode:string) =
 
 
             echo clearline
-            printlnbicol("Code     : " & myD.stock)  
-            printlnBiCol("Company  : " & comp)
-            printlnBiCol("Boardlot : " & boardlot)
-            printlnBiCol("Date     : " & myD.date[0])  # most recent date on yahoo
+            printLnBiCol("Code     : " & myD.stock)  
+            printLnBiCol("Company  : " & comp)
+            printLnBiCol("Boardlot : " & boardlot)
+            printLnBiCol("Date     : " & myD.date[0])  # most recent date on yahoo
 
-            printlnBiCol("Cur.Price: " & ff2(myD2.price,4) & "  Moving Avg. 50 days: " & ff2(myD2.movingavg50day,4))
+            printLnBiCol("Cur.Price: " & ff2(myD2.price,4) & "  Moving Avg. 50 days: " & ff2(myD2.movingavg50day,4))
             var costperboardlot = myD2.price * parseFloat(boardlot)
-            printlnBiCol("Cost     : " & ff2(costperboardlot,2) & " per boardlot")
+            printLnBiCol("Cost     : " & ff2(costperboardlot,2) & " per boardlot")
 
       else:
         
-            println(mystockcode & spaces(1) & rightarrow & " wrong stock code or not Hongkong HKEX yahoo style code",red)
+            printLn(mystockcode & spaces(1) & rightarrow & " wrong stock code or not Hongkong HKEX yahoo style code",red)
 
 if paramCount() == 0: 
    
    astockcode = "0386.HK"   # yahoo stock code
-   printlnbicol("Code     : " & spaces(1) & astockcode & spaces(1),styled = {styleReverse})
+   printLnBiCol("Code     : " & spaces(1) & astockcode & spaces(1),styled = {styleReverse})
    quickStock(astockcode)  
 else:
    for x in 1.. paramCount():
-      printlnbicol("Code     : " & spaces(1) & strutils.toupper(paramStr(x)) & spaces(1),styled = {styleReverse})
+      printLnBiCol("Code     : " & spaces(1) & strutils.toupper(paramStr(x)) & spaces(1),styled = {styleReverse})
       astockcode = strutils.toupper(paramStr(x))
       quickStock(astockcode)
       decho(2)
-      
+  
+  
+
+# show latest stock quotes
+showCurrentStocks("IBM+BP.L+0001.HK")
+
+showCurrentIndexes("^HSI+^FTSE")
+decho(2) 
+  
 doFinishHk()       
 

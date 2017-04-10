@@ -15,9 +15,8 @@ import nimFinLib,libFinHk,cx
 
 
 echo ()
-msgy() do : echo "###############################################"
-msgy() do : echo "# Testing nimFinLib                  nimFinT3 #"
-msgy() do : echo "###############################################"
+printLn("# Testing nimFinLib                  nimFinT3 #",yellowgreen)
+
 echo ()
 
 var hkpool      = initPool()
@@ -79,5 +78,5 @@ for x in 0.. <master.pf.len:
 when isMainModule:
     when declared(libFinHk):
         decho(2)
-        msgb() do : echo "{:<15}{} {} - {}".fmt("Library     : ","qqTop libFinHk : ",LIBFINHKVERSION,year(getDateStr()))
+        printLn("{:<15}{} {} - {}".fmt("Library     : ","qqTop libFinHk : ",LIBFINHKVERSION,year(getDateStr())),cyan)
     doFinish()

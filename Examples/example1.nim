@@ -19,7 +19,6 @@ showhistdata(ibm,"2015-01-12","2015-01-19")
 showdailyReturnsCl(ibm,5)
 decho(3)
 
-
 # show EMA 14 days
 showEMA(ema(ibm,14),5)
 decho(3)
@@ -28,7 +27,6 @@ decho(3)
 cecholn(peru,"{:<8} {:<11} {:>15}".fmt("Code","Date","Adj.Close"))
 echo  "{:<8} {:<11} {:>15}".fmt(ibm.stock,ibm.date.seqlast,ibm.adjc.seqlast)
 decho(1)
-
 
 # show some forex data
 

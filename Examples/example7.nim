@@ -15,7 +15,7 @@ echo()
 
 print(" Current Data ",salmon)
 print("Historic Data ",pink,xpos = 35)
-printlnbicol("Code : " & mystockcode,xpos = 55)
+printLnBiCol("Code : " & mystockcode,xpos = 55)
 hlineln(70)
 
 showTimeSeries(mydT,"AdjClose",head,5)

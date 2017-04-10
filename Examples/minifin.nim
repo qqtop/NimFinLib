@@ -6,13 +6,14 @@ import os,cx,httpclient,strutils,nimFinLib,times,strfmt,osproc,parseopt2
 # A MINI financial information system example
 # currently set to update every minute if started w/o param
 # 
-# Compiler : NIM 0.13.1
+# Compiler : NIM 0.14.3
 # 
 # USAGE: minifin -t:10 -s:0386.HK+0880.HK+0555.HK+BP.L+AAPL+BAS.DE
 # 
-# terminal size : full screen 80 x 40
-# font          : monospace
-# fontsize      : 9 regular
+# Tested on     : Monitor resolution 1024 x 768
+# Terminal size : full screen 80 x 40
+# Font          : monospace
+# Fontsize      : 8 regular
 # 
 # profiling
 # import nimProf
@@ -73,7 +74,7 @@ proc bottomInfo(lpx:int,mxpos:int,ts:int) =
       if mm > 1_000_000:
            GC_FullCollect() # free some memory
 
-      #curdn(1)
+      curdn(4)
       printLn("Memory  : " &  $mm &  " | Min : " & $mmin & " | Max : " & $mmax,cx.gray,xpos = mxpos)
       print("Updated : " & $lpx & " times ",cx.gray,xpos = mxpos)
       print(" Update Interval " & $ts & " secs.",cx.gray)
@@ -90,7 +91,7 @@ proc bottomInfo(lpx:int,mxpos:int,ts:int) =
       print(" |",gray)  
       var ntc = "Metal : Kitco, Market Data : Yahoo Finance"
       printLn(ntc,gray,xpos = cx.tw - ntc.len - 3)
-
+      #printLn("Terminal : use font monospace size 9 or 10")
 
 proc doit(mxpos:int,stock:string) =
     # setup the terminal
@@ -171,6 +172,7 @@ for kind, key, val in getopt():
     of "version", "v": writeVersion()
     of "time","t"    : timespace = checkTimespace(parseInt(val))
     of "stock","s"   : stock = $val
+    else : discard
     
   of cmdEnd: assert(false) # cannot happen
   

@@ -1,6 +1,6 @@
 import os,terminal,sequtils,strutils,times,math,stats,unicode,tables
 import nimFinLib,cx
-import "random-0.5.3/random"
+import alea
 # comment next line if tests concerning libFinHk not required
 import libFinHk
 # uncomment next line for nimprofiler 
@@ -157,17 +157,17 @@ echo()
 
 # now we can use our data for some basic calculations
 # we show the most recent 5 dailyreturns for data based on close price
-msgy() do: echo "Most recent 5 dailyreturns based on close price"
+printLn("Most recent 5 dailyreturns based on close price",yellowgreen)
 showdailyReturnsCl(data,5)
 
 # we show the most recent 5 dailyreturns for data based on adjusted close price
 echo()
-msgy() do: echo "Most recent 5 dailyreturns based on adjc price"
+printLn("Most recent 5 dailyreturns based on adjc price",yellow)
 showdailyReturnsAdCl(data,5)
 
 
 echo()
-msgy() do: echo "Show tail 2 rows = most recent dailyreturns based on adjc"
+printLn("Show tail 2 rows = most recent dailyreturns based on adjc",yellowgreen)
 # if we need the actual returnseries for further use we need to save it
 # Note : we need to pass the desired data column
 var rets = dailyreturns(data.adjc)
@@ -188,18 +188,18 @@ superheader(" Tests for timeseries ")
 echo()
 
 # this returns a date column and one of the ohlcva data columns
-msgy() do : echo "\nTest timeseries - show recent 5 rows for $1\n" % data.stock
+println("\nTest timeseries - show recent 5 rows for $1\n" % data.stock,yellow)
 # available headers
 var htable = {"o": "Open", "h": "High","l":"Low","c":"Close","v":"Volume","a":"Adj.Close"}.toTable
 var ohlcva = "a"  # here we choose adjclose column
 var ts = data.timeseries(ohlcva)
 # once we have the timeseries it can be displayed with the showTimeseries function
-msgy() do : echo "Head"
+printLn( "Head",yellow)
 showTimeseries(ts,htable[ohlcva],head,5) # newest on top
-msgy() do : echo "Tail"
+printLn("Tail",yellow)
 showTimeseries(ts,htable[ohlcva],tail,5) # oldest on bottom
 # to see all rows
-#msgy() do : echo "All"
+#printLn("All",yellow)
 #showTimeseries(ts,htable[ohlcva],all,5) # also available , the 5 here has no effect
 
 echo()
@@ -218,8 +218,8 @@ printLn(fmtx(["","","<10","",""],"tail(1) ",spaces(3),$(ts.dd.seqtail(1)[0]),spa
 # http://nim-lang.org/docs/tables.html#OrderedTable
 # for reference:
 # echo()
-# msgy() do : echo"Test OrderedTable"
-# msgg() do : echo "{:<11} {:>11} ".fmt("Date",htable[ohlcva])
+# printLn("Test OrderedTable",yellow)
+# println("{:<11} {:>11} ".fmt("Date",htable[ohlcva]),yellowgreen)
 # # init table
 # var atable = initOrderedTable[string, float]()
 # # load table
@@ -335,7 +335,7 @@ printLn(" Testing logistics functions\n",peru)
 var a = 5
 printLn(fmtx([">15","", ">15" ,"",">15"],"Value",spaces(1),"logisticf",spaces(3),"logistic_derivative"),yellowgreen)
 for x in -a.. a:
-  var xx = random.random() * 1.8
+  var xx = getRandomFloat() * 1.8
   echo(fmtx([">15.14f","",">15.14f","",">15.14f"],xx,spaces(1),logisticf(xx),spaces(3),logisticf_derivative(xx)))
 
 
@@ -392,7 +392,7 @@ echo()
 var symb = "AAPL"
 var sx = getSymbol3(symb)
 decho(2)
-msgg() do : echo "Stock Code : ", symb
+println("Stock Code : " & symb,yellow)
 aline()
 showStockdatatable(sx)
 decho(2)
@@ -461,7 +461,7 @@ when declared(libFinHk):
         # at this stage three lists are available for work in hxc
         if hxc.len > 0:
           # # we can show all 1500+ stocks too ..
-          # msgg() do : echo "Full List of Hongkong Stock Exchange MainBoard Listed Stocks" # show all
+          # printLn("Full List of Hongkong Stock Exchange MainBoard Listed Stocks") # show all
           # for x in 0.. <hxc[0].len :
           #   try:
           #      echo "{:<5} {:<7} {:<22}  {:>6}".fmt(x + 1,hxc[0][x],hxc[1][x],hxc[2][x])
@@ -483,7 +483,7 @@ when declared(libFinHk):
              try:
                 echo(fmtx(["<5","","<7","","<22","",">6"],x + 1,spaces(1),hxc[0][x],spaces(1),hxc[1][x],spaces(1),hxc[2][x]))
              except:
-                msgr() do : echo "Problem with item in hkex.csv",x
+                println("Problem with item in hkex.csv" & $x,red)
 
         else:
              # in case of parsing errors due to issues with the website we return some message
@@ -517,7 +517,7 @@ when declared(libFinHk):
         var rc = 0
         while rc < 10:
                   # get a random number between 1 and max no of items in hkexcodes[0]
-                  var rdn = randomInt(1,hkexcodes[stockcodes].len)
+                  var rdn = getRndInt(1,hkexcodes[stockcodes].len)
                   
                   # pick the stock with index number rdn from hxc[stockcodes]
                   # and convert to yahoo format then add it to a pool called randomstockpool

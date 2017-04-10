@@ -6,9 +6,9 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.0.8
+## Version     : 0.0.9
 ##
-## Compiler    : nim 0.14.3
+## Compiler    : tested on nim 0.16.1 dev
 ##
 ##
 ## Description : A library to support financial calculations with Nim
@@ -22,7 +22,7 @@
 ##
 ## ProjectStart: 2015-07-07
 ## 
-## Latest      : 2016-09-10 
+## Latest      : 2017-04-10 
 ##
 ## ToDo        :
 ##
@@ -50,9 +50,9 @@ import terminal,times,tables,stats
 import parsecsv,streams,algorithm,math,unicode
 # imports based on modules available via nimble
 import nimFinLib,cx
-import "random-0.5.3/random"
 
-let LIBFINHKVERSION* = "0.0.8"
+
+let LIBFINHKVERSION* = "0.0.9"
 
 proc hkexToYhoo*(stc:string):string =
    ## hkexToYhoo
@@ -195,7 +195,7 @@ proc getHKEXcodesFromFile*(fname : string):seq[seq[string]] =
       # if no such file we just leave
 
       if fileExists(fname) == false:
-        msgr() do : echo "File : ",fname," not found !"
+        printLn("File : " & fname & " not found !",red)
         result = @[]
       else:
           var stockcodes   = newSeq[string]()
@@ -207,7 +207,7 @@ proc getHKEXcodesFromFile*(fname : string):seq[seq[string]] =
           # another file check , maybe not necessary , but check if we can read fom stream
           var s = newFileStream(fname, fmRead)
           if s == nil:
-              msgr() do: echo("Cannot open file : " & fname)
+              printLn("Cannot open file : " & fname,red)
               result = @[]
           else:
               var x: CsvParser
@@ -228,7 +228,7 @@ proc getHKEXcodesFromFile*(fname : string):seq[seq[string]] =
                      result = @[stockcodes,companynames,boardlots]
               else:
                      # try to give some indication where the error occured
-                     msgr() do : echo("Error in hkex.csv data. Row count differs.")
+                     printLn("Error in hkex.csv data. Row count differs.",red)
                      echo "Stockcodes Items   : ",stockcodes.len
                      echo "CompanyNames Items : ",companynames.len
                      echo "BoardLots Items    : ",boardlots.len
@@ -356,7 +356,7 @@ proc showQuoteTableHk*(apfData: Portfolio) =
 
      decho(2)
      # header for the table
-     printLn(fmtx(["<8",">10",">10",">10",">10",">16",">11",">10"],"Stock","Kurtosis","StdDev","EMA22","Close","Company","Quote","BoardLot"),green)
+     println(fmtx(["<8",">10",">10",">10",">10",">16",">11",">10"],"Stock","Kurtosis","StdDev","EMA22","Close","Company","Quote","BoardLot"),green)
      try:
         for x in 0.. <stkdata.len:
             # to get ema we pass our data to the ema function
@@ -375,7 +375,7 @@ proc showQuoteTableHk*(apfData: Portfolio) =
             # display the data rows
             echo(fmtx(["<8","",">9.3f","",">9.3f","",">9.3f","",">9.3f","",">15","",">10","",">9"],stkdata[x].stock ," ", kurtosis(stkdata[x].close)," ", stddev," ",emadata," ",seqlast(stkdata[x].close)," ",compname," ",cquote," ",blot))
      except IndexError:
-         printLn("Calculation failed . Insufficient Historical Data",red)
+         println("Calculation failed . Insufficient Historical Data",red)
 
 
 proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:string = getDateStr()):(Portfolio, seq[int]) =
@@ -394,13 +394,13 @@ proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:stri
   var maxstocks = sz
   if maxstocks > hl:
      echo()
-     printLn("Max Stocks Available : " & $hl,red)
+     println("Max Stocks Available : " & $hl,red)
      echo()
      maxstocks = hl
 
   var rndpf = initOrderedTable[int,string]()
   for x in 0.. <maxstocks:
-      var z = randomInt(0,hl)
+      var z = getRndint(0,hl)
       discard rndpf.haskeyorput(z,$(hkexcodes[0][z]))
 
   decho(1)
