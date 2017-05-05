@@ -5,7 +5,7 @@
 
 Financial Library for Nim 
 ==========================
-
+(Work in Progress)
 
 
 ![Image](http://qqtop.github.io/nfT50.png?raw=true)
@@ -40,7 +40,7 @@ Example screen from minifin.nim
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|
-| nimFinLib  | Development | 0.2.7.x | MIT opensource | Linux  | Nim >= 0.16    |
+| nimFinLib  | Development | 0.2.8.x | MIT opensource | Linux  | Nim >= 0.16    |
 
 
 
