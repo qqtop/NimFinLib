@@ -6,7 +6,7 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.0.9
+## Version     : 0.1.0
 ##
 ## Compiler    : tested on nim 0.16.1 dev
 ##
@@ -22,7 +22,7 @@
 ##
 ## ProjectStart: 2015-07-07
 ## 
-## Latest      : 2017-04-10 
+## Latest      : 2017-05-05 
 ##
 ## ToDo        :
 ##
@@ -378,67 +378,63 @@ proc showQuoteTableHk*(apfData: Portfolio) =
          println("Calculation failed . Insufficient Historical Data",red)
 
 
-proc hkRandomPortfolio*(sz:int = 10,startdate:string = "2014-01-01",enddate:string = getDateStr()):(Portfolio, seq[int]) =
-  ## hkRandomPf
-  ##
-  ## a fast automated random Portfolio generator
-  ##
-  ## just pass in number of stocks and optionally start and enddate
-  ##
-  ## the portfolio is also returned as Portfolio object for further use as desired
-  ##
-  ## for example use see nimFinT4.nim
-  ##
-  var hkexcodes = initHKEX()
-  var hl = hkexcodes[0].len
-  var maxstocks = sz
-  if maxstocks > hl:
-     echo()
-     println("Max Stocks Available : " & $hl,red)
-     echo()
-     maxstocks = hl
+proc hkRndPortfolioData*(rc:int = 10,startdate:string = "2014-01-01",enddate:string = getDateStr()):seq[Stocks] =
+        # we will return a seq[Stocks] of random stocks to be selected from hkexcodes
+        
+        result = initPool()
 
-  var rndpf = initOrderedTable[int,string]()
-  for x in 0.. <maxstocks:
-      var z = getRndint(0,hl)
-      discard rndpf.haskeyorput(z,$(hkexcodes[0][z]))
+        var hkexcodes= initHKEX()
+        # hkexcodes now holds three seqs namely : stockcodes,companynames,boardlots
+        # for easier reading we can introduce constants
+        const
+            stockcodes   = 0
+            companynames = 1
+            boardlots    = 2 
 
-  decho(1)
-  var pf1 = initPortfolio()
-  pf1.nx = "RandomPortfolio - HK"
-  var pfpool = initPool()
-  var pfseq = newSeq[int]()
-  for key,val in rndpf:
-      var nval = hkexToYhoo(val)
-      try:
-         pfpool.add(getSymbol2(nval,startdate,enddate))
-         pfseq.add(key)
-      except:
-         # we may come here if yahoo has no data or other issues for the
-         # requested stock, currently we skip it
-         discard
-         echo()
+        var rc1 = 0
+        while rc1 < rc:
+                    # get a random number between 1 and max no of items in hkexcodes[0]
+                    var rdn = getRndInt(1,hkexcodes[stockcodes].len)
+                    
+                    # pick the stock with index number rdn from hxc[stockcodes]
+                    # and convert to yahoo format 
+                    var arandomstock = hkexToYhoo(hkexcodes[stockcodes][rdn])
+                                                    
+                    #load the historic data for arandomstock into result
+                    if arandomstock.startswith("    ") == true: discard
+                    else:
+                        var dxz = getSymbol2(arandomstock,startdate,enddate)
+                        if dxz.stock.startswith("Error") == false:   # effect of errstflag in nimFinLib
+                            if dxz.stock.startswith("    ") == false:
+                                result.add(dxz)
+                                doassert result.seqfirst.stock == dxz.stock
+                                inc rc1
 
-  pf1.dx = pfpool
-  result = (pf1,pfseq)
-
-
-proc quickPortfolioHk*(n:int = 5) : Portfolio =
-   ## quickPortfolioHk
-   ## 
-   ## just show a random portfolio of Hongkong stocks for quick demoing
-   ## 
-   ## n = number of stocks in portfolio
-   ## 
-   ## .. code-block:: nim
-   ##    import cx, libFinHk
-   ##    quickPortfolioHk()
-   ##    doFinish()
-   ## 
-   ## 
-   var z = hkRandomPortfolio(n)[0]
-   showQuoteTableHk(z)
-   result = z
+proc quickPortfolioHk*(n:int = 5):Portfolio =
+    ## quickPortfolioHk
+    ## 
+    ## just show a random portfolio of Hongkong stocks for quick demoing
+    ## 
+    ## n = number of stocks in portfolio
+    ## 
+    ## .. code-block:: nim
+    ##    import nimFinLib,libFinHk
+    ##    var mypf = quickPortfolioHk()
+    ##    doFinish()
+    ## 
+    ## 
+    var rpf = initPortfolio()
+    # rpf.nx holds the relevant portfolio name
+    rpf.nx = "RandomTestPortfolio"
+    # rpf.dx will hold the relevant historic data for all stocks
+    # here we get new data and load it into the new portfolio
+    rpf.dx = hkRndPortfolioData(n)                             
+    decho(2)
+    printLn("\nshowQuoteTableHk\n",salmon)
+    showQuoteTableHk(rpf)
+    printLn("\nshowStocksTable\n",salmon)
+    showStocksTable(rpf)
+    result = rpf
 
 
 proc doFinishHk*() =

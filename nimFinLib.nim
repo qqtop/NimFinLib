@@ -7,7 +7,7 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.7.9
+## Version     : 0.2.8.0
 ##
 ## Compiler    : nim 0.16+  dev branch
 ##
@@ -42,7 +42,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2017-04-10
+## Latest      : 2017-05-05
 ##
 ## ToDo        : 
 ## 
@@ -107,7 +107,7 @@
 ##
 ## Tests       : 
 ## 
-##               For comprehensive tests and example usage see 
+##               For comprehensive tests and example usage see examples and
 ## 
 ##               nfT50.nim
 ##               
@@ -125,10 +125,9 @@ import
        algorithm,math,unicode,stats
        
 
-let NIMFINLIBVERSION* = "0.2.7.9"
+let NIMFINLIBVERSION* = "0.2.8.0"
 
 let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
-
 
 const
       tail* = "tail"
@@ -783,7 +782,7 @@ proc showCurrentIndexes*(adf:seq[Stocks],xpos:int = 1){.discardable.} =
    ##
    var idxs = buildStockString(adf)
    #hdx(echo "Index Data for a pool" )
-   var qurl=yahoourl  % idxs
+   var qurl = yahoourl  % idxs
    currentIndexes(qurl,xpos = xpos)
 
 
@@ -800,7 +799,7 @@ proc showCurrentIndexes*(idxs:string,xpos:int = 1){.discardable.} =
     ##     showCurrentIndexes("^HSI+^GDAXI+^FTSE+^NYA",xpos = 5)
     ## xpos allows x positioning
     #
-    var qurl=yahoourl  % idxs
+    var qurl = yahoourl  % idxs
     currentIndexes(qurl,xpos = xpos)
 
 
@@ -814,7 +813,7 @@ proc showCurrentIDX*(adf:seq[Stocks],xpos:int = 1,header:bool = false){.discarda
    
    var idxs = buildStockString(adf)
    if header == true: hdx(printLn("Index Data ",yellowgreen,termblack),width = 64,nxpos = xpos)
-   var qurl=yahoourl  % idxs
+   var qurl = yahoourl  % idxs
    currentIDX(qurl,xpos = xpos)
 
 
@@ -835,7 +834,7 @@ proc showCurrentIDX*(idxs:string,xpos:int = 1,header:bool = false){.discardable.
     #
     
     if header == true: hdx(printLn("Index Quote ",yellowgreen,termblack),width = 64,nxpos = xpos)
-    var qurl=yahoourl  % idxs
+    var qurl = yahoourl  % idxs
     currentIDX(qurl,xpos = xpos)
 
 
@@ -968,7 +967,7 @@ proc showCurrentStocks*(apf:Portfolio,xpos:int = 1,header:bool = false){.discard
    ##
    var stcks = buildStockString(apf)
    if header == true : hdx(printLn("Stocks Current Quote for $1" % apf.nx,yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)         
-   var qurl=yahoourl  % stcks
+   var qurl = yahoourl  % stcks
    currentStocks(qurl,xpos = xpos)
 
 
@@ -990,7 +989,7 @@ proc showCurrentStocks*(stcks:string,xpos:int = 1,header:bool = false){.discarda
    ##
    
    if header == true : hdx(printLn("Stocks Current Quote ",yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)         
-   var qurl=yahoourl  % stcks
+   var qurl = yahoourl  % stcks
    currentStocks(qurl,xpos = xpos)
 
 
@@ -1015,7 +1014,7 @@ proc showCurrentSTX*(apf:Portfolio,xpos:int = 1,header:bool = false){.discardabl
    
    var stcks = buildStockString(apf)
    if header == true: hdx(printLn("Stocks Current Quote for $1" % apf.nx,yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)
-   var qurl=yahoourl  % stcks
+   var qurl = yahoourl  % stcks
    currentSTX(qurl,xpos = xpos)
 
 
@@ -1037,7 +1036,7 @@ proc showCurrentSTX*(stcks:string,xpos:int = 1,header:bool = false){.discardable
    ##
    
    if header == true :  hdx(printLn("Stocks Quote ",yellowgreen,termblack,xpos = xpos + 2),width = 64,nxpos = xpos)
-   var qurl=yahoourl  % stcks
+   var qurl = yahoourl  % stcks
    currentSTX(qurl,xpos = xpos)
  
 
@@ -1077,7 +1076,7 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
              print(fmtx(["<11","","<11"],startDate,spaces(1),endDate))
              # end feedback line
           else:
-              printLn("Processing... ",lightskyblue)
+              printLnBiCol("Processing... : " & symb,":",lightskyblue)
               curup(1)
           # set up dates for yahoo
           var sdy = year(startDate)
@@ -1120,11 +1119,17 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
           # e = end day
           # f = end year
           # we use the csv string , yahoo json format only returns limited data 1.5 years or less
+          
           # this url worked until 2015-09-21
           #var qurl = "http://real-chart.finance.yahoo.com/table.csv?s=$1&a=$2&b=$3&c=$4&d=$5&e=$6&f=$7&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
-          # current historical data url
+          
+          # current historic data url
           var qurl = "http://ichart.finance.yahoo.com/table.csv?s=$1&a=$2&b=$3&c=$4&d=$5&e=$6&f=$7&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
-
+          
+          # alternatively try this historical data url
+          #var qurl = "https://chart.finance.yahoo.com/table.csv?s=$1&a=2&b=28&c=2017&d=3&e=28&f=2017&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
+         
+          
           var headerset = [symb,"Date","Open","High","Low","Close","Volume","Adj Close"]
           var c = 0
           var hflag  : bool # used for testing maybe removed later
@@ -1142,69 +1147,71 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
             echo()
             printLn("Error : Yahoo currently does not provide historical data for " & symb,red)
             errstflag = true  
-            
-          var s = newFileStream(acvsfile, fmRead)
-          if s == nil:
-             # in case of problems with the yahoo csv file we show a message
-             printLn("Error : Data file for $1 could not be opened " % symb,red)
-
-          # now parse the csv file
-         
+           
           var x: CsvParser
-          open(x, s , acvsfile, separator=',')
-          while readRow(x):
-            # a way to get the actual csv header , but here we use our custom headerset with more info
-            # if validIdentifier(x.row[0]):
-            #  header = x.row
-            c = 0 # counter to assign item to correct var
-            for val in items(x.row):
-              if val in headerset:
-                    hflag = true
+          if errstflag == false: 
+                var s = newFileStream(acvsfile, fmRead)
+                if s == nil:
+                    # in case of problems with the yahoo csv file we show a message
+                    printLn("Error : Data file for $1 could not be opened " % symb,red)
 
-              else:
-                    c += 1
-                    hflag = false
+                # now parse the csv file
+                
+                
+                open(x, s , acvsfile, separator=',')
+                while readRow(x):
+                    # a way to get the actual csv header , but here we use our custom headerset with more info
+                    # if validIdentifier(x.row[0]):
+                    #  header = x.row
+                    c = 0 # counter to assign item to correct var
+                    for val in items(x.row):
+                      if val in headerset:
+                            hflag = true
 
-                    case c
-                    of 1:
-                          datx = val
-                          datdf.add(datx)
+                      else:
+                            c += 1
+                            hflag = false
 
-                    of 2:
-                          opex = parseFloat(val)
-                          openRC.push(opex)      ## RunningStat for open price
-                          opedf.add(opex)
+                            case c
+                            of 1:
+                                datx = val
+                                datdf.add(datx)
 
-                    of 3:
-                          higx = parseFloat(val)
-                          highRC.push(higx)
-                          higdf.add(higx)
+                            of 2:
+                                opex = parseFloat(val)
+                                openRC.push(opex)      ## RunningStat for open price
+                                opedf.add(opex)
 
-                    of 4:
-                          lowx = parseFloat(val)
-                          lowRC.push(lowx)
-                          lowdf.add(lowx)
+                            of 3:
+                                higx = parseFloat(val)
+                                highRC.push(higx)
+                                higdf.add(higx)
 
-                    of 5:
-                          closx = parseFloat(val)
-                          closeRC.push(closx)     ## RunningStat for close price
-                          closdf.add(closx)
+                            of 4:
+                                lowx = parseFloat(val)
+                                lowRC.push(lowx)
+                                lowdf.add(lowx)
 
-                    of 6:
-                          volx = parseFloat(val)
-                          volumeRC.push(volx)
-                          voldf.add(volx)
+                            of 5:
+                                closx = parseFloat(val)
+                                closeRC.push(closx)     ## RunningStat for close price
+                                closdf.add(closx)
 
-                    of 7:
-                          adjclosx = parseFloat(val)
-                          closeRCA.push(adjclosx)  ## RunningStat for adj close price
-                          adjclosdf.add(adjclosx)
+                            of 6:
+                                volx = parseFloat(val)
+                                volumeRC.push(volx)
+                                voldf.add(volx)
 
-                    else :
-                          printLn("Csv Data in unexpected format for Stocks :" & symb,red)
+                            of 7:
+                                adjclosx = parseFloat(val)
+                                closeRCA.push(adjclosx)  ## RunningStat for adj close price
+                                adjclosdf.add(adjclosx)
+
+                            else :
+                                printLn("Csv Data in unexpected format for Stocks :" & symb,red)
 
           # feedbacklines can be shown with processFlag set to true
-          if processFlag == true:
+          if processFlag == true and errstflag == false:
              printLn(" --> Rows processed : " & $processedRows(x),salmon)
           
 
@@ -1868,7 +1875,7 @@ proc showStocksTable*(apfdata: Portfolio,xpos:int = 1) =
    for x in 0.. <astkdata.len:
        var sx = astkdata[x] # just for less writing ...
        # display the data rows
-       printLn(fmtx(["<8",">9.3f",">9.3f",">9.3f",">9.3f",">13.0",">10.3f",">9.3f",">9.3f",">9.3f",">9.3f"],sx.stock,sx.open.seqlast,sx.high.seqlast,sx.low.seqlast,sx.close.seqlast,sx.vol.seqlast,sx.adjc.seqlast,
+       printLn(fmtx(["<8",">9.3f",">9.3f",">9.3f",">9.3f",">13",">10.3f",">9.3f",">9.3f",">9.3f",">9.3f"],sx.stock,sx.open.seqlast,sx.high.seqlast,sx.low.seqlast,sx.close.seqlast,int(sx.vol.seqlast),sx.adjc.seqlast,
        sx.rh[0].standardDeviation,sx.rl[0].standardDeviation,sx.rc[0].standardDeviation,sx.rca[0].standardDeviation))
 
    echo()

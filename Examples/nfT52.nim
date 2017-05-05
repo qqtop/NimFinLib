@@ -501,7 +501,9 @@ when declared(libFinHk):
         echo()
 
         # lets create a portfolio with 10 random hongkong stocks
-        # get available stock codes
+        # get available stock codes  alternatively you can use the
+        # hkRndportfolio function from libFinHk.nim  for example see nimFinT7.nim
+        # 
         let hkexcodes = initHKEX()
         # hkexcodes now holds three seqs namely : stockcodes,companynames,boardlots
         # for easier reading we can introduce constants
