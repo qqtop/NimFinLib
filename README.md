@@ -40,7 +40,7 @@ Example screen from minifin.nim
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|
-| nimFinLib  | Development | 0.2.8.x | MIT opensource | Linux  | Nim >= 0.16    |
+| nimFinLib  | Development | 0.2.8.x | MIT opensource | Linux  | Nim >= 0.16.x  |
 
 
 
@@ -95,8 +95,7 @@ Requirements
 ------------
 
             
-      alea      nimble install alea
-      
+           
       cx        nimble install nimcx
       
       strfmt    nimble install strfmt   (optional as a basic format engine available in cx)

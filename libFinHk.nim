@@ -38,13 +38,7 @@
 ##
 ##               For comprehensive tests and usage see nimFinT3.nim & nimFinT4
 ##
-##
-##               Recent updates to nim , especially creating a random.nim
-##               
-##               which gets loaded instead of the random.nim available from nimble
-##               
-##               forced us to specify the absolute import path ,see below 
-##
+
 import os,strutils,parseutils,sequtils,httpclient
 import terminal,times,tables,stats
 import parsecsv,streams,algorithm,math,unicode
@@ -403,12 +397,15 @@ proc hkRndPortfolioData*(rc:int = 10,startdate:string = "2014-01-01",enddate:str
                     #load the historic data for arandomstock into result
                     if arandomstock.startswith("    ") == true: discard
                     else:
-                        var dxz = getSymbol2(arandomstock,startdate,enddate)
-                        if dxz.stock.startswith("Error") == false:   # effect of errstflag in nimFinLib
-                            if dxz.stock.startswith("    ") == false:
+                        try:  #try...except to avoid error when yahoo has no hist data for a random stock
+                          var dxz = getSymbol2(arandomstock,startdate,enddate)
+                          if dxz.stock.startswith("Error") == false:     # effect of errstflag in nimFinLib
+                              if dxz.stock.startswith("    ") == false:  # in case of yahoo data issues
                                 result.add(dxz)
                                 doassert result.seqfirst.stock == dxz.stock
                                 inc rc1
+                        except:
+                           discard
 
 proc quickPortfolioHk*(n:int = 5):Portfolio =
     ## quickPortfolioHk
