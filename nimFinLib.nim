@@ -97,13 +97,7 @@
 ##               
 ##               if you see some unexpected chars then this libraries may be missing
 ##               
-##               Recent updates to nim , especially creating a random.nim
-##               
-##               which gets loaded instead of the random.nim available from nimble
-##               
-##               forced us to specify the absolute import path ,see below 
-##               
-##               random numbers are now generated via alea in cx.nim
+
 ##
 ## Tests       : 
 ## 
