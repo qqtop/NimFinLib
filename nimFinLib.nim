@@ -44,7 +44,11 @@
 ## 
 ## Latest      : 2017-05-05
 ##
-## ToDo        : 
+## ToDo        : NOTE : getSymbol2 is currently not working as most
+##                      yahoo endpoints are down , we are looking
+##                      for a solution to this 2017-05-19
+##                      Some data is still being available if the markets are up
+##                      Yahoo being sold to Verizon so expect hick-ups ...
 ## 
 ##               Ratios , Covariance , Correlation , Plotting advanced functions etc.
 ##               
@@ -121,7 +125,12 @@ import
 
 let NIMFINLIBVERSION* = "0.2.8.0"
 
-let yahoourl* = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
+let yahoourl*    = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
+let yahoocururl* = "https://finance.yahoo.com/webservice/v1/symbols/allcurrencies/quote?format=json"
+
+# urls for retrieving historical data  --  as of min may2017 all these endpoints are down
+# see getSymbol3 for alternative but data is not reliable ... needs more testing
+
 
 const
       tail* = "tail"
@@ -1116,14 +1125,13 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
           
           # this url worked until 2015-09-21
           #var qurl = "http://real-chart.finance.yahoo.com/table.csv?s=$1&a=$2&b=$3&c=$4&d=$5&e=$6&f=$7&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
-          
-          # current historic data url
+                    
+          # current historic data url worked until minmay 2017
           var qurl = "http://ichart.finance.yahoo.com/table.csv?s=$1&a=$2&b=$3&c=$4&d=$5&e=$6&f=$7&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
-          
+
           # alternatively try this historical data url
           #var qurl = "https://chart.finance.yahoo.com/table.csv?s=$1&a=2&b=28&c=2017&d=3&e=28&f=2017&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
-         
-          
+    
           var headerset = [symb,"Date","Open","High","Low","Close","Volume","Adj Close"]
           var c = 0
           var hflag  : bool # used for testing maybe removed later
@@ -1139,8 +1147,12 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
             htpc.downloadFile(qurl,acvsfile)
           except HttpRequestError:
             echo()
-            printLn("Error : Yahoo currently does not provide historical data for " & symb,red)
+            printLn("Error : Yahoo is down or currently does not provide historical data for " & symb,red)
+            printLnBiCol("Check: " & qurl,":",salmon)
             errstflag = true  
+            # we just quit here if it does not work
+            printLn("Sorry, Yahoo endpoints are down ! Try getSymbol3 ... good luck . ByeBye.",salmon)
+            doFinish()
            
           var x: CsvParser
           if errstflag == false: 
@@ -1254,6 +1266,8 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
 proc getSymbol3*(symb:string):Stockdata =
      ## getSymbol3
      ##
+     ## probably only provides data after 01/01/2000 or younger or not at all  .... YAHOO!!!!!  :(
+     ##
      ## additional data as provided by yahoo for a stock
      ##
      ## data returned is inside an Stockdata object with following fields and types
@@ -1310,9 +1324,9 @@ proc getSymbol3*(symb:string):Stockdata =
 
      var qz : Stockdata
      var stx = "l1c1va2xj1b4j4dyekjm3m4rr5p5p6s7"
-     var qurl = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=$2" % [symb, stx]
+     var qurl3 = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=$2" % [symb, stx]
      let zcli = newHttpClient()
-     var rx = zcli.getcontent(qurl)
+     var rx = zcli.getcontent(qurl3)
      var rxs = rx.split(",")
      try:
         qz.price             = parseFloat(strip(rxs[0]))
