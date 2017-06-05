@@ -10,9 +10,9 @@ Financial Library for Nim
 
 Note : As of Mid May 2017 due to changes in Yahoo data endpoints for historical stock data
        the proc getSymbol2 and relevant example progs may not run or error out . 
-       We hope there will be a solution to this issue soon.
-       Try getSymbol3 (experimental) for historic stockdata .
-       Other current quote data seems not to be effected.
+       A temporary solution has been found and will find its way into nimFinLib soon
+       meanwhile see  : stockdata.nim.
+       Other current quote data seems not to be effected. See example: minifin.nim
 
 ![Image](http://qqtop.github.io/nfT50.png?raw=true)
 Example screen from nfT50.nim
