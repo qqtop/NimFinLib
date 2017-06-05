@@ -4,6 +4,10 @@ import streams
 
 # Download historical stockdata from yahoo after the major endpoint change in May 2017
 # Tested ok 2017-06-05
+# 
+# Code adapted for Nim language from ideas in :
+# https://stackoverflow.com/questions/44044263/yahoo-finance-historical-data-downloader-url-is-not-working
+# 
 # compile with :  nim c -d:release -d:ssl stockdata
 # 
 # 
@@ -17,6 +21,9 @@ import streams
 # ./stockdata  BAS.DE  2015-01-01  2016-06-03    # symbol startdate enddate
 # ./stockdata  0005.HK                           # symbol defaultstartdate  currentdate
 # ./stockdata  0001.HK 2007-01-01                $ symbol startdate  enddate = currentdate
+# 
+# Note : if it fails try again .... tested with several hundred stock codes
+# 
 
 proc get_crumble_and_cookie(symbol:string):seq[string] =
     result = @[]
@@ -39,7 +46,7 @@ proc download_quote(symbol:string, date_from:string = "2000-01-01", date_to:stri
     var quote_link = "https://query1.finance.yahoo.com/v7/finance/download/$1?period1=$2&period2=$3&interval=1d&events=$4&crumb=$5"
     var time_stamp_from = $(epochSecs(date_from))     
     var time_stamp_to = $(epochSecs(date_to))  
-    var events = "history"
+    var events = "history"   # default  available: history|div|split
     var attempts = 1
     var okflag = false
     var cc = newSeq[string]()
@@ -56,9 +63,9 @@ proc download_quote(symbol:string, date_from:string = "2000-01-01", date_to:stri
                    if ($r.body).contains("cookie") == true:
                       okflag = false
                       attempts += 1
-                      sleepy(2 * attempts)  # do not hit yahoo too fast
+                      sleepy(2 * attempts)  # do not hit poor yahoo too fast
                       result = "Symbol " & symbol & " download failed.\n\nReason : \n\n"
-                      result = result & $r.body
+                      result = result & $r.body   # adding any yahoo returned error message
                       
                    else:
                       okflag = true                   
@@ -67,8 +74,7 @@ proc download_quote(symbol:string, date_from:string = "2000-01-01", date_to:stri
                 
         except :
                 # we may come here if the httpclient can not connect or there is no such symbol
-                # however a download despite succeeding may also only carry a yahoo error message
-                
+                             
                 attempts += 1
                 okflag = false
                 sleepy(2 * attempts)
