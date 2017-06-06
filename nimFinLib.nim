@@ -7,16 +7,16 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.8.0
+## Version     : 0.2.8.5
 ##
-## Compiler    : nim 0.16+  dev branch
+## Compiler    : nim 0.17+  dev branch
 ##
 ##
 ## Description : A basic library for financial calculations with Nim
 ##
-##               Yahoo historical stock data
+##               Yahoo historical stock data    
 ##
-##               Yahoo additional stock data
+##               Yahoo additional stock data    
 ##
 ##               Yahoo current stock quotes           
 ##
@@ -42,13 +42,15 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2017-05-05
+## Latest      : 2017-06-05
 ##
-## ToDo        : NOTE : getSymbol2 is currently not working as most
-##                      yahoo endpoints are down , we are looking
-##                      for a solution to this 2017-05-19
-##                      Some data is still being available if the markets are up
+## ToDo        : NOTE : Due to changes in Yahoo endpoints data quality may be impacted
+##                      Some data has holes and adj.close seems not to be correct for splits or dividends
+##                      in some cases so all data has to be taken with a grain of salt .. or whatever.
 ##                      Yahoo being sold to Verizon so expect hick-ups ...
+## 
+##                      getsymbol2 fetching hisorical data has been fixed as of 2017-06-03
+##                      and is currently working.
 ## 
 ##               Ratios , Covariance , Correlation , Plotting advanced functions etc.
 ##               
@@ -107,11 +109,11 @@
 ## 
 ##               For comprehensive tests and example usage see examples and
 ## 
-##               nfT50.nim
+##               nfT50.nim      - passed ok 2017-06-06
 ##               
-##               nfT52.nim
+##               nfT52.nim      - passed ok 2017-06-06
 ##               
-##               minifin.nim
+##               minifin.nim    - ok
 ## 
 ##
 ##
@@ -120,16 +122,14 @@ import
 
        os,cx,strutils,parseutils,sequtils,httpclient,net,
        terminal,times,tables, parsecsv,streams,
-       algorithm,math,unicode,stats
+       algorithm,math,unicode,stats,unicode
        
+import nre except toSeq
 
-let NIMFINLIBVERSION* = "0.2.8.0"
+let NIMFINLIBVERSION* = "0.2.8.5"
 
 let yahoourl*    = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
 let yahoocururl* = "https://finance.yahoo.com/webservice/v1/symbols/allcurrencies/quote?format=json"
-
-# urls for retrieving historical data  --  as of min may2017 all these endpoints are down
-# see getSymbol3 for alternative but data is not reliable ... needs more testing
 
 
 const
@@ -236,7 +236,10 @@ type
         strange*  : string
         stdate*   : string
         sttime*   : string
-      
+
+        
+var supererrorflag = false        
+        
 proc initTs*():Ts=
      ## initTs
      ##
@@ -1059,7 +1062,65 @@ proc ymonth*(aDate:string) : string =
   result = asdm
 
 
+proc get_crumble_and_cookie(symbol:string):seq[string] =
+    result = @[]
+    var cookie_str = ""
+    var crumble_link = "https://finance.yahoo.com/quote/$1/history?p=$1"
+    var link = crumble_link % symbol
+    var zcli = newHttpClient()
+    var response = zcli.request(link,httpMethod = HttpGet)
+    for x,y in response.headers:
+         if $x == "set-cookie" : cookie_str = y.split(";")[0]
+    var m1 = find($response.body,re"""CrumbStore":{"crumb":"(.*?)"}""")  
+    var m2 = replace($m1,"""Some(CrumbStore":{"crumb":"""  , "")
+    var crumble_str = replace(m2,"})","").replace("\"","")
+    result.add(crumble_str)
+    result.add(cookie_str)
+    
 
+proc download_quote(symbol:string, date_from:string = "2000-01-01", date_to:string = "2100-01-01",events:string = ""):string = 
+    result = ""
+    var quote_link = "https://query1.finance.yahoo.com/v7/finance/download/$1?period1=$2&period2=$3&interval=1d&events=$4&crumb=$5"
+    var time_stamp_from = $(epochSecs(date_from))     
+    var time_stamp_to = $(epochSecs(date_to))  
+    var events = "history"   # default  available: history|div|split
+    var attempts = 1
+    var okflag = false
+    var cc = newSeq[string]()
+    while attempts < 4 and okflag == false:
+        echo("Attempt No.       : ",attempts,"  for ",symbol)
+        cc = get_crumble_and_cookie(symbol)
+        quotelink = quote_link % [symbol, time_stamp_from, time_stamp_to, events,$cc[0]]
+        var zcli = newHttpClient()
+        var dacooky = strip(cc[1])
+        zcli.headers = newHttpHeaders({"Cookie": dacooky}) 
+        try:
+                var r = zcli.request(url=quotelink)
+                if ($r.body).len > 0:
+                   if ($r.body).contains("Invalid cookie") == true:
+                      okflag = false
+                      supererrorflag = true
+                      attempts += 1
+                      sleepy(2 * attempts)  # do not hit poor yahoo too fast
+                      result = "Symbol " & symbol & " download failed.\n\nReason : \n\n"
+                      result = result & $r.body   # adding any yahoo returned error message
+                      
+                   else:
+                      okflag = true 
+                      supererrorflag = false
+                      result = $r.body
+                   
+                
+        except :
+                # we may come here if the httpclient can not connect or there is no such symbol
+                supererrorflag = true           
+                attempts += 1
+                okflag = false
+                sleepy(2 * attempts)
+                result = "Symbol " & symbol & " download failed.\n"
+                break
+             
+#  trying to rewrite this
 proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Stocks =
     ## getSymbol2
     ##
@@ -1071,10 +1132,13 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
     #
     # check the dates if there are funny dates an empty Stocks object will be returned
     # together with an error message
+    # 
+    # Note on rewrite something blocks the data despite it coming in
+    # 
 
     if validdate(startDate) and validdate(endDate):
           if processFlag == true:
-             stdout.write(fmtx(["<15"],"Processing   : "))
+             print(fmtx(["<15"],"Processing   : "))
              print(fmtx(["<8"],symb & spaces(1)),green)
              print(fmtx(["<11","","<11"],startDate,spaces(1),endDate))
              # end feedback line
@@ -1113,25 +1177,7 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
           var closeRC  : Runningstat
           var volumeRC : Runningstat
           var closeRCA : Runningstat
-
-          # note to dates for this yahoo url according to latest research
-          # a=04  means may  a=00 means jan start month
-          # b = start day
-          # c = start year
-          # d = end month  05 means jun
-          # e = end day
-          # f = end year
-          # we use the csv string , yahoo json format only returns limited data 1.5 years or less
-          
-          # this url worked until 2015-09-21
-          #var qurl = "http://real-chart.finance.yahoo.com/table.csv?s=$1&a=$2&b=$3&c=$4&d=$5&e=$6&f=$7&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
-                    
-          # current historic data url worked until minmay 2017
-          var qurl = "http://ichart.finance.yahoo.com/table.csv?s=$1&a=$2&b=$3&c=$4&d=$5&e=$6&f=$7&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
-
-          # alternatively try this historical data url
-          #var qurl = "https://chart.finance.yahoo.com/table.csv?s=$1&a=2&b=28&c=2017&d=3&e=28&f=2017&g=d&ignore=.csv" % [symb,sdm,sdd,sdy,edm,edd,edy]
-    
+             
           var headerset = [symb,"Date","Open","High","Low","Close","Volume","Adj Close"]
           var c = 0
           var hflag  : bool # used for testing maybe removed later
@@ -1141,93 +1187,124 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
           # could also be done to be in memory like /shm/  this file will be auto removed.
 
           var acvsfile = "nimfintmp.csv"
-          var errstflag = false  
+          var errstflag = false 
+          
+          #prepare for writing incoming data
+          var fsw = newFileStream(acvsfile, fmWrite)
           try:
-            var htpc = newHttpClient()
-            htpc.downloadFile(qurl,acvsfile)
-          except HttpRequestError:
-            echo()
-            printLn("Error : Yahoo is down or currently does not provide historical data for " & symb,red)
-            printLnBiCol("Check: " & qurl,":",salmon)
-            errstflag = true  
-            # we just quit here if it does not work
-            printLn("Sorry, Yahoo endpoints are down ! Try getSymbol3 ... good luck . ByeBye.",salmon)
-            doFinish()
-           
+               var mydata = download_quote(symbol = symb,startdate,enddate)
+               # maybe we can check here for invalid data and abort imm if something is wrong
+               if mydata.contains("Invalid cookie") == true:    
+                   errstflag = true
+                   printLnBiCol("Error downloading data for : " & symb ,":",peru,red)
+                   
+               # we only continue if no error sofar
+               if errstflag == false:
+                   var mydataline = mydata.splitLines()
+                   var xdata2 = ""
+                   for xdata in mydataline:
+                       xdata2 = strip(xdata,true,true)
+                      
+                       if xdata2.len > 0:
+                          # we do not write lines with "null" values as happens with yahoo data
+                          # unfortunately this makes holes in our timeseries
+                          if ($xdata2).contains("null") == false: 
+                             fsw.writeLine(xdata2)
+                             
+                            
+               printLnBicol("Created  File     : " & acvsfile)
+               echo()
+          except:
+               printLnBicol("Error writing to  : " & acvsfile,":",red)
+               discard
+            
+          fsw.close() 
+          sleepy(0.3) # give it some time to settle down
+          
+          # now reopen the file with the cvsparser for reading 
+         
           var x: CsvParser
-          if errstflag == false: 
+          if errstflag == false and supererrorflag == false: 
                 var s = newFileStream(acvsfile, fmRead)
                 if s == nil:
                     # in case of problems with the yahoo csv file we show a message
                     printLn("Error : Data file for $1 could not be opened " % symb,red)
-
-                # now parse the csv file
+                    errstflag = true
                 
-                
-                open(x, s , acvsfile, separator=',')
-                while readRow(x):
-                    # a way to get the actual csv header , but here we use our custom headerset with more info
-                    # if validIdentifier(x.row[0]):
-                    #  header = x.row
-                    c = 0 # counter to assign item to correct var
-                    for val in items(x.row):
-                      if val in headerset:
-                            hflag = true
+                # now try to open anyway and see whats going on parse the csv file
+                if errstflag == false:
+                   open(x, s , acvsfile, separator=',')
+                   while readRow(x):
+                     
+                      if errstflag == false and supererrorflag == false: 
+                          # a way to get the actual csv header , but here we use our custom headerset with more info
+                          # if validIdentifier(x.row[0]):
+                          #    header = x.row
+                          c = 0 # counter to assign item to correct var
+                          
+                          for val in items(x.row):
+                            if val in headerset:
+                                hflag = true
 
-                      else:
-                            c += 1
-                            hflag = false
+                            else:
+                                c += 1
+                                hflag = false
 
-                            case c
-                            of 1:
-                                datx = val
-                                datdf.add(datx)
+                                case c
+                                of 1:
+                                    datx = val
+                                    datdf.add(datx)
 
-                            of 2:
-                                opex = parseFloat(val)
-                                openRC.push(opex)      ## RunningStat for open price
-                                opedf.add(opex)
+                                of 2:
+                                    opex = parseFloat(val)
+                                    openRC.push(opex)      ## RunningStat for open price
+                                    opedf.add(opex)
 
-                            of 3:
-                                higx = parseFloat(val)
-                                highRC.push(higx)
-                                higdf.add(higx)
+                                of 3:
+                                    higx = parseFloat(val)
+                                    highRC.push(higx)
+                                    higdf.add(higx)
 
-                            of 4:
-                                lowx = parseFloat(val)
-                                lowRC.push(lowx)
-                                lowdf.add(lowx)
+                                of 4:
+                                    lowx = parseFloat(val)
+                                    lowRC.push(lowx)
+                                    lowdf.add(lowx)
 
-                            of 5:
-                                closx = parseFloat(val)
-                                closeRC.push(closx)     ## RunningStat for close price
-                                closdf.add(closx)
+                                of 5:
+                                    closx = parseFloat(val)
+                                    closeRC.push(closx)     ## RunningStat for close price
+                                    closdf.add(closx)
+                                    
+                                of 6:
+                                    adjclosx = parseFloat(val)
+                                    closeRCA.push(adjclosx)  ## RunningStat for adj close price
+                                    adjclosdf.add(adjclosx)
 
-                            of 6:
-                                volx = parseFloat(val)
-                                volumeRC.push(volx)
-                                voldf.add(volx)
+                                of 7:
+                                    volx = parseFloat(val)
+                                    volumeRC.push(volx)
+                                    voldf.add(volx)
 
-                            of 7:
-                                adjclosx = parseFloat(val)
-                                closeRCA.push(adjclosx)  ## RunningStat for adj close price
-                                adjclosdf.add(adjclosx)
-
-                            else :
-                                printLn("Csv Data in unexpected format for Stocks :" & symb,red)
+                            
+                                else :
+                                    printLn("Csv Data in unexpected format for Stocks :" & symb,red)
 
           # feedbacklines can be shown with processFlag set to true
-          if processFlag == true and errstflag == false:
+          if processFlag == true and errstflag == false and supererrorflag == false:
              printLn(" --> Rows processed : " & $processedRows(x),salmon)
           
 
           # close CsvParser
-          close(x)
+          if processFlag == true and errstflag == false and supererrorflag == false:
+             try:
+                 close(x)
+             except:
+                 printLn("csvParser x was not closed",red)
 
           # put the collected data into Stocks type
           # if errstflag == true the stock name will be changed to Error for further handling
           # this occures if yahoo does not have data for a given stock
-          if errstflag == false:
+          if errstflag == false and supererrorflag == false:
              astock.stock = symb
           else:
              astock.stock = "Error " & symb
@@ -1263,12 +1340,8 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
           result = initStocks() # return an empty df
 
 
-proc getSymbol3*(symb:string):Stockdata =
-     ## getSymbol3
-     ##
-     ## probably only provides data after 01/01/2000 or younger or not at all  .... YAHOO!!!!!  :(
-     ##
-     ## additional data as provided by yahoo for a stock
+proc getSymbol3*(symb:string,startDate,endDate : string,processFlag:bool = false):Stockdata =
+     ## getSymbol3   
      ##
      ## data returned is inside an Stockdata object with following fields and types
      ##
@@ -1321,7 +1394,12 @@ proc getSymbol3*(symb:string):Stockdata =
      ##
      ##     shortratio*       : float
      ##
-
+     ##
+     ##     Example : 
+     ##     
+     ## .. code-block:: nim     
+     ##     echo getSymbol3("0005.HK","2000-01-01",getDateStr())
+     ##
      var qz : Stockdata
      var stx = "l1c1va2xj1b4j4dyekjm3m4rr5p5p6s7"
      var qurl3 = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=$2" % [symb, stx]
@@ -1577,10 +1655,16 @@ proc sumDailyReturnsCl*(self:Stocks) : float =
       # returns a sum of dailyreturns but is off from quantmod more than expected why ?
       # the len of seq roughly the same of by 1-2 vals as expected but
       # the sum is of by too much , maybe it is in the missing values
+      result = 0.0
+      var sumdfr = 0.0
       var dR = self.close.dailyReturns
-      var sumdfr = sum(dR)
-      # feedback line can be commented out
-      printLn("Returns on Close Price calculated : " & $dR.len,yellow)
+      
+      try:
+         sumdfr = sum(dR)
+         # feedback line can be commented out
+         printLn("Returns on Close Price calculated : " & $dR.len,yellow)
+      except:   
+           printLnBiCol("Returns on Close Price : failed due to no data error . value 0.0 returned",":",red)
       result = sumdfr
 
 
@@ -1592,10 +1676,15 @@ proc sumDailyReturnsAdCl*(self:Stocks) : float =
       # returns a sum of dailyreturns but is off from quantmod more than expected why ?
       # the len of seq roughly the same of by 1-2 vals as expected but
       # the sum is of by too much , maybe it is in the missing values
+      result = 0.0
+      var sumdfr = 0.0
       var dR = self.adjc.dailyReturns
-      var sumdfr = sum(dR)
-      # feedback line can be commented out
-      printLn("Returns on Close Price calculated : " & $dR.len,peru)
+      try:
+          var sumdfr = sum(dR)
+          # feedback line can be commented out
+          printLn("Returns on Close Price calculated : " & $dR.len,peru)
+      except:
+          printLnBiCol("Returns on Adjc.Close Price : failed due to no data error . value 0.0 returned",":",red)
       result = sumdfr
 
 
@@ -1883,9 +1972,11 @@ proc showStocksTable*(apfdata: Portfolio,xpos:int = 1) =
    for x in 0.. <astkdata.len:
        var sx = astkdata[x] # just for less writing ...
        # display the data rows
-       printLn(fmtx(["<8",">9.3f",">9.3f",">9.3f",">9.3f",">13",">10.3f",">9.3f",">9.3f",">9.3f",">9.3f"],sx.stock,sx.open.seqlast,sx.high.seqlast,sx.low.seqlast,sx.close.seqlast,int(sx.vol.seqlast),sx.adjc.seqlast,
-       sx.rh[0].standardDeviation,sx.rl[0].standardDeviation,sx.rc[0].standardDeviation,sx.rca[0].standardDeviation))
-
+       try:
+          printLn(fmtx(["<8",">9.3f",">9.3f",">9.3f",">9.3f",">13",">10.3f",">9.3f",">9.3f",">9.3f",">9.3f"],sx.stock,sx.open.seqlast,sx.high.seqlast,sx.low.seqlast,sx.close.seqlast,int(sx.vol.seqlast),sx.adjc.seqlast,
+          sx.rh[0].standardDeviation,sx.rl[0].standardDeviation,sx.rc[0].standardDeviation,sx.rca[0].standardDeviation))
+       except:
+          printLn(sx.stock & " data errors ",red)
    echo()
    printLn(" NOTE : stdDevOpen and stdDevVol are not shown but available",peru)
    decho(2)

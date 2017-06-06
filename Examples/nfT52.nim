@@ -29,7 +29,7 @@ echo()
 superheader(" Testing nimFinLib  ")
 echo()
 
-
+# if yahoo is down or temporarily changes the conn string this may not work until we get it running again
 # symbols holds a list of yahoo type stock codes
 var symbols1  = @["0001.HK","0386.HK","0880.HK","0555.HK"]
 # some more symbol sets for testing always use symbols
@@ -51,7 +51,7 @@ var symbols5 = @["AFK", "ASHR", "ECH", "EGPT",
              "VNM", "TLT"]
 
 # select one of the lists or use your own
-var symbols = symbols4
+var symbols = symbols1
 
 # make sure the list is unique
 symbols = deduplicate(symbols)
@@ -384,19 +384,19 @@ echo "Passing in our indexpool a  seq[Stocks] type\n"
 showCurrentIDX(indexpool)
 decho(2)
 
-
-echo()
-superheader(" Testing getSymbol3 - Additional stock info ")
-echo()
-
-var symb = "AAPL"
-var sx = getSymbol3(symb)
-decho(2)
-println("Stock Code : " & symb,yellow)
-aline()
-showStockdatatable(sx)
-decho(2)
-
+# 
+# echo()
+# superheader(" Testing getSymbol3 - Additional stock info ")
+# echo()
+# 
+# var symb = "AAPL"
+# var sx = getSymbol3(symb)
+# decho(2)
+# println("Stock Code : " & symb,yellow)
+# aline()
+# showStockdatatable(sx)
+# decho(2)
+# 
 
 echo()
 superHeader(" Tests for Forex rates ")

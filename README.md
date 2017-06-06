@@ -9,10 +9,7 @@ Financial Library for Nim
 
 
 Note : As of Mid May 2017 due to changes in Yahoo data endpoints for historical stock data
-       the proc getSymbol2 and relevant example progs may not run or error out . 
-       A temporary solution has been found and will find its way into nimFinLib soon
-       meanwhile see  : stockdata.nim.
-       Other current quote data seems not to be effected. See example: minifin.nim
+       the proc getSymbol2 has been changed to reflect this new reality.
 
 ![Image](http://qqtop.github.io/nfT50.png?raw=true)
 Example screen from nfT50.nim
@@ -28,6 +25,7 @@ Example screen from nfT50.nim
 # font : size 8
 # background color black
 # 
+import cx,nimFinLib
 cleanscreen()
 curset()
 curdn(1)
