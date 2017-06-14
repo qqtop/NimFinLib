@@ -46,7 +46,7 @@ Example screen from minifin.nim
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|
-| nimFinLib  | Development | 0.2.8.x | MIT opensource | Linux  | Nim >= 0.16.x  |
+| nimFinLib  | Development | 0.2.8.x | MIT opensource | Linux  | Nim >= 0.17.x  |
 
 
 

@@ -42,15 +42,24 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2017-06-05
+## Latest      : 2017-06-14
 ##
 ## ToDo        : NOTE : Due to changes in Yahoo endpoints data quality may be impacted
 ##                      Some data has holes and adj.close seems not to be correct for splits or dividends
 ##                      in some cases so all data has to be taken with a grain of salt .. or whatever.
 ##                      Yahoo being sold to Verizon so expect hick-ups ...
 ## 
-##                      getsymbol2 fetching hisorical data has been fixed as of 2017-06-03
-##                      and is currently working.
+##                      getsymbol2 fetching historical data has been fixed as of 2017-06-03
+##                      and is currently working. See: proc download_quote.
+##
+##                      You may however need several attempts to get the data from yahoo cleanly.. 
+##                      
+##                      It may happen that 'out of memory' error or crashes
+##                      occure if the yahoo data does not come in or is interspersed
+##                      with unclean row data. So overall use historical data best
+##                      after it is cleaned , an attempt of cleaning out null rows is being
+##                      made , but there maybe other issues with the data.
+##                      
 ## 
 ##               Ratios , Covariance , Correlation , Plotting advanced functions etc.
 ##               
@@ -85,7 +94,7 @@
 ##               
 ##               of course if it works again you also can use strfmt library
 ##               
-##               and all/most documentation samples shown use it.
+##               and many documentation samples shown use it.
 ##               
 ##               nfT50 and nfT52 samples have been changed to the fmtengine
 ##               
@@ -109,9 +118,9 @@
 ## 
 ##               For comprehensive tests and example usage see examples and
 ## 
-##               nfT50.nim      - passed ok 2017-06-06
+##               nfT50.nim      - passed ok 2017-06-14
 ##               
-##               nfT52.nim      - passed ok 2017-06-06
+##               nfT52.nim      - passed ok 2017-06-14
 ##               
 ##               minifin.nim    - ok
 ## 
@@ -143,7 +152,7 @@ type
   Portfolio* {.inheritable.} = object
         ## Portfolio type
         ## holds one portfolio with all relevant historic stocks data
-        nx* : string   ## nx  holds portfolio name  e.g. MyGetRichPortfolio
+        nx* : string       ## nx  holds portfolio name  e.g. MyGetRichPortfolio
         dx* : seq[Stocks]  ## dx  holds all stocks with historical data
 
 
@@ -1133,7 +1142,8 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
     # check the dates if there are funny dates an empty Stocks object will be returned
     # together with an error message
     # 
-    # Note on rewrite something blocks the data despite it coming in
+    # see download_quote above on how this currently works
+    # 
     # 
 
     if validdate(startDate) and validdate(endDate):
@@ -1758,7 +1768,8 @@ proc showStatisticsT*(z : Stocks) =
 
 
 # emaflag = false meaning all ok
-# if true some problem to indicate to following calcs not to proceed
+# if true there is a problem and following calculations should not proceed as
+# it is meaningless to work with crap data
 
 var emaflag : bool = false
 
@@ -1872,6 +1883,7 @@ proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
 
   # currently using cvs data url
   # this version does not need temp file as we parse cvs as text file directly
+  # and hope yahoo is not changing this endpoints too..
   
   try:
           var aurl = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=c4l1&s="    #  EURUSD=X,GBPUSD=X
