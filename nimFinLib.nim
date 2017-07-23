@@ -7,7 +7,7 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.2.8.5
+## Version     : 0.2.8.6
 ##
 ## Compiler    : nim 0.17+  dev branch
 ##
@@ -42,9 +42,9 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2017-06-14
+## Latest      : 2017-07-23
 ##
-## ToDo        : NOTE : Due to changes in Yahoo endpoints data quality may be impacted
+## ToDo        : NOTE : Due to changes in Yahoo endpoints data quality may be severely impacted
 ##                      Some data has holes and adj.close seems not to be correct for splits or dividends
 ##                      in some cases so all data has to be taken with a grain of salt .. or whatever.
 ##                      Yahoo being sold to Verizon so expect hick-ups ...
@@ -52,7 +52,8 @@
 ##                      getsymbol2 fetching historical data has been fixed as of 2017-06-03
 ##                      and is currently working. See: proc download_quote.
 ##
-##                      You may however need several attempts to get the data from yahoo cleanly.. 
+##                      You may however need several attempts to get the data from yahoo cleanly
+##                      depending on your connection and the gremlins at yahoo .. 
 ##                      
 ##                      It may happen that 'out of memory' error or crashes
 ##                      occure if the yahoo data does not come in or is interspersed
@@ -112,20 +113,23 @@
 ##               
 ##               if you see some unexpected chars then this libraries may be missing
 ##               
-
 ##
 ## Tests       : 
 ## 
-##               For comprehensive tests and example usage see examples and
+##               For comprehensive raw tests and example usage see examples and
 ## 
-##               nfT50.nim      - passed ok 2017-06-14
+##               nfT50.nim      - passed ok 2017-07-14
 ##               
-##               nfT52.nim      - passed ok 2017-06-14
+##               nfT52.nim      - passed ok 2017-07-14
 ##               
-##               minifin.nim    - ok
+##               minifin.nim    - passed ok 2017-07-20
 ## 
 ##
-##
+## Funding     : If you are happy send any amount of bitcoins you like to a nice wallet :
+##              
+##                194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
+##                     
+##                     
 
 import
 
@@ -135,7 +139,7 @@ import
        
 import nre except toSeq
 
-let NIMFINLIBVERSION* = "0.2.8.5"
+let NIMFINLIBVERSION* = "0.2.8.6"
 
 let yahoourl*    = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
 let yahoocururl* = "https://finance.yahoo.com/webservice/v1/symbols/allcurrencies/quote?format=json"
