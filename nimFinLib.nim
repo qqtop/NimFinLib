@@ -2037,10 +2037,10 @@ template metal(dc:int):typed =
       printLn(ktd[x],yellowgreen,xpos = xpos - 2 )
       
     elif find(ktd[x],"Asia / Europe") > 0:
-       print(strip(ktd[x],true,true),cx.white,xpos = xpos)
+       print(strip(ktd[x],true,true),nimcx.white,xpos = xpos)
         
     elif find(ktd[x],"New York") > 0:
-       print(strip(ktd[x],true,true),cx.white,xpos = xpos)
+       print(strip(ktd[x],true,true),nimcx.white,xpos = xpos)
     
     elif find(ktd[x],opn) > 0 :
         printLn(spaces(10) & "MARKET IS OPEN",lime)
@@ -2057,7 +2057,7 @@ template metal(dc:int):typed =
                try:
                  var ks = ktd[x].split(" ")
                  if ktd[x].contains("Metals") == true:
-                    printLn(ktd[x],cx.white,xpos = xpos - 1)
+                    printLn(ktd[x],nimcx.white,xpos = xpos - 1)
                  else: 
                     
                     kss = @[]
