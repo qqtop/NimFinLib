@@ -83,13 +83,13 @@
 ##
 ## Notes       :
 ## 
-##               nimFinlib is being developed utilizing cx.nim module
+##               nimFinlib is being developed utilizing nimcx.nim module
 ##
 ##               to improve coloring of data and positioning of output.
 ##
 ##               Terminals tested : bash,xterm,st.
 ##
-##               strfmt  is now optional , a simple fmtengine was implemented in cx.nim
+##               strfmt  is now optional , a simple fmtengine was implemented in nimcx.nim
 ##               
 ##               as strfmt is often broken due to changes in the evolving compiler
 ##               
@@ -1966,10 +1966,10 @@ proc showCurrentForex*(curs : openarray[string],xpos:int = 1) =
        ##    decho(cursl + 5)
        ##    doFinish()
        ##           
-       var cx = getcurrentForex(curs) # we get a Currencies object back
+       var cxf = getcurrentForex(curs) # we get a Currencies object back
        printLn(fmtx(["<14","<4","",">6"],"Currencies","Cur",spaces(1),"Rate"),lime,xpos = xpos)
-       for x in 0.. <cx.cu.len:
-            printLn(fmtx(["<14","<4","",">8.4f"],curs[x],cx.cu[x],spaces(1),cx.ra[x]),xpos = xpos)
+       for x in 0.. <cxf.cu.len:
+            printLn(fmtx(["<14","<4","",">8.4f"],curs[x],cxf.cu[x],spaces(1),cxf.ra[x]),xpos = xpos)
 
 
 proc showStocksTable*(apfdata: Portfolio,xpos:int = 1) =
@@ -2037,10 +2037,10 @@ template metal(dc:int):typed =
       printLn(ktd[x],yellowgreen,xpos = xpos - 2 )
       
     elif find(ktd[x],"Asia / Europe") > 0:
-       print(strip(ktd[x],true,true),nimcx.white,xpos = xpos)
+       print(strip(ktd[x],true,true),white,xpos = xpos)
         
     elif find(ktd[x],"New York") > 0:
-       print(strip(ktd[x],true,true),nimcx.white,xpos = xpos)
+       print(strip(ktd[x],true,true),white,xpos = xpos)
     
     elif find(ktd[x],opn) > 0 :
         printLn(spaces(10) & "MARKET IS OPEN",lime)
@@ -2057,7 +2057,7 @@ template metal(dc:int):typed =
                try:
                  var ks = ktd[x].split(" ")
                  if ktd[x].contains("Metals") == true:
-                    printLn(ktd[x],nimcx.white,xpos = xpos - 1)
+                    printLn(ktd[x],white,xpos = xpos - 1)
                  else: 
                     
                     kss = @[]

@@ -449,7 +449,7 @@ proc doFinishHk*() =
     print(fmtx(["","","","",""],"Library     : ","libFinHk : ",LIBFINHKVERSION," - " ,"qqTop "),dodgerblue)
     printLn(" - " & year(getDateStr()),brightblack)
     print(fmtx(["<14"],"Elapsed     : "),yellowgreen)
-    printLn(fmtx(["<",">5"],ff(epochtime() - cx.start,3),"secs"),goldenrod)
+    printLn(fmtx(["<",">5"],ff(epochtime() - start,3),"secs"),goldenrod)
     echo()
     quit(0)
 
