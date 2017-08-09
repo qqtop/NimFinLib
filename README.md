@@ -25,7 +25,7 @@ Example screen from nfT50.nim
 # font : size 8
 # background color black
 # 
-import cx,nimFinLib
+import nimcx,nimFinLib
 cleanscreen()
 curset()
 curdn(1)
@@ -122,7 +122,7 @@ example1.nim
 
 ```nimrod         
 import nimFinLib,times,strfmt,strutils
-from cx import decho,cecholn,peru
+from nimcx import decho,cecholn,peru
 
 # show latest stock quotes
 showCurrentStocks("IBM+BP.L+0001.HK")
