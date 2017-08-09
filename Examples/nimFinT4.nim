@@ -1,5 +1,5 @@
 import os,terminal,strfmt,times
-import nimFinLib,libFinHk,cx
+import nimFinLib,libFinHk,nimcx
 
 # nimFinT4.nim
 #

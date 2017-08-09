@@ -1,5 +1,5 @@
 import nimFinLib
-import cx
+import nimcx
 # example to quickly display var. data items for one stock code and forex
 
 

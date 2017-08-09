@@ -1,4 +1,4 @@
-import os,cx,httpclient,unicode
+import os,nimcx,httpclient,unicode
 import nre except toSeq
 import streams
 

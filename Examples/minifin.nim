@@ -1,4 +1,4 @@
-import os,cx,httpclient,strutils,nimFinLib,times,strfmt,osproc,parseopt2
+import os,nimcx,httpclient,nimFinLib,times,strfmt,osproc,parseopt2
 
 
 # MINIFIN

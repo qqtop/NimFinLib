@@ -1,4 +1,4 @@
-import cx,nimFinLib
+import nimcx,nimFinLib
 
 # nfT50.nim
 # Example program for using stock and index display routines

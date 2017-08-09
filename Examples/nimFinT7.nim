@@ -1,4 +1,4 @@
-import nimFinLib,libFinHk,cx
+import nimFinLib,libFinHk,nimcx
 
 # nimFinT7.nim
 #

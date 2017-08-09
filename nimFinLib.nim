@@ -122,7 +122,7 @@
 ##               
 ##               nfT52.nim      - passed ok 2017-07-14
 ##               
-##               minifin.nim    - passed ok 2017-07-20
+##               minifin.nim    - passed ok 2017-08-09
 ## 
 ##
 ## Funding     : If you are happy send any amount of bitcoins you like to a nice wallet :
@@ -133,7 +133,7 @@
 
 import
 
-       os,cx,strutils,parseutils,sequtils,httpclient,net,
+       os,nimcx,strutils,parseutils,sequtils,httpclient,net,
        terminal,times,tables, parsecsv,streams,
        algorithm,math,unicode,stats,unicode
        

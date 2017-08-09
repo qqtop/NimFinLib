@@ -1,4 +1,4 @@
-import os,cx,nimFinLib,libFinHk,strutils,nimdataframe
+import os,nimcx,nimFinLib,libFinHk,nimdataframe
 
 # Example nimFinT6   
 # requires nimdataframe

@@ -1,4 +1,4 @@
-import nimFinLib,cx,strutils,times
+import nimFinLib,nimcx,times
 
 # example6 
 # 

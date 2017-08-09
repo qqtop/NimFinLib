@@ -1,4 +1,4 @@
-import cx,nimFinLib,libFinHk
+import nimcx,nimFinLib,libFinHk
 
 # Example nimFinT5   for Hongkong stocks only
 # show use of var routines

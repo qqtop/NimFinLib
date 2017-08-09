@@ -29,7 +29,7 @@ proc source() =
    downloadFile(afile,"nimFinLib.nim")
    afile = "https://raw.githubusercontent.com/qqtop/NimFinLib/master/Examples/example1.nim"
    downloadFile(afile,"example1.nim")
-   afile = "https://raw.githubusercontent.com/qqtop/NimCx/master/cx.nim"
+   afile = "https://github.com/qqtop/NimCx/tree/master/nimcx/cx.nim"
    downloadFile(afile,"cx.nim")
 
 proc janitation() =

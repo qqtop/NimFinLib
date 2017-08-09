@@ -1,5 +1,5 @@
 import os,nimFinLib
-import cx 
+import nimcx 
 # show latest stock quotes , with stock codes passed in from commandline
 
 if paramCount() > 0:

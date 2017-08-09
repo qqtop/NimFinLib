@@ -43,7 +43,7 @@ import os,strutils,parseutils,sequtils,httpclient
 import terminal,times,tables,stats
 import parsecsv,streams,algorithm,math,unicode
 # imports based on modules available via nimble
-import nimFinLib,cx
+import nimFinLib,nimcx
 
 
 let LIBFINHKVERSION* = "0.1.0"

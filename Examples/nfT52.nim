@@ -1,5 +1,5 @@
-import os,terminal,sequtils,strutils,times,math,stats,unicode,tables
-import nimFinLib,cx
+import os,terminal,sequtils,times,math,stats,unicode,tables
+import nimFinLib,nimcx
 
 # comment next line if tests concerning libFinHk not required
 import libFinHk

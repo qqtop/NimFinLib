@@ -1,5 +1,5 @@
-import os,terminal,strfmt,times,strutils
-import nimFinLib,libFinHk,cx
+import os,terminal,strfmt,times
+import nimFinLib,libFinHk,nimcx
 
 
 # nimFinT3.nim

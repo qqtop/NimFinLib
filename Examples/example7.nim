@@ -1,4 +1,4 @@
-import cx,nimFinLib
+import nimcx,nimFinLib
 
 # example7
 # showing timeseries usage and ema head and tail display

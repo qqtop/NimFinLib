@@ -1,4 +1,4 @@
-import cx,nimFinLib
+import nimcx,nimFinLib
 
 # nfT0 is used for temp testing of examples in docs , delete if not needed
 
