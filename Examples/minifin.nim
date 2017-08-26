@@ -75,10 +75,10 @@ proc bottomInfo(lpx:int,mxpos:int,ts:int) =
            GC_FullCollect() # free some memory
 
       curdn(4)
-      printLn("Memory  : " &  $mm &  " | Min : " & $mmin & " | Max : " & $mmax,cx.gray,xpos = mxpos)
-      print("Updated : " & $lpx & " times ",cx.gray,xpos = mxpos)
-      print(" Update Interval " & $ts & " secs.",cx.gray)
-      printLn("Next Update: " & $(getLocalTime(getTime()) + initInterval(0,ts,0,0,0)),pastelGreen,xpos = cx.tw - 45)
+      printLn("Memory  : " &  $mm &  " | Min : " & $mmin & " | Max : " & $mmax,gray,xpos = mxpos)
+      print("Updated : " & $lpx & " times ",gray,xpos = mxpos)
+      print(" Update Interval " & $ts & " secs.",gray)
+      printLn("Next Update: " & $(getLocalTime(getTime()) + initInterval(0,ts,0,0,0)),pastelGreen,xpos = tw - 45)
       print(fmtx(["<14"],"Application :"),pastelgreen,xpos = mxpos)
       print(extractFileName(getAppFilename()),brightblack)
       print(" | ",brightblack)
@@ -87,55 +87,56 @@ proc bottomInfo(lpx:int,mxpos:int,ts:int) =
       print("cx : ",peru)
       print(CXLIBVERSION,brightblack)
       print(" | ",brightblack)
-      cx.qqTop()
+      qqTop()
       print(" |",gray)  
       var ntc = "Metal : Kitco, Market Data : Yahoo Finance"
-      printLn(ntc,gray,xpos = cx.tw - ntc.len - 3)
+      printLn(ntc,gray,xpos = tw - ntc.len - 3)
       #printLn("Terminal : use font monospace size 9 or 10")
 
 proc doit(mxpos:int,stock:string) =
     # setup the terminal
     cleanScreen()
     curset()
-    cx.decho(2)
+    
+    nimcx.decho(2)
     # print the large MINI with Finance Center and Yahoo delayed notice underneath
-    printNimsxR(nimsx2,randcol(),xpos = cx.tw - 46)
+    printNimsxR(nimsx2,randcol(),xpos = nimcx.tw - 46)
     #printBigLetters("MINI",xpos = 102,fun = true)  # also ok
-    printLn("Finance Center",yellowgreen,xpos = cx.tw - 39)  
+    printLn("Finance Center",yellowgreen,xpos = nimcx.tw - 39)  
     var ymd = "Yahoo Market Data delayed 15 minutes"
-    printLn(ymd,truetomato,xpos = cx.tw - 45)
+    printLn(ymd,truetomato,xpos = nimcx.tw - 45)
     # move cursor to top left
     curset()
     # down 2
-    cx.decho(2)
+    nimcx.decho(2)
     # setup for forex display on the right side
     # down 10        
     curdn(10)
     # display top forex set
-    showCurrentForex(@["EURHKD","GBPHKD","JPYHKD","AUDHKD","CNYHKD"],xpos = cx.tw - 45)
+    showCurrentForex(@["EURHKD","GBPHKD","JPYHKD","AUDHKD","CNYHKD"],xpos = nimcx.tw - 45)
     # down 3
     curdn(2)
     # display second forex set and update time
-    showCurrentForex(@["EURUSD","GBPUSD","USDJPY","AUDUSD","USDCNY"],xpos = cx.tw - 45)
+    showCurrentForex(@["EURUSD","GBPUSD","USDJPY","AUDUSD","USDCNY"],xpos = nimcx.tw - 45)
     curdn(1)
-    cx.printLn($getTime(),yellowgreen,xpos = cx.tw - 44)
+    nimcx.printLn($getTime(),yellowgreen,xpos = nimcx.tw - 44)
     
     
     # here we display price and range data for stocks passed in from command line
     if stock.len > 0:
        decho(3)
-       printLn(fmtx(["<9",">10","",""],"Stock","Current",spaces(2),"Range"),lime,xpos = cx.tw - 45)
+       printLn(fmtx(["<9",">10","",""],"Stock","Current",spaces(2),"Range"),lime,xpos = nimcx.tw - 45)
        var sxc = 0 # we limit to max 15 stocks displayable
        for x in yahooStocks(stock,xpos = 10):
              inc sxc
              if sxc < 16:
-                printLnBiCol(fmtx(["<10","",">8","",""],x.stcode,spaces(1),x.stprice,spaces(2),x.strange),xpos = cx.tw - 45)
+                printLnBiCol(fmtx(["<10","",">8","",""],x.stcode,spaces(1),x.stprice,spaces(2),x.strange),xpos = nimcx.tw - 45)
              
        
     # go back to top left
     curset()
     # down 2
-    cx.decho(2)
+    nimcx.decho(2)
     # display 3 indexes
     printLn("Stock Markets",peru,xpos = mxpos)
     echo()

@@ -296,17 +296,17 @@ if ts.dd.len > 0:
 
     printLn(" Interval Information\n",peru)
     echo "Date Range : ", s,"  -  ",e
-    echo "Years      : ", cx.intervalyears(s,e)
-    echo "Months     : ", cx.intervalmonths(s,e)
-    echo "Weeks      : ", cx.intervalweeks(s,e)
-    echo "Days       : ", cx.intervaldays(s,e)
-    echo "Hours      : ", cx.intervalhours(s,e)
-    echo "Mins       : ", cx.intervalmins(s,e)
-    echo "Secs       : ", cx.intervalsecs(s,e)
+    echo "Years      : ", nimcx.intervalyears(s,e)
+    echo "Months     : ", nimcx.intervalmonths(s,e)
+    echo "Weeks      : ", nimcx.intervalweeks(s,e)
+    echo "Days       : ", nimcx.intervaldays(s,e)
+    echo "Hours      : ", nimcx.intervalhours(s,e)
+    echo "Mins       : ", nimcx.intervalmins(s,e)
+    echo "Secs       : ", nimcx.intervalsecs(s,e)
 
     echo()
     echo "Extract items from date string ",s
-    echo cx.year(s)," ",cx.month(s)," ",cx.day(s)
+    echo nimcx.year(s)," ",nimcx.month(s)," ",nimcx.day(s)
     decho(2)
 
 
@@ -314,7 +314,7 @@ printLn(" Test validDate proc\n",peru)
 var somedates = @["2015-05-10","2015-02-29","3000-15-10","1899-12-31","2018-12-31","2016-02-29",
                  "2017-02-29","2018-02-29","2019-02-29","2019-01-02",getDateStr()]
 for sd in somedates:
-  if cx.validDate(sd) == true:
+  if nimcx.validDate(sd) == true:
       printLn(fmtx(["<11","",""],sd,spaces(1),"true"),yellowgreen)
   else:
       printLn(fmtx(["<11","",""],sd,spaces(1),"false"),truetomato)
@@ -324,8 +324,8 @@ echo()
 printLn(" Test plusDays and minusDays proc \n",peru)
 var indate = getDateStr()
 printLnBiCol("Indate     : " & indate,":")
-printLnBiCol("Outdate +7 : " & cx.plusDays(indate,7),":")
-printLnBiCol("Outdate -7 : " & cx.minusdays(indate,7),":")
+printLnBiCol("Outdate +7 : " & nimcx.plusDays(indate,7),":")
+printLnBiCol("Outdate -7 : " & nimcx.minusdays(indate,7),":")
 echo()
 
 printLn(" Testing logistics functions\n",peru)
@@ -563,5 +563,5 @@ when isMainModule:
   # show time elapsed for this run
   when declared(libFinHk):
       decho(2)
-      printLn(fmtx(["<15","","","",""],"Library     : ","qqTop libFinHk : ",LIBFINHKVERSION," - ",cx.year(getDateStr())),brightblack)
-  cx.doFinish()
+      printLn(fmtx(["<15","","","",""],"Library     : ","qqTop libFinHk : ",LIBFINHKVERSION," - ",nimcx.year(getDateStr())),brightblack)
+  nimcx.doFinish()
