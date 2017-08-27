@@ -6,7 +6,7 @@ import os,nimcx,httpclient,nimFinLib,times,strfmt,osproc,parseopt2
 # A MINI financial information system example
 # currently set to update every minute if started w/o param
 # 
-# Compiler : NIM 0.14.3
+# Compiler : NIM 0.17.1
 # 
 # USAGE: minifin -t:10 -s:0386.HK+0880.HK+0555.HK+BP.L+AAPL+BAS.DE
 # 

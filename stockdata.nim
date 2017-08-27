@@ -97,7 +97,7 @@ else:
 if pc > 1:    
      fromdate = paramStr(2)
      if validdate(fromdate) == false:
-        printLnBiCol("Invalid startdate  : " & fromdate,":",red)
+        printLnBiCol("Invalid startdate  : " & fromdate,colLeft=red)
         printLnBicol("Using default date : " & defaultstartdate)
         fromdate = defaultstartdate
 else:
@@ -106,7 +106,7 @@ else:
 if pc > 2:       
      todate = paramStr(3)
      if validdate(todate) == false:
-        printLnBiCol("Invalid startdate  : " & fromdate,":",red)
+        printLnBiCol("Invalid startdate  : " & fromdate,colLeft=red)
         printLnBicol("Using default date : " & defaultenddate)
         todate = defaultenddate
         

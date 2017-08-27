@@ -42,7 +42,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2017-07-23
+## Latest      : 2017-08-27
 ##
 ## ToDo        : NOTE : Due to changes in Yahoo endpoints data quality may be severely impacted
 ##                      Some data has holes and adj.close seems not to be correct for splits or dividends
@@ -672,12 +672,12 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
       for line in ci.splitLines:
         var data = line[1..line.high].split(",")
         if data.len > 1:
-                printBiCol(fmtx(["","<10"],"Code : ",unquote(data[0])),":",salmon,cyan,xpos = xpos)
-                printLnBiCol(fmtx(["",""],"Index : ",unquote(data[1])),":",salmon,cyan)
+                printBiCol(fmtx(["","<10"],"Code : ",unquote(data[0])),colLeft=salmon,colRight=cyan,xpos = xpos)
+                printLnBiCol(fmtx(["",""],"Index : ",unquote(data[1])),colLeft=salmon,colRight=cyan,)
                 #curdn(1)                      
-                printLnBiCol(fmtx(["","<30"],"Exch : ",unquote(data[2])),":",yellowgreen,goldenrod,xpos = xpos)                   
+                printLnBiCol(fmtx(["","<30"],"Exch : ",unquote(data[2])),colLeft=yellowgreen,colRight=goldenrod,xpos = xpos)                   
                 #curdn(1)
-                printLnBiCol(fmtx(["","<12","<9"],"Date : ", unquote(data[4]),unquote(data[5])),":",xpos = xpos)
+                printLnBiCol(fmtx(["","<12","<9"],"Date : ", unquote(data[4]),unquote(data[5])),xpos = xpos)
                 curup(1) # needed to position the rune below
                 var cc = checkChange(unquote(data[9]))
                 
@@ -735,12 +735,12 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
                           print("Error",red,xpos = xpos + 31)              
                 
                 curup(1)
-                printLnBiCol(fmtx(["",""],"Range: ",unquote(data[10])),":",xpos = xpos)
-                printBiCol(fmtx(["","<8"],"Open : ",data[6]),":",xpos = xpos)     
+                printLnBiCol(fmtx(["",""],"Range: ",unquote(data[10])),xpos = xpos)
+                printBiCol(fmtx(["","<8"],"Open : ",data[6]),xpos = xpos)     
                 if unquote(data[8]) == "0":
-                    printBiCol(fmtx([""],"  Vol   : N/A"),":",xpos = xpos + 17)
+                    printBiCol(fmtx([""],"  Vol   : N/A"),xpos = xpos + 17)
                 else:
-                    printBiCol(fmtx([""],"  Vol   : " & unquote(data[8])),":",xpos = xpos + 17)               
+                    printBiCol(fmtx([""],"  Vol   : " & unquote(data[8])),xpos = xpos + 17)               
                 printLn("Yahoo Finance Data",brightblack,xpos = xpos + slmdis - 12)
                 printLn(repeat("_",63),xpos = xpos)
                 
@@ -875,11 +875,11 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
         var data = line[1..line.high].split(",") 
         
         if data.len > 1:
-                printBiCol(fmtx(["","<9"],"Code : ",unquote(data[0])),":",lightskyblue,cyan,xpos = xpos)
-                printLnBiCol(fmtx(["","<36"],"   Name : ",unquote(data[1])),":",lightskyblue,pastelyellowgreen)
-                printLnBiCol(fmtx(["",""],"Exch : ",unquote(data[2])),":",yellowgreen,goldenrod,xpos = xpos)
+                printBiCol(fmtx(["","<9"],"Code : ",unquote(data[0])),colLeft=lightskyblue,colRight=cyan,xpos = xpos)
+                printLnBiCol(fmtx(["","<36"],"   Name : ",unquote(data[1])),colLeft=lightskyblue,colRight=pastelyellowgreen)
+                printLnBiCol(fmtx(["",""],"Exch : ",unquote(data[2])),colleft=yellowgreen,colRight=goldenrod,xpos = xpos)
                 #curdn(1)
-                printLnBiCol(fmtx(["","<12","<9",""],"Date : ",unquote(data[4]),unquote(data[5]),spaces(4)),":",xpos = xpos)
+                printLnBiCol(fmtx(["","<12","<9",""],"Date : ",unquote(data[4]),unquote(data[5]),spaces(4)),xpos = xpos)
                 curup(1) 
                 var cc = checkChange(unquote(data[9])) 
                 
@@ -938,9 +938,9 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
                           print("Error",red,xpos = xpos + 31)              
                 
                 curup(1)
-                printLnBiCol(fmtx(["",""],"Range: ",unquote(data[10])),":",xpos = xpos)
-                printBiCol(fmtx(["","<8"],"Open : ",unquote(data[6])),":",xpos = xpos)          
-                printBiCol(fmtx([""],"   Vol  : " & unquote(data[8])),":",xpos = xpos + 17)               
+                printLnBiCol(fmtx(["",""],"Range: ",unquote(data[10])),xpos = xpos)
+                printBiCol(fmtx(["","<8"],"Open : ",unquote(data[6])),xpos = xpos)          
+                printBiCol(fmtx([""],"   Vol  : " & unquote(data[8])),xpos = xpos + 17)               
                 printLn("Yahoo Finance Data",brightblack,xpos = xpos + slmdis - 12)
                 printLn(repeat("_",63),xpos = xpos)
             
@@ -1157,7 +1157,7 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
              print(fmtx(["<11","","<11"],startDate,spaces(1),endDate))
              # end feedback line
           else:
-              printLnBiCol("Processing... : " & symb,":",lightskyblue)
+              printLnBiCol("Processing... : " & symb,colLeft=lightskyblue)
               curup(1)
           # set up dates for yahoo
           var sdy = year(startDate)
@@ -1210,7 +1210,7 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
                # maybe we can check here for invalid data and abort imm if something is wrong
                if mydata.contains("Invalid cookie") == true:    
                    errstflag = true
-                   printLnBiCol("Error downloading data for : " & symb ,":",peru,red)
+                   printLnBiCol("Error downloading data for : " & symb ,colLeft=peru,colRight=red)
                    
                # we only continue if no error sofar
                if errstflag == false:
@@ -1229,7 +1229,7 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
                printLnBicol("Created  File     : " & acvsfile)
                echo()
           except:
-               printLnBicol("Error writing to  : " & acvsfile,":",red)
+               printLnBicol("Error writing to  : " & acvsfile,colleft=red)
                discard
             
           fsw.close() 
@@ -1678,7 +1678,7 @@ proc sumDailyReturnsCl*(self:Stocks) : float =
          # feedback line can be commented out
          printLn("Returns on Close Price calculated : " & $dR.len,yellow)
       except:   
-           printLnBiCol("Returns on Close Price : failed due to no data error . value 0.0 returned",":",red)
+           printLnBiCol("Returns on Close Price : failed due to no data error . value 0.0 returned",colleft=red)
       result = sumdfr
 
 
@@ -1698,7 +1698,7 @@ proc sumDailyReturnsAdCl*(self:Stocks) : float =
           # feedback line can be commented out
           printLn("Returns on Close Price calculated : " & $dR.len,peru)
       except:
-          printLnBiCol("Returns on Adjc.Close Price : failed due to no data error . value 0.0 returned",":",red)
+          printLnBiCol("Returns on Adjc.Close Price : failed due to no data error . value 0.0 returned",colleft=red)
       result = sumdfr
 
 

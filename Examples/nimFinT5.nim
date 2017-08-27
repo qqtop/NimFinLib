@@ -70,7 +70,7 @@ if pl > 0 :
     printLnBiCol("Profit / 1 Share trading    : " & ff2(pl,2))
     printLnBiCol("Profit / 1 Boardlot trading : " & ff2(pl * parsefloat(boardlot),2))
 else:
-    printLnBiCol("Loss   / 1 Share trading    : " & ff2(pl,2),":",red)
+    printLnBiCol("Loss   / 1 Share trading    : " & ff2(pl,2),colleft=red)
     printLnBiCol("Profit / 1 Boardlot trading : " & ff2(pl * parsefloat(boardlot),2))   
 
 doFinishHk()
