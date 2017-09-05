@@ -1412,7 +1412,7 @@ proc getSymbol3*(symb:string):Stockdata =
      ##     Example : 
      ##     
      ## .. code-block:: nim     
-     ##     echo getSymbol3("0005.HK","2000-01-01",getDateStr())
+     ##     echo getSymbol3("AAPL")
      ##
      var qz : Stockdata
      var stx = "l1c1va2xj1b4j4dyekjm3m4rr5p5p6s7"
@@ -1977,7 +1977,6 @@ proc showStocksTable*(apfdata: Portfolio,xpos:int = 1) =
    ##
    ## a convenience prog to display the data part of a Portfolio object
    ##
-   ## for usage example see nimFinT3
    ##
 
    var astkdata = apfdata.dx
@@ -2002,6 +2001,9 @@ proc showStockdataTable*(a:Stockdata) =
       ## showStockdatatable
       ##
       ## shows all items of a Stockdata object
+      ## 
+      ## .. code-block:: nim     
+      ##    showStockdataTable(getSymbol3("AAPL")) 
       ##
       printLnBiCol(fmtx(["<17","",">12"],"Price"," : ",a.price))
       printLnBiCol(fmtx(["<17","",">12"],"Change"," : ",a.change))
