@@ -327,10 +327,6 @@ proc getBoardLot*(astock:Stocks):string =
       
 
 
-
-
-
-
 proc showQuoteTableHk*(apfData: Portfolio) =
      ## showQuoteTable
      ##

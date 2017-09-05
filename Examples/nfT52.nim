@@ -323,9 +323,9 @@ echo()
 
 printLn(" Test plusDays and minusDays proc \n",peru)
 var indate = getDateStr()
-printLnBiCol("Indate     : " & indate,":")
-printLnBiCol("Outdate +7 : " & nimcx.plusDays(indate,7),":")
-printLnBiCol("Outdate -7 : " & nimcx.minusdays(indate,7),":")
+printLnBiCol("Indate     : " & indate)
+printLnBiCol("Outdate +7 : " & nimcx.plusDays(indate,7))
+printLnBiCol("Outdate -7 : " & nimcx.minusdays(indate,7))
 echo()
 
 printLn(" Testing logistics functions\n",peru)
@@ -384,19 +384,19 @@ echo "Passing in our indexpool a  seq[Stocks] type\n"
 showCurrentIDX(indexpool)
 decho(2)
 
-# 
-# echo()
-# superheader(" Testing getSymbol3 - Additional stock info ")
-# echo()
-# 
-# var symb = "AAPL"
-# var sx = getSymbol3(symb)
-# decho(2)
-# println("Stock Code : " & symb,yellow)
-# aline()
-# showStockdatatable(sx)
-# decho(2)
-# 
+
+echo()
+superheader(" Testing getSymbol3 - Additional stock info ")
+echo()
+
+var symb = "AAPL"
+var sx = getSymbol3(symb)
+decho(2)
+println("Stock Code : " & symb,yellow)
+aline()
+showStockdatatable(sx)
+decho(2)
+
 
 echo()
 superHeader(" Tests for Forex rates ")

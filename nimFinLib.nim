@@ -42,7 +42,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2017-08-27
+## Latest      : 2017-09-05
 ##
 ## ToDo        : NOTE : Due to changes in Yahoo endpoints data quality may be severely impacted
 ##                      Some data has holes and adj.close seems not to be correct for splits or dividends
@@ -283,13 +283,13 @@ proc timeSeries*[T](self:T,ty:string): Ts =
      var ts:Ts
      ts.dd = self.date
      case ty
-     of "o": ts.tx = self.open
-     of "h": ts.tx = self.high
-     of "l": ts.tx = self.low
-     of "c": ts.tx = self.close
-     of "v": ts.tx = self.vol
-     of "a": ts.tx = self.adjc
-     else  : discard 
+      of "o": ts.tx = self.open
+      of "h": ts.tx = self.high
+      of "l": ts.tx = self.low
+      of "c": ts.tx = self.close
+      of "v": ts.tx = self.vol
+      of "a": ts.tx = self.adjc
+      else  : discard 
      return ts
 
 
@@ -330,7 +330,7 @@ proc showTimeSeries* (ats:Ts,header,ty:string,N:int,fgr:string = yellowgreen,bgr
    ## Example
    ##
    ## .. code-block:: nim
-   ##    import cx,nimFinLib
+   ##    import nimcx,nimFinLib
    ##    # show adj. close price , 5 rows head and tail 374 days apart
    ##    var myD = initStocks()
    ##    myD = getSymbol2("0386.HK",minusdays(getDateStr(),374),getDateStr())
@@ -1353,8 +1353,157 @@ proc getSymbol2*(symb,startDate,endDate : string,processFlag:bool = false) : Sto
           printLn("Error location : proc getSymbol2",red)
           result = initStocks() # return an empty df
 
+# 
+# proc getSymbol3*(symb:string,startDate,endDate : string,processFlag:bool = false):Stockdata =
+#      ## getSymbol3   
+#      ##
+#      ## data returned is inside an Stockdata object with following fields and types
+#      ##
+#      ## the reason for string types in marketcap and ebitda is yahoo returning
+#      ##
+#      ## numbers shortened with B for billions etc.
+#      ##
+#      ## not all data may be available for stocks or even maybe incorrect.
+#      ##
+#      ## so use with care.
+#      ##
+#      ##
+#      ##     price*            : float
+#      ##
+#      ##     change*           : float
+#      ##
+#      ##     volume*           : float
+#      ##
+#      ##     avgdailyvol*      : float
+#      ##
+#      ##     market*           : string
+#      ##
+#      ##     marketcap*        : string
+#      ##
+#      ##     bookvalue*        : float
+#      ##
+#      ##     ebitda*           : string
+#      ##
+#      ##     dividendpershare* : float
+#      ##
+#      ##     dividendperyield* : float
+#      ##
+#      ##     earningspershare* : float
+#      ##
+#      ##     week52high*       : float
+#      ##
+#      ##     week52low*        : float
+#      ##
+#      ##     movingavg50day*   : float
+#      ##
+#      ##     movingavg200day*  : float
+#      ##
+#      ##     priceearingratio* : float
+#      ##
+#      ##     priceearninggrowthratio* : float
+#      ##
+#      ##     pricesalesratio*  : float
+#      ##
+#      ##     pricebookratio*   : float
+#      ##
+#      ##     shortratio*       : float
+#      ##
+#      ##
+#      ##     Example : 
+#      ##     
+#      ## .. code-block:: nim     
+#      ##     echo getSymbol3("0005.HK","2000-01-01",getDateStr())
+#      ##
+#      var qz : Stockdata
+#      var stx = "l1c1va2xj1b4j4dyekjm3m4rr5p5p6s7"
+#      var qurl3 = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=$2" % [symb, stx]
+#      let zcli = newHttpClient()
+#      var rx = zcli.getcontent(qurl3)
+#      var rxs = rx.split(",")
+#      try:
+#         qz.price             = parseFloat(strip(rxs[0]))
+#      except:
+#         qz.price             =  0.0
+#      try:
+#         qz.change            = parseFloat(strip(rxs[1]))
+#      except:
+#         qz.change            = 0.0
+#      try:
+#         qz.volume            = parseFloat(strip(rxs[2]))
+#      except:
+#         qz.volume            = 0.0
+#      try:
+#         qz.avgdailyvol       = parseFloat(strip(rxs[3]))
+#      except:
+#         qz.avgdailyvol       = 0.0
+#      try:
+#         qz.market            = strip(rxs[4])
+#      except:
+#         qz.market            = ""
+#      try:
+#         qz.marketcap         = strip(rxs[5])
+#      except:
+#         qz.marketcap         = ""
+#      try:
+#         qz.bookvalue         = parseFloat(strip(rxs[6]))
+#      except:
+#         qz.bookvalue         = 0.0
+#      try:
+#         qz.ebitda            = strip(rxs[7])
+#      except:
+#         qz.ebitda            = ""
+#      try:
+#         qz.dividendpershare  = parseFloat(strip(rxs[8]))
+#      except:
+#         qz.dividendpershare  = 0.0
+#      try:
+#         qz.dividendperyield  = parseFloat(strip(rxs[9]))
+#      except:
+#         qz.dividendperyield  = 0.0
+#      try:
+#         qz.earningspershare  = parseFloat(strip(rxs[10]))
+#      except:
+#         qz.earningspershare  = 0.0
+#      try:
+#         qz.week52high        = parseFloat(strip(rxs[11]))
+#      except:
+#         qz.week52high        = 0.0
+#      try:
+#         qz.week52low         = parseFloat(strip(rxs[12]))
+#      except:
+#         qz.week52low         = 0.0
+#      try:
+#         qz.movingavg50day    = parseFloat(strip(rxs[13]))
+#      except:
+#         qz.movingavg50day    = 0.0
+#      try:
+#         qz.movingavg200day   = parseFloat(strip(rxs[14]))
+#      except:
+#         qz.movingavg200day   = 0.0
+#      try:
+#         qz.priceearingratio  = parseFloat(strip(rxs[15]))
+#      except:
+#         qz.priceearingratio  = 0.0
+#      try:
+#         qz.priceearninggrowthratio = parseFloat(strip(rxs[16]))
+#      except:
+#         qz.priceearninggrowthratio = 0.0
+#      try:
+#         qz.pricesalesratio   = parseFloat(strip(rxs[17]))
+#      except:
+#         qz.pricesalesratio   = 0.0
+#      try:
+#         qz.pricebookratio    = parseFloat(strip(rxs[18]))
+#      except:
+#         qz.pricebookratio    = 0.0
+#      try:
+#         qz.shortratio        = parseFloat(strip(rxs[19]))
+#      except:
+#         qz.shortratio        = 0.0
+#      result = qz
 
-proc getSymbol3*(symb:string,startDate,endDate : string,processFlag:bool = false):Stockdata =
+
+proc getSymbol3*(symb:string):Stockdata =
      ## getSymbol3   
      ##
      ## data returned is inside an Stockdata object with following fields and types
@@ -1957,7 +2106,7 @@ proc showCurrentForex*(curs : openarray[string],xpos:int = 1) =
        ##    decho(3)
        ##
        ## .. code-block:: nim
-       ##    import cx,nimFinLib
+       ##    import nimcx,nimFinLib
        ##    var curs = ["EURUSD","GBPHKD","CADEUR","AUDNZD","USDCNY","GBPCNY","JPYHKD"]
        ##    var cursl = curs.len
        ##    showCurrentForex(curs,xpos = 5)
@@ -2003,26 +2152,26 @@ proc showStockdataTable*(a:Stockdata) =
       ##
       ## shows all items of a Stockdata object
       ##
-      printLn(fmtx(["<17","",">12"],"Price"," : ",a.price))
-      printLn(fmtx(["<17","",">12"],"Change"," : ",a.change))
-      printLn(fmtx(["<17","",">12"],"Volume"," : ",a.volume))
-      printLn(fmtx(["<17","",">12"],"Avg.DailyVolume"," : ",a.avgdailyvol))
-      printLn(fmtx(["<17","",">12"],"Market"," : ",a.market))
-      printLn(fmtx(["<17","",">12"],"MarketCap"," : ",a.marketcap))
-      printLn(fmtx(["<17","",">12"],"BookValue"," : ",a.bookvalue))
-      printLn(fmtx(["<17","",">12"],"Ebitda"," : ",a.ebitda))
-      printLn(fmtx(["<17","",">12"],"DividendPerShare"," : ",a.dividendpershare))
-      printLn(fmtx(["<17","",">12"],"DividendPerYield"," : ",a.dividendperyield))
-      printLn(fmtx(["<17","",">12"],"EarningsPerShare"," : ",a.earningspershare))
-      printLn(fmtx(["<17","",">12"],"52 Week High"," : ",a.week52high))
-      printLn(fmtx(["<17","",">12"],"52 Week Low"," : ",a.week52low))
-      printLn(fmtx(["<17","",">12"],"50 Day Mov. Avg"," : ",ff(a.movingavg50day,2)))
-      printLn(fmtx(["<17","",">12"],"200 Day Mov. Avg"," : ",ff(a.movingavg200day,2)))
-      printLn(fmtx(["<17","",">12"],"P/E"," : ",ff(a.priceearingratio,2)))
-      printLn(fmtx(["<17","",">12"],"P/E Growth Ratio"," : ",ff(a.priceearninggrowthratio,2)))
-      printLn(fmtx(["<17","",">12"],"Price Sales Ratio"," : ",ff(a.pricesalesratio,2)))
-      printLn(fmtx(["<17","",">12"],"Price Book Ratio"," : ",ff(a.pricebookratio,2)))
-      printLn(fmtx(["<17","",">12"],"Price Short Ratio"," : ",ff(a.shortratio,2)))
+      printLnBiCol(fmtx(["<17","",">12"],"Price"," : ",a.price))
+      printLnBiCol(fmtx(["<17","",">12"],"Change"," : ",a.change))
+      printLnBiCol(fmtx(["<17","",">12"],"Volume"," : ",a.volume))
+      printLnBiCol(fmtx(["<17","",">12"],"Avg.DailyVolume"," : ",a.avgdailyvol))
+      printLnBiCol(fmtx(["<17","",">12"],"Market"," : ",a.market))
+      printLnBiCol(fmtx(["<17","",">12"],"MarketCap"," : ",a.marketcap))
+      printLnBiCol(fmtx(["<17","",">12"],"BookValue"," : ",a.bookvalue))
+      printLnBiCol(fmtx(["<17","",">12"],"Ebitda"," : ",a.ebitda))
+      printLnBiCol(fmtx(["<17","",">12"],"DividendPerShare"," : ",a.dividendpershare))
+      printLnBiCol(fmtx(["<17","",">12"],"DividendPerYield"," : ",a.dividendperyield))
+      printLnBiCol(fmtx(["<17","",">12"],"EarningsPerShare"," : ",a.earningspershare))
+      printLnBiCol(fmtx(["<17","",">12"],"52 Week High"," : ",a.week52high))
+      printLnBiCol(fmtx(["<17","",">12"],"52 Week Low"," : ",a.week52low))
+      printLnBiCol(fmtx(["<17","",">12"],"50 Day Mov. Avg"," : ",ff(a.movingavg50day,2)))
+      printLnBiCol(fmtx(["<17","",">12"],"200 Day Mov. Avg"," : ",ff(a.movingavg200day,2)))
+      printLnBiCol(fmtx(["<17","",">12"],"P/E"," : ",ff(a.priceearingratio,2)))
+      printLnBiCol(fmtx(["<17","",">12"],"P/E Growth Ratio"," : ",ff(a.priceearninggrowthratio,2)))
+      printLnBiCol(fmtx(["<17","",">12"],"Price Sales Ratio"," : ",ff(a.pricesalesratio,2)))
+      printLnBiCol(fmtx(["<17","",">12"],"Price Book Ratio"," : ",ff(a.pricebookratio,2)))
+      printLnBiCol(fmtx(["<17","",">12"],"Price Short Ratio"," : ",ff(a.shortratio,2)))
       decho(2)
 
 template metal(dc:int):typed =

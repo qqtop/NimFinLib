@@ -132,7 +132,7 @@ decho(2)
 var ibm = initStocks()
 ibm = getsymbol2("IBM","2000-01-01",getDateStr())
 
-# show recent 5 historical data rows
+# show 5 historical data rows
 showhistdata(ibm,5)
 
 # show data between 2 dates incl.
