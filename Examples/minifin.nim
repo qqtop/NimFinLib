@@ -6,7 +6,7 @@ import os,nimcx,httpclient,nimFinLib,times,strfmt,osproc,parseopt2
 # A MINI financial information system example
 # currently set to update every minute if started w/o param
 # 
-# Compiler : NIM 0.17.1
+# Compiler : NIM 0.17.2
 # 
 # USAGE: minifin -t:10 -s:0386.HK+0880.HK+0555.HK+BP.L+AAPL+BAS.DE
 # 
@@ -20,7 +20,7 @@ import os,nimcx,httpclient,nimFinLib,times,strfmt,osproc,parseopt2
 # nim c -d:ssl --profiler:on --stackTrace:on minifin 
 # 
 # 
-# nim c -d:release --threads:on --gc:boehm minifin
+# nim c -d:release -d:ssl --gc:boehm minifin
 # 
 # 
 # 
@@ -93,16 +93,25 @@ proc bottomInfo(lpx:int,mxpos:int,ts:int) =
       printLn(ntc,gray,xpos = tw - ntc.len - 3)
       #printLn("Terminal : use font monospace size 9 or 10")
 
+      
+proc printmini(npos:int = tw div 2 - 60) = 
+  var xpos = npos
+  cxm(xpos)
+  cxi(xpos + 10,coltop=red)
+  cxn(xpos + 17,coltop = randcol())
+  cxi(xpos + 26,coltop=red)
+  decho(7)
+      
 proc doit(mxpos:int,stock:string) =
     # setup the terminal
     cleanScreen()
     curset()
-    
     nimcx.decho(2)
     # print the large MINI with Finance Center and Yahoo delayed notice underneath
-    printNimsxR(nimsx2,randcol(),xpos = nimcx.tw - 46)
+    #printNimsxR(nimsx2,randcol(),xpos = nimcx.tw - 46)
+    printmini(nimcx.tw - 50) # improved font ..
     #printBigLetters("MINI",xpos = 102,fun = true)  # also ok
-    printLn("Finance Center",yellowgreen,xpos = nimcx.tw - 39)  
+    printLn("Finance Center",randcol(),xpos = nimcx.tw - 35)  
     var ymd = "Yahoo Market Data delayed 15 minutes"
     printLn(ymd,truetomato,xpos = nimcx.tw - 45)
     # move cursor to top left
