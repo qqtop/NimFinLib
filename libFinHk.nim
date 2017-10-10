@@ -22,7 +22,7 @@
 ##
 ## ProjectStart: 2015-07-07
 ## 
-## Latest      : 2017-08-27 
+## Latest      : 2017-10-10 
 ##
 ## ToDo        :
 ##
@@ -445,7 +445,7 @@ proc doFinishHk*() =
     print(fmtx(["","","","",""],"Library     : ","libFinHk : ",LIBFINHKVERSION," - " ,"qqTop "),dodgerblue)
     printLn(" - " & year(getDateStr()),brightblack)
     print(fmtx(["<14"],"Elapsed     : "),yellowgreen)
-    printLn(fmtx(["<",">5"],ff(epochtime() - start,3),"secs"),goldenrod)
+    printLn(fmtx(["<",">5"],ff(epochtime() - cxstart,3),"secs"),goldenrod)
     echo()
     quit(0)
 
