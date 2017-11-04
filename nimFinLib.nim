@@ -44,25 +44,16 @@
 ## 
 ## Latest      : 2017-11-03
 ##
-## ToDo        : NOTE : Due to changes in Yahoo endpoints data quality may be severely impacted
-##                      Some data has holes and adj.close seems not to be correct for splits or dividends
-##                      in some cases so all data has to be taken with a grain of salt .. or whatever.
-##                      Yahoo being sold to Verizon so expect hick-ups ...
+## NOTE        : Unfortunately starting on Nov. 1st 2017 Yahoo denies access to their API endpoints
 ## 
-##                      getsymbol2 fetching historical data has been fixed as of 2017-06-03
-##                      and is currently working. See: proc download_quote.
-##
-##                      You may however need several attempts to get the data from yahoo cleanly
-##                      depending on your connection and the gremlins at yahoo .. 
-##                      
-##                      It may happen that 'out of memory' error or crashes
-##                      occure if the yahoo data does not come in or is interspersed
-##                      with unclean row data. So overall use historical data best
-##                      after it is cleaned , an attempt of cleaning out null rows is being
-##                      made , but there maybe other issues with the data.
-##                      
+##               unless they reconsider the functionality here is limited to data you download manually
 ## 
-##               Ratios , Covariance , Correlation , Plotting advanced functions etc.
+##               Other data sources like quandl, alpha vantage may be considered but they are all US market
+##               
+##               centric and not global data sets.  
+##                              
+## 
+## Todo        : Ratios , Covariance , Correlation , Plotting advanced functions etc.
 ##               
 ##
 ## Programming : qqTop
@@ -144,6 +135,8 @@ let NIMFINLIBVERSION* = "0.2.8.6"
 let yahoourl*    = "http://finance.yahoo.com/d/quotes.csv?s=$1&f=snxl1d1t1ohvcm"
 let yahoocururl* = "https://finance.yahoo.com/webservice/v1/symbols/allcurrencies/quote?format=json"
 
+# historic data query string Nov 4 2017
+#https://query1.finance.yahoo.com/v7/finance/download/0127.HK?period1=1507086873&period2=1509765273&interval=1d&events=history&crumb=NSPPeHFqOWm
 
 const
       tail* = "tail"
@@ -1093,6 +1086,7 @@ proc get_crumble_and_cookie(symbol:string):seq[string] =
 
 proc download_quote(symbol:string, date_from:string = "2000-01-01", date_to:string = "2100-01-01",events:string = ""):string = 
     result = ""
+    #https://query1.finance.yahoo.com/v7/finance/download/0127.HK?period1=1507086873&period2=1509765273&interval=1d&events=history&crumb=NSPPeHFqOWm
     var quote_link = "https://query1.finance.yahoo.com/v7/finance/download/$1?period1=$2&period2=$3&interval=1d&events=$4&crumb=$5"
     var time_stamp_from = $(epochSecs(date_from))     
     var time_stamp_to = $(epochSecs(date_to))  
