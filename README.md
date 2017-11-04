@@ -10,6 +10,14 @@ Financial Library for Nim
 
 Note : As of Mid May 2017 due to changes in Yahoo data endpoints for historical stock data
        the proc getSymbol2 has been changed to reflect this new reality.
+       
+       As of Nov 1 2017 Yahoo decided to take even these Api endpoints of air , which basically
+       removes our ability to pull in delayed data for stocks/indexes and currencies. Some functionallity
+       may still be available and we will look into other data providers in the near future.
+       Currently testing with data via apikey from Alpha Vantage , but this data seems US market centric
+       and hence of limited interest for Asian or European users and also will require a rewrite of
+       several procs to work . So do not hold your breath for too long.
+       
 
 ![Image](http://qqtop.github.io/nfT50.png?raw=true)
 Example screen from nfT50.nim
@@ -54,9 +62,9 @@ Example screen from minifin.nim
 Data gathering and calculations support 
 ----------------------------------------
 
-              Yahoo historical stock data
+              Yahoo historical stock data             <---- currently off line since Nov 2017
               
-              Yahoo current quotes and forex rates
+              Yahoo current quotes and forex rates    <---- currently off line since Nov 2017
               
               Dataframe like structure for easy working with dataseries
               
@@ -68,7 +76,7 @@ Data gathering and calculations support
               
               Date manipulations
               
-              
+              Kitco Metal Prices
               
               
 API Docs
@@ -102,7 +110,7 @@ Requirements
 
             
            
-      cx        nimble install nimcx
+      nimcx     nimble install nimcx
       
       strfmt    nimble install strfmt   (optional as a basic format engine available in cx)
            

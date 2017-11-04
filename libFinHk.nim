@@ -165,7 +165,7 @@ proc getHKEXcodes*(): seq[seq[string]] =
 
           let hkx = "hkex.csv"
           var f = open(hkx,fmWrite)  
-          for x in 0.. <stockcodes.len:
+          for x in 0..<stockcodes.len:
                  f.write(stockcodes[x])
                  f.write(",")
                  f.write(companynames[x])
@@ -286,7 +286,7 @@ proc hkPfseq*(anf: Portfolio;hkexcodes:seq[seq[string]]):seq[int]=
   ## hkPfseq returns the index seq of stocks in a Portfolio objects dx Stocks
   ##
   var pfseq = newSeq[int]()
-  for x in 0.. <anf.dx.len:
+  for x in 0..<anf.dx.len:
       pfseq.add(getHKEXseq(hkexcodes[0],yhooToHKEX(anf.dx[x].stock)))
   result = pfseq
 
@@ -348,7 +348,7 @@ proc showQuoteTableHk*(apfData: Portfolio) =
      # header for the table
      println(fmtx(["<8",">10",">10",">10",">10",">16",">11",">10"],"Stock","Kurtosis","StdDev","EMA22","Close","Company","Quote","BoardLot"),green)
      try:
-        for x in 0.. <stkdata.len:
+        for x in 0..<stkdata.len:
             # to get ema we pass our data to the ema function
             # we want 22 days so ..
             # and we just want the newest ema data point which resides in tx[0]

@@ -42,7 +42,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2017-09-05
+## Latest      : 2017-11-03
 ##
 ## ToDo        : NOTE : Due to changes in Yahoo endpoints data quality may be severely impacted
 ##                      Some data has holes and adj.close seems not to be correct for splits or dividends
@@ -299,7 +299,7 @@ proc timeSeriesHead*(ats:Ts,n:int = 5):Ts =
      ## returns a timeseries with n elements of the newest data
      ## 
      var nats = initTs() 
-     for x in 0.. <n:
+     for x in 0..<n:
          nats.dd.add($(ats.dd[x]))
          nats.tx.add(ats.tx[x])
      result = nats
@@ -311,7 +311,7 @@ proc timeSeriesTail*(ats:Ts,n:int = 5):Ts =
      ## returns a timeseries with n elements of the oldest data
      ## 
      var nats = initTs()
-     for x in (ats.tx.len - n).. <ats.tx.len:
+     for x in (ats.tx.len - n)..<ats.tx.len:
          nats.dd.add($(ats.dd[x]))
          nats.tx.add(ats.tx[x])
      result = nats
@@ -345,15 +345,15 @@ proc showTimeSeries* (ats:Ts,header,ty:string,N:int,fgr:string = yellowgreen,bgr
    printLn(fmtx(["<11","",">11"],"Date",spaces(1),header),fgr,xpos = xpos)
    if ats.dd.len > 0:
         if ty == all:
-            for x in 0.. <ats.tx.len:
+            for x in 0..<ats.tx.len:
                 printLn(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)),xpos = xpos)
         elif ty == tail:
-            for x in (ats.tx.len - N).. <ats.tx.len:
+            for x in (ats.tx.len - N)..<ats.tx.len:
                 printLn(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)),xpos = xpos)
          
         else:
             ## head is the default in case an empty ty string was passed in
-            for x in 0.. <N:
+            for x in 0..<N:
                 printLn(fmtx(["<11","",">11"],ats.dd[x],spaces(1),ff2(ats.tx[x],4)),xpos = xpos)
 
 
@@ -505,7 +505,7 @@ proc getStocks*(aurl:string,xpos:int = 1):seq[string] =
   try:
        let zcli = newHttpClient(timeout = 5000)
        let zz = splitLines(zcli.getContent(aurl))
-       for zs in 0.. <zz.len-1: data3.add(zz[zs])    
+       for zs in 0..<zz.len-1: data3.add(zz[zs])    
       
   except HttpRequestError:
       printLn("Yahoo current data could not be retrieved . Try again .\L",truetomato,xpos = xpos)
@@ -611,7 +611,7 @@ proc yahooStocks*(stock:string,xpos:int = 1):seq[YHobject] =
     let data5 = getStocks(yahoourl % stock ,xpos = xpos)
     var dn = newSeq[string]()
     var ss = stock.split("+")
-    for x in 0.. <ss.len:
+    for x in 0..<ss.len:
           dn = data5[x].split(",")
           var myst = initYHobject()
           if dn.len == 11:
@@ -750,7 +750,7 @@ proc currentIDX(aurl:string,xpos:int) {.discardable.} =
                   sflag = true
                   
     except HttpRequestError:
-          printLn("Index Data temporary unavailable" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+          printLn("Index Data temporary unavailable . --> " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
     except ValueError:
           discard
     except OSError:
@@ -773,7 +773,7 @@ proc buildStockString*(apf:Portfolio):string =
   ##
   ## Produce a string of one or more stock codes coming from a Portfolio object
   var xs = ""
-  for x in 0.. <apf.dx.len:
+  for x in 0..<apf.dx.len:
     # need to pass multiple code like so code+code+ , an initial + is also ok.
     xs = xs & "+" & apf.dx[x].stock
   result = xs
@@ -783,7 +783,7 @@ proc buildStockString*(adf:seq[Stocks]):string =
   ##
   ## Produce a string of one or more stock codes coming from a pool Stocks object
   var xs = ""
-  for x in 0.. <adf.len:
+  for x in 0..<adf.len:
     # need to pass multiple code like so code+code+ , an initial + is also ok.
     xs = xs & "+" & adf[x].stock
   result = xs
@@ -949,7 +949,7 @@ proc currentSTX(aurl:string,xpos:int) {.discardable.} =
                    printLn("Yahoo Server Fail.",truetomato,xpos = xpos)
                    sflag = true
     except HttpRequestError:
-          printLn("Stock Data temporary unavailable" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+          printLn("Stock Data temporary unavailable . --> " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
     except ValueError:
           discard
     except OSError:
@@ -1511,10 +1511,10 @@ proc showHistData*(adf: Stocks,n:int) =
     decho(1)
     printLn(fmtx(["<8","<11",">10",">10",">10",">10",">14",">10"],"Code","Date","Open","High","Low","Close","Volume","AdjClose"),green)
     if n >= adf.date.len:
-      for x in 0.. <adf.date.len:
+      for x in 0..<adf.date.len:
         echo(fmtx(["<8","<11",">10.3",">10.3",">10.3",">10.3",">14",">10.3"],adf.stock,adf.date[x],adf.open[x],adf.high[x],adf.low[x],adf.close[x],adf.vol[x],adf.adjc[x]))
     else:
-      for x in 0.. <n:
+      for x in 0..<n:
         echo(fmtx(["<8","<11",">10.3",">10.3",">10.3",">10.3",">14",">10.3"],adf.stock,adf.date[x],adf.open[x],adf.high[x],adf.low[x],adf.close[x],adf.vol[x],adf.adjc[x]))
     decho(2)
 
@@ -1530,7 +1530,7 @@ proc showHistData*(adf: Stocks,s: string,e:string) =
     # s <= e   ==> 2
     decho(1)
     printLn(fmtx(["<8","<11",">10",">10",">10",">10",">14",">10"],"Code","Date","Open","High","Low","Close","Volume","AdjClose"),green)
-    for x in 0.. <adf.date.len:
+    for x in 0..<adf.date.len:
       var c1 = compareDates(adf.date[x],s)
       var c2 = compareDates(adf.date[x],e)
       if c1 == 1 or c1 == 0:
@@ -1565,9 +1565,9 @@ proc seqtail*[T](self : seq[T] , n: int) : seq[T] =
     ##
     try:
         if len(self) >= n:
-            result = self[0.. <n]
+            result = self[0..<n]
         else:
-            result = self[0.. <len(self)]
+            result = self[0..<len(self)]
     except RangeError:
        discard
 
@@ -1578,9 +1578,9 @@ proc seqhead*[T](self : seq[T] , n: int) : seq[T] =
     var self2 = reversed(self)
     try:
         if len(self2) >= n:
-            result = self2[0.. <n].seqtail(n)
+            result = self2[0..<n].seqtail(n)
         else:
-            result = self2[0.. <len(self2)].seqtail(n)
+            result = self2[0..<len(self2)].seqtail(n)
     except RangeError:
        discard
 
@@ -1593,7 +1593,7 @@ proc lagger*[T](self:T , days : int) : T =
      ## this functions provides this
      ##
      try:
-       var lgx = self[days.. <self.len]
+       var lgx = self[days..<self.len]
        result = lgx
      except RangeError:
        discard
@@ -1606,7 +1606,7 @@ proc dailyReturns*(self:seq[float]):seq =
     ##
     var k = 1
     var lgx = newSeq[float]()
-    for z in 1+k.. <self.len:
+    for z in 1+k..<self.len:
         lgx.add(1-(self[z] / self[z-k]))
     result = lgx
 
@@ -1628,11 +1628,11 @@ proc showDailyReturnsCl*(self:Stocks , N:int) =
           printLn(fmtx(["<8","","<11","",">14"],"Code",spaces(1),"Date",spaces(1),"Returns"),yellowgreen)
           # show limited rows output if c<>0
           if N == 0:
-              for  x in 0.. <dfr.len:
+              for  x in 0..<dfr.len:
                       printLn(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),ff2(dfr[x],6)))
 
           else:
-              for  x in 0.. <N:
+              for  x in 0..<N:
                       printLn(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),ff2(dfr[x],6)))
 
 
@@ -1653,11 +1653,11 @@ proc showDailyReturnsAdCl*(self:Stocks , N:int) =
             printLn(fmtx([":<8","","<11","",">14"],"Code",spaces(1),"Date",spaces(1),"Returns"),yellowgreen)
             # show limited output if c<>0
             if N == 0:
-                for  x in 0.. <dfr.len:
+                for  x in 0..<dfr.len:
                         printLn(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),ff2(dfr[x],6)))
 
             else:
-                for  x in 0.. <N:
+                for  x in 0..<N:
                         printLn(fmtx(["<8","<11","",">15.10f"],self.stock,dfd[x],spaces(1),ff2(dfr[x],6)))
 
 
@@ -1744,13 +1744,13 @@ proc showStatistics*(z : Stocks) =
           z6.add(ohSet[x].min)
 
       decho(1)
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],"Item","Open","High","Low","Close","Volume","Adj Close"),yellowgreen)
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[0],ff(z1[0],2),ff(z1[1],2),ff(z1[2],2),ff(z1[3],2),ff2(z1[4],0),ff(z1[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[1],ff(z2[0],2),ff(z2[1],2),ff(z2[2],2),ff(z2[3],2),ff2(z2[4],0),ff(z2[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[2],ff(z3[0],2),ff(z3[1],2),ff(z3[2],2),ff(z3[3],2),ff2(z3[4],0),ff(z3[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[3],ff(z4[0],2),ff(z4[1],2),ff(z4[2],2),ff(z4[3],2),ff2(z4[4],0),ff(z4[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[4],ff(z5[0],2),ff(z5[1],2),ff(z5[2],2),ff(z5[3],2),ff2(z5[4],0),ff(z5[5],2)))
-      printLn(fmtx(["<11",">11",">11",">11",">11",">14",">11"],itemset[5],ff(z6[0],2),ff(z6[1],2),ff(z6[2],2),ff(z6[3],2),ff2(z6[4],0),ff(z6[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">20",">11"],"Item","Open","High","Low","Close","Volume","Adj Close"),yellowgreen)
+      printLn(fmtx(["<11",">11",">11",">11",">11",">20",">11"],itemset[0],ff(z1[0],2),ff(z1[1],2),ff(z1[2],2),ff(z1[3],2),ff2(z1[4],0),ff(z1[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">20",">11"],itemset[1],ff(z2[0],2),ff(z2[1],2),ff(z2[2],2),ff(z2[3],2),ff2(z2[4],0),ff(z2[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">20",">11"],itemset[2],ff(z3[0],2),ff(z3[1],2),ff(z3[2],2),ff(z3[3],2),ff2(z3[4],0),ff(z3[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">20",">11"],itemset[3],ff(z4[0],2),ff(z4[1],2),ff(z4[2],2),ff(z4[3],2),ff2(z4[4],0),ff(z4[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">20",">11"],itemset[4],ff(z5[0],2),ff(z5[1],2),ff(z5[2],2),ff(z5[3],2),ff2(z5[4],0),ff(z5[5],2)))
+      printLn(fmtx(["<11",">11",">11",">11",">11",">20",">11"],itemset[5],ff(z6[0],2),ff(z6[1],2),ff(z6[2],2),ff(z6[3],2),ff2(z6[4],0),ff(z6[5],2)))
       decho(2)                                                                     
 
 
@@ -1765,7 +1765,7 @@ proc showStatisticsT*(z : Stocks) =
       var headerset = @["Open","High","Low","Close","Volume","Adj Close"]
       decho(1)
       printLn(fmtx(["<11",">14",">14",">14",">14",">14",">14"],"Item","sum","variance","mean","stddev","max","min"))
-      for x in 0.. <ohSet.len:
+      for x in 0..<ohSet.len:
           printLn(fmtx(["<11",">14",">14",">14",">14",">14",">14"],headerset[x],ff(ohSet[x].sum,2),ff(ohSet[x].variance,2),ff(ohSet[x].mean,2),
           ff(ohSet[x].standardDeviation,2),ff(ohSet[x].max,2),ff(ohSet[x].min,2)))
       decho(2)
@@ -1925,7 +1925,7 @@ proc getCurrentForex*(curs:openarray[string],xpos:int = 1):Currencies =
           result = rf
           
   except HttpRequestError:
-          printLn("Forex Data temporary unavailable" & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+          printLn("Forex Data temporary unavailable . --> " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
   except ValueError:
           discard
   except OSError:
@@ -1968,7 +1968,7 @@ proc showCurrentForex*(curs : openarray[string],xpos:int = 1) =
        ##           
        var cxf = getcurrentForex(curs) # we get a Currencies object back
        printLn(fmtx(["<14","<4","",">6"],"Currencies","Cur",spaces(1),"Rate"),lime,xpos = xpos)
-       for x in 0.. <cxf.cu.len:
+       for x in 0..<cxf.cu.len:
             printLn(fmtx(["<14","<4","",">8.4f"],curs[x],cxf.cu[x],spaces(1),cxf.ra[x]),xpos = xpos)
 
 
@@ -1984,7 +1984,7 @@ proc showStocksTable*(apfdata: Portfolio,xpos:int = 1) =
    decho(2)
    # header for the table
    printLn(fmtx(["<8",">9",">9",">9",">9",">13",">10",">9",">9",">9",">9"],"Code","Open","High","Low","Close","Volume","AdjClose","StDevHi","StDevLo","StDevCl","StDevClA"),yellowgreen)
-   for x in 0.. <astkdata.len:
+   for x in 0..<astkdata.len:
        var sx = astkdata[x] # just for less writing ...
        # display the data rows
        try:
@@ -2064,7 +2064,7 @@ template metal(dc:int):typed =
                     
                     kss = @[]
                     if ks.len > 0:
-                      for x in 0.. <ks.len:
+                      for x in 0..<ks.len:
                         if ks[x].len > 0:
                           kss.add(ks[x].strip(false,true))
                       if kss[0].startswith("Gold") or kss[0].startswith("Silver") or kss[0].startswith("Platinum") or kss[0].startswith("Palladium") == true:                    
@@ -2085,8 +2085,7 @@ template metal(dc:int):typed =
                                 else:
                                     print(spaces(4) & downarrow,red,xpos = 1)
                                 
-                              
-                                
+                                                         
                           printLn(fmtx(["<9",">11",">12",">10",">8",">10",">10"],kss[0],kss[1],kss[2],kss[3],kss[4],kss[5],kss[6]))                  
           
                except:
@@ -2163,7 +2162,7 @@ proc showKitcoMetal*(xpos:int = 1) =
             elif nymarket == true and asiaeuropemarket == false:
                 # ny  open we show new york gold       
                   dc = 0
-                  for x in 0.. <ktd.len - 18: 
+                  for x in 0..<ktd.len - 18: 
                     inc dc
                     metal(dc)                                                                     
 
