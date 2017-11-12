@@ -9,14 +9,14 @@ Financial Library for Nim
 
 
 Note: 
-       As of Nov 1 2017 Yahoo decided to take even these Api endpoints off air , which at an instant 
+       As of Nov 1 2017 Yahoo decided to take their finance api endpoints off air , which at an instant 
        removes our ability to automatically pull in delayed data for stocks/indexes and currencies. 
        Some functionallity may still be available and manually download data may work too.
        Currently testing with data via apikey from Alpha Vantage , but we ran into access limiting after hitting the
        the api a couple of times . A further issue is that multiple data series cannot be pulled in one request,
        which makes the process slow. A test with currency data from Alpha Vantage for 7 currency pairs here took 10 secs
        to return the data from their realtime exchange rate feed.
-       So, do not hold your breath for too long. With Yahoo Finance Api in demise you are witnessing the end of a good thing.
+       With Yahoo Finance Api in demise you are witnessing the end of a good thing.
    
    
 Below of what it used to look like until Nov 1 2017
