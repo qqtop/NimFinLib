@@ -8,16 +8,19 @@ Financial Library for Nim
 (Work in Progress)
 
 
-Note:  As of Mid May 2017 due to changes in Yahoo data endpoints for historical stock data
-       the proc getSymbol2 has been changed to reflect this new reality.
-       As of Nov 1 2017 Yahoo decided to take even these Api endpoints off air , which at an instant 
-       removes our ability to pull in delayed data for stocks/indexes and currencies. Some functionallity
-       may still be available and we will look into other data providers in the near future.
-       Currently testing with data via apikey from Alpha Vantage , but this data seems US market centric
-       and hence of limited interest for Asian or European users and also will require a rewrite of
-       several procs to actually work .
-       So, do not hold your breath for too long you are witnessing the end of a good thing.
+Note:  As of Nov 1 2017 Yahoo decided to take even these Api endpoints off air , which at an instant 
+       removes our ability to automatically pull in delayed data for stocks/indexes and currencies. 
+       Some functionallity may still be available and manually download data may work too.
+              
+       Currently testing with data via apikey from Alpha Vantage , but we ran into access limiting after hitting the
+       the api a couple of times . A further issue is that multiple data series cannot be pulled in one request,
+       which makes the process slow. A test with currency data from Alpha Vantage for 7 currency pairs here took 10 secs
+       to return the data from their realtime exchange rate feed.
        
+       So, do not hold your breath for too long. With Yahoo Finance Api in demise you are witnessing the end of a good thing.
+   
+   
+Below of what it used to look like until Nov 1 2017
 
 ![Image](http://qqtop.github.io/nfT50.png?raw=true)
 Example screen from nfT50.nim
