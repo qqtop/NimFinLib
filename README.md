@@ -13,10 +13,10 @@ Note:
        removes our ability to automatically pull in delayed data for stocks/indexes and currencies. 
        Some functionallity may still be available and manually download data may work too.
        Currently testing with data via free apikey from Alpha Vantage , we ran into access limiting after hitting the
-       api a couple of times . Currently multiple data points/series can not be pulled in one request,
+       api a couple of times .Multiple data points/series still can not be pulled in one request,
        which makes the process rather slow. A test with 8 currency pairs took 11 secs to return the data from their
        realtime exchange rate feed. See nimexratesE1.nim
-       With Yahoo Finance Api in demise you are witnessing the end of a good thing.
+       With Yahoo Finance Api currently in demise you are witnessing the end of a good thing.
    
    
 Below of what it used to look like until Nov 1 2017
@@ -77,7 +77,7 @@ Tests and Examples
       
       nimexratesE1  ok with api key
       
-      minifin       small application showing index,stock,currency and metal data  (deprecated)
+      minifin       small application showing index,stock,currency and metal data  (to be reworked)
       
       nfT52         the main raw testing suite     (to be reworked)
       
@@ -103,60 +103,8 @@ Installation
       
       Note : it is always a good idea to remove old packages from the .nimble/pkgs dir 
       
-             as version numbers may not be updated often. 
+             as version numbers may not be updated often and always pull the latest nimcx from nimble.
 
-
-example1.nim 
-
-
-```nimrod         
-import nimFinLib,times,strfmt,strutils
-from nimcx import decho,cecholn,peru
-
-# show latest stock quotes
-showCurrentStocks("IBM+BP.L+0001.HK")
-decho(2)
-
-# get latest historic data for a stock
-var ibm = initStocks()
-ibm = getsymbol2("IBM","2000-01-01",getDateStr())
-
-# show 5 historical data rows
-showhistdata(ibm,5)
-
-# show data between 2 dates incl.
-showhistdata(ibm,"2015-01-12","2015-01-19")
-
-# show recent 5 returns based on closing price
-showdailyReturnsCl(ibm,5)
-decho(3)
-
-# show EMA 14 days
-showEMA(ema(ibm,14),5)
-decho(3)
-
-# show stock name and latest adjusted close
-cecholn(peru,"{:<8} {:<11} {:>15}".fmt("Code","Date","Adj.Close"))
-echo  "{:<8} {:<11} {:>15}".fmt(ibm.stock,ibm.date.seqlast,ibm.adjc.seqlast)
-decho(1)
-
-# show some forex data
-
-showCurrentForex(@["EURUSD","GBPHKD","CADEUR","AUDNZD"])
-decho(3)
-
-```
-
-
-Want to try ? 
-
-     Get the file testMe.nim and put it into a new directory
-     then execute this :
-              
-         nim c -r -d:ssl testMe
-       
-      
-     
 
 NOTE : 
   
@@ -164,7 +112,7 @@ NOTE :
      Forking ,testing, suggestions ,ideas are welcome.
      This is development code , hence use at your own risk.
      
-     Tested on openSuse Leap42.1 , openSuse TumbleWeed
+     Tested openSuse TumbleWeed
               
 
 ![Image](http://qqtop.github.io/qqtop-small.png?raw=true)
