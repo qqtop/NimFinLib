@@ -12,10 +12,10 @@ Note:
        As of Nov 1 2017 Yahoo decided to take their finance api endpoints off air , which at an instant 
        removes our ability to automatically pull in delayed data for stocks/indexes and currencies. 
        Some functionallity may still be available and manually download data may work too.
-       Currently testing with data via apikey from Alpha Vantage , but we ran into access limiting after hitting the
-       the api a couple of times . A further issue is that multiple data series cannot be pulled in one request,
-       which makes the process slow. A test with currency data from Alpha Vantage for 7 currency pairs here took 10 secs
-       to return the data from their realtime exchange rate feed.
+       Currently testing with data via free apikey from Alpha Vantage , we ran into access limiting after hitting the
+       api a couple of times . Currently multiple data points/series can not be pulled in one request,
+       which makes the process rather slow. A test with 8 currency pairs took 11 secs to return the data from their
+       realtime exchange rate feed. See nimexratesE1.nim
        With Yahoo Finance Api in demise you are witnessing the end of a good thing.
    
    
@@ -24,29 +24,6 @@ Below of what it used to look like until Nov 1 2017
 ![Image](http://qqtop.github.io/nfT50.png?raw=true)
 Example screen from nfT50.nim
 
-
-```nimrod        
-
-# nfT50.nim
-# Example program for using stock and index display routines
-# needs to be run in a full terminal window
-# best results in bash konsole with
-# font : hack
-# font : size 8
-# background color black
-# 
-import nimcx,nimFinLib
-cleanscreen()
-curset()
-curdn(1)
-showCurrentIDX("^HSI+^GSPC+^FTSE+^GDAXI+^FCHI+^N225+^JKSE",xpos = 5 ,header = true)
-curset()
-curdn(1)
-showCurrentSTX("IBM+BP.L+0001.HK+0027.HK+SNP+AAPL+BAS.DE",xpos = 72,header = true)
-curdn(5)
-doFinish()   
-
-```
 
 
 ![Image](http://qqtop.github.io/minifin1.png?raw=true)
@@ -68,6 +45,8 @@ Data gathering and calculations support
               
               Yahoo current quotes and forex rates    <---- off line since Nov 2017
               
+              Alpha Vantage Api support               ----> testing since Nov 2017
+              
               Dataframe like structure for easy working with dataseries
               
               Multiple accounts and portfolios management
@@ -78,7 +57,7 @@ Data gathering and calculations support
               
               Date manipulations
               
-              Kitco Metal Prices
+              Kitco Metal Prices                      -----> working ok
               
               
 API Docs
@@ -94,17 +73,17 @@ API Docs
 Tests and Examples
 ------------------
 
-      nimFinTxx   are test programs to show use of the library .
+      nimFinTxx     are test programs to show use of the library (to be reworked)
       
-      examplex    short examples 
+      nimexratesE1  ok with api key
       
-      minifin     small application showing index,stock,currency and metal data
+      minifin       small application showing index,stock,currency and metal data  (deprecated)
       
-      nfT52       the main raw testing suite
+      nfT52         the main raw testing suite     (to be reworked)
       
-      nfT50       stock and index display test
+      nfT50         stock and index display test   (to be reworked)
       
-      testMe      automated example1      
+          
       
 
 Requirements
