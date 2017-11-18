@@ -9,13 +9,10 @@ Financial Library for Nim
 
 
 Note: 
-       As of Nov 1 2017 Yahoo decided to take their finance api endpoints off air , which at an instant 
+       Unfortunately, as of Nov 1 2017 Yahoo decided to take their finance api endpoints off air , which at an instant 
        removes our ability to automatically pull in delayed data for stocks/indexes and currencies. 
-       Currently testing with data via free apikey from Alpha Vantage . Some functionality will go by the wayside
-       and many functions need to be adjusted. 
-       Currently providing 2 examples and you will need your own apikey .
-       Also for convenient display the nimdataframe.nim needs to be installed
-       
+       Currently testing with data via free apikey from Alpha Vantage , which looks promising
+       but will need a major refactoring, which may need some time .
  
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
@@ -28,11 +25,10 @@ Note:
 Data gathering and calculations support 
 ----------------------------------------
 
-              Yahoo historical stock data             <---- off line since Nov 2017
-              
-              Yahoo current quotes and forex rates    <---- off line since Nov 2017
-              
+                          
               Alpha Vantage Api support               ----> testing since Nov 2017
+              
+              Planned 
               
               Dataframe like structure for easy working with dataseries
               
@@ -40,17 +36,15 @@ Data gathering and calculations support
               
               Returns calculations
               
-              Ema calculation
-              
-              Date manipulations
-              
+              Ema and other indicators calculation
+                      
               Kitco Metal Prices                      -----> working ok
               
               
 API Docs
 --------
 
-      http://qqtop.github.io/nimFinLib.html
+      # http://qqtop.github.io/nimFinLib.html
 
       for a library pertaining to Hongkong Stocks see
 
@@ -60,16 +54,11 @@ API Docs
    
 Tests and Examples
 ------------------
-
-      nimFinTxx     are test programs to show use of the library (to be reworked)
+    
       
       nimexratesE1  ok with api key
       
-      minifin       small application showing index,stock,currency and metal data  (to be reworked)
-      
-      nfT52         the main raw testing suite     (to be reworked)
-      
-      nfT50         stock and index display test   (to be reworked)
+
       
           
       
@@ -82,9 +71,7 @@ Requirements
       
       nimdataframe  nimble install https://github.com/qqtop/nimdataframe.git
       
-      strfmt        nimble install strfmt   (optional as a basic format engine available in cx)
-
-      
+          
  
 Installation 
 ------------
