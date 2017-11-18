@@ -11,29 +11,16 @@ Financial Library for Nim
 Note: 
        As of Nov 1 2017 Yahoo decided to take their finance api endpoints off air , which at an instant 
        removes our ability to automatically pull in delayed data for stocks/indexes and currencies. 
-       Some functionallity may still be available and manually download data may work too.
-       Currently testing with data via free apikey from Alpha Vantage , we ran into access limiting after hitting the
-       api a couple of times .Multiple data points/series still can not be pulled in one request,
-       which makes the process rather slow. A test with 8 currency pairs took 11 secs to return the data from their
-       realtime exchange rate feed. See nimexratesE1.nim
-       With Yahoo Finance Api currently in demise you are witnessing the end of a good thing.
-   
-   
-Below of what it used to look like until Nov 1 2017
-
-![Image](http://qqtop.github.io/nfT50.png?raw=true)
-Example screen from nfT50.nim
-
-
-
-![Image](http://qqtop.github.io/minifin1.png?raw=true)
-Example screen from minifin.nim
-
-
+       Currently testing with data via free apikey from Alpha Vantage . Some functionality will go by the wayside
+       and many functions need to be adjusted. 
+       Currently providing 2 examples and you will need your own apikey .
+       Also for convenient display the nimdataframe.nim needs to be installed
+       
+ 
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|
-| nimFinLib  | Development | 0.2.8.x | MIT opensource | Linux  | Nim >= 0.17.x  |
+| nimFinLib  | Development | 0.3.0.x | MIT opensource | Linux  | Nim >= 0.17.x  |
 
 
 
@@ -69,7 +56,8 @@ API Docs
 
       http://qqtop.github.io/libFinHk.html
       
-
+  
+   
 Tests and Examples
 ------------------
 
@@ -88,13 +76,15 @@ Tests and Examples
 
 Requirements
 ------------
-
-            
+     
            
-      nimcx     nimble install nimcx
+      nimcx         nimble install nimcx
       
-      strfmt    nimble install strfmt   (optional as a basic format engine available in cx)
-           
+      nimdataframe  nimble install https://github.com/qqtop/nimdataframe.git
+      
+      strfmt        nimble install strfmt   (optional as a basic format engine available in cx)
+
+      
  
 Installation 
 ------------
@@ -106,6 +96,21 @@ Installation
              as version numbers may not be updated often and always pull the latest nimcx from nimble.
 
 
+             
+Below of what it used to look like until Nov 1 2017
+
+![Image](http://qqtop.github.io/nfT50.png?raw=true)
+Example screen from nfT50.nim
+
+
+
+![Image](http://qqtop.github.io/minifin1.png?raw=true)
+Example screen from minifin.nim             
+             
+             
+             
+             
+             
 NOTE : 
   
      Improvements may be made at any time.              
