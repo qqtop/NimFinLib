@@ -77,8 +77,7 @@ Requirements
 Installation 
 ------------
   
-      nimble install https://github.com/qqtop/nimdataframe.git
-  
+       
       nimble install nimFinLib 
       
       Note : it is always a good idea to remove old packages from the .nimble/pkgs dir 
