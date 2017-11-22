@@ -13,6 +13,9 @@ Note:
        removes our ability to automatically pull in delayed data for stocks/indexes and currencies. 
        Currently testing with data via free apikey from Alpha Vantage , which looks promising
        but will need a major refactoring, which may need some time .
+       
+       
+       
  
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
@@ -38,17 +41,17 @@ Data gathering and calculations support
               
               Ema and other indicators calculation
                       
-              Kitco Metal Prices                      -----> working ok
+              Kitco Metal Prices                      
               
               
 API Docs
 --------
 
-      # http://qqtop.github.io/nimFinLib.html
+      Planned to be in
+      
+      http://qqtop.github.io/nimFinLib.html
 
-      for a library pertaining to Hongkong Stocks see
-
-      http://qqtop.github.io/libFinHk.html
+      # http://qqtop.github.io/libFinHk.html
       
   
    
@@ -56,12 +59,10 @@ Tests and Examples
 ------------------
     
       
-      nimexratesE1  ok with api key
-      
+      nimexrates  ok with api key
+      nfT53       ok w/o api key
 
-      
-          
-      
+     
 
 Requirements
 ------------
@@ -75,7 +76,9 @@ Requirements
  
 Installation 
 ------------
-
+  
+      nimble install https://github.com/qqtop/nimdataframe.git
+  
       nimble install nimFinLib 
       
       Note : it is always a good idea to remove old packages from the .nimble/pkgs dir 
