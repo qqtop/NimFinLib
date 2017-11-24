@@ -84,7 +84,12 @@ Installation
       
              as version numbers may not be updated often and always pull the latest nimcx from nimble.
 
+![Image](http://qqtop.github.io/nfT53-1.png?raw=true)
 
+![Image](http://qqtop.github.io/nfT53-2.png?raw=true)
+
+![Image](http://qqtop.github.io/nfT53-3.png?raw=true)
+Example screen from nfT53.nim
              
 Below of what it used to look like until Nov 1 2017
 
