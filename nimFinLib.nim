@@ -3,7 +3,7 @@
 ##
 ## Program     : nimFinLib
 ##
-## Status      : Early Alpha   - Development Rewrite for Alpha Vantage API   
+## Status      : Alpha   - Development Rewrite for Alpha Vantage API   
 ##
 ## License     : MIT opensource
 ##
@@ -36,7 +36,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2017-11-22
+## Latest      : 2017-11-24
 ##
 ## NOTE        : 
 ##                              
@@ -56,14 +56,16 @@
 ##
 ##               nimble install nimFinLib 
 ##
+##               
+##               
+##               
+##               
 ##
 ## Notes       :
 ## 
 ##               nimFinlib is being developed utilizing nimcx.nim module and nimdataframe.nim
 ##
-##               to improve coloring of data and displaying in a suitable dataframe .
-##
-##               
+##               to improve coloring of data and positioning of output.
 ## 
 ##
 ## Funding     : If you are happy send any amount of bitcoins you like to a nice wallet :
@@ -73,11 +75,7 @@
 ##                     
 
 import
-
-       os,nimcx,strutils,parseutils,sequtils,httpclient,net,
-       terminal,times,tables, parsecsv,streams,nimdataframe,
-       algorithm,math,unicode,stats,unicode
-       
+       os,nimcx,nimdataframe,parseutils,net,tables,parsecsv,algorithm,math,unicode,stats    
 import nre except toSeq
 
 let NIMFINLIBVERSION* = "0.3.0.0"
@@ -86,8 +84,8 @@ let NIMFINLIBVERSION* = "0.3.0.0"
 # for currencies
 #var callavcur  = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=CNY&to_currency=HKD&apikey=$1" % [apikey]
 
-var avtempdata* = "/dev/shm/avdata.csv"    # temporary holding place for data fetched from alphavantage
-
+# temporary holding place for data fetched from alphavantage , change directory as required below
+var avtempdata* = "/dev/shm/avdata.csv"    
 
 const
       tail* = "tail"
@@ -144,7 +142,8 @@ proc getData22*(url:string):auto =
        printLnBiCol("Error : " & url & " content could not be fetched . Retry with -d:ssl",red,bblack,":",0,true,{}) 
        printLn(getCurrentExceptionMsg(),red,xpos = 9)
        doFinish()            
-        
+      
+      
 proc avDatafectcher*(stckcode:string,mode:string = "compact",apikey:string):bool =
    ## avDatafectcher
    ## fetches data from alphavantage 
@@ -241,6 +240,7 @@ proc showStocksDf*(stckcode:string,xpos:int = 3,header:bool = false,apikey:strin
      ## showStocksDf
      ## 
      ## a display routine with some more information
+     ## data is freshly downloaded
      ## 
       
      if not avDatafectcher(stckcode,"compact",apikey): doFinish()
@@ -323,7 +323,70 @@ proc showStocksDf*(stckcode:string,xpos:int = 3,header:bool = false,apikey:strin
         decho(2)
         result = ndf9
   
-  
+proc showLocalStocksDf*(ndf9:nimdf,xpos:int = 3):nimdf {.discardable.} =
+        ## showLocalStocksDf
+        ## 
+        ## used to display a df which already exists or has been loaded via dfLoad
+        ## with all parameters pre specified
+        ## 
+        ## 
+
+        # calc the percentage change from last day close to current real time close
+        var yday = parsefloat(ndf9.df[1][5])   # last close
+        var tday = parseFloat(ndf9.df[0][5])   # current close
+        var pctchange = ((yday / tday) - 1.0) * -100.0 
+        var actchange = tday - yday
+        var tdayopen = parseFloat(ndf9.df[0][2])
+        
+        # set up df colors we only change close and adjusted close 
+        if   yday < tday == true: ndf9.colcolors = @[lightgrey,pastelgreen,pastelpink,lightblue,goldenrod,lime,lime,white]  
+        elif yday > tday == true: ndf9.colcolors = @[lightgrey,pastelgreen,pastelpink,lightblue,goldenrod,truetomato,truetomato,white]
+        else:  ndf9.colcolors = @[lightgrey,pastelgreen,pastelpink,dodgerblue,gold,skyblue,skyblue,white]
+        ndf9.colheaders = @["code","timestamp","open", "high", "low", "close","adjclose" ,"volume"]
+        
+        # start to show something
+            
+        # we show a line with stock code,change pct ,change and last close
+        # followed by the df with 3 rows of data (in compact mode abt 100 rows ,in full mode maybe thousands of rows ,here we use compact)
+        printBiCol(fmtx(["",">11",],"Code :" , ndf9.df[0][1]),colleft=olivedrab,colright=lightgrey,sep=":",xpos = xpos,false,{styleReverse})
+        
+        if pctchange > 0.0:
+                printBiCol(fmtx(["",">9"],"Change % ",ff(pctchange,5)),colright=white,sep="%",xpos = xpos  + 22,false,{styleReverse})
+        elif pctchange < 0.0:
+                printBiCol(fmtx(["",">9"],"Change % ",ff(pctchange,5)),colleft=truetomato,colright=white,sep="%",xpos = xpos + 22,false,{styleReverse}) 
+        else :
+                printBiCol(fmtx(["",">9"],"Change % ",ff(pctchange,5)),colleft=skyblue,colright=white,sep="%",xpos = xpos + 22,false,{styleReverse})     
+        
+        
+        if actchange > 0.0:
+                printBiCol(fmtx(["",">9"],"Change : ",ff(actchange,6)),colright=white,xpos = xpos + 42,false,{styleReverse})
+        elif pctchange < 0.0:
+                printBiCol(fmtx(["",">9"],"Change : ",ff(actchange,6)),colleft=truetomato,colright=white,xpos = xpos + 42,false,{styleReverse}) 
+        else :
+                printBiCol(fmtx(["",">9"],"Change : ",ff(actchange,6)),colleft=skyblue,colright=white,xpos = xpos + 42,false,{styleReverse})     
+        
+
+        if pctchange > 0.0:
+                printLnBiCol(fmtx(["",">9",],"Last : " , ndf9.df[0][5]),colright=white,xpos = xpos + 62,false,{styleReverse})
+        elif pctchange < 0.0:
+                printLnBiCol(fmtx(["",">9",],"Last : " , ndf9.df[0][5]),colleft=truetomato,colright=white,xpos = xpos + 62,false,{styleReverse}) 
+        else :
+                printLnBiCol(fmtx(["",">9",],"Last : " , ndf9.df[0][5]),colleft=skyblue,colright=white,xpos = xpos + 62,false,{styleReverse})                   
+
+        showDf(ndf9,
+            rows = 3,  #if there is a header we need 2 rows ,if there is no header and header is passed in 1 row 
+                        #of course we can show more rows like here show last three dates 1 row is realtime if markets open
+            cols =  toNimis(toSeq(1..ndf9.colcount)),                       
+            colwd = ndf9.colwidths,
+            colcolors = ndf9.colcolors,
+            showFrame =  true,
+            framecolor = blue,
+            showHeader = true,
+            headertext = ndf9.colheaders,
+            leftalignflag = false,
+            xpos = 3) 
+        decho(2)
+        result = ndf9  
  
   
 #------------------------------------------------------------------------------------------
