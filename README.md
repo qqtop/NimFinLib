@@ -61,7 +61,7 @@ Tests and Examples
       
       nimexrates  ok with api key
       nfT53       ok w/o api key
-
+      nimmetal    ok
      
 
 Requirements

@@ -388,7 +388,265 @@ proc showLocalStocksDf*(ndf9:nimdf,xpos:int = 3):nimdf {.discardable.} =
         decho(2)
         result = ndf9  
  
+var flag = 0
+template metal(dc:int):typed =
+    ## metal
+    ## 
+    ## utility template to display Kitco metal data
+    ## 
+    ## used by showKitcoMetal
+    ## 
+    
+    if ktd[x].startswith(dl) == true:
+      printLn(ktd[x] & "---",yellowgreen,xpos = xpos - 2 )
+      
+    elif find(ktd[x],"Asia / Europe") > 0:
+       print(spaces(2) & strip(ktd[x],true,true),white,xpos = xpos)
+       flag = 1
+       
+    elif find(ktd[x],"New York") > 0:
+       print(spaces(2) & strip(ktd[x],true,true),white,xpos = xpos)
+       flag = 2
+       
+    elif find(ktd[x],opn) > 0 :
+        if flag == 1:
+           printLn(fmtx([">48"],"MARKET IS OPEN"),lime)
+        elif flag == 2:
+           printLn(fmtx([">53"],"MARKET IS OPEN"),lime)
+           
+    elif find(ktd[x],cls) > 0:
+        if flag == 1:
+          printLn(fmtx([">46"],"MARKET IS CLOSED"),truetomato)
+        elif flag == 2:
+          printLn(fmtx([">51"],"MARKET IS CLOSED"),truetomato)
+              
+    elif find(ktd[x],"Update") > 0:
+        print(spaces(3))
+        printLnBicol(strip(ktd[x]) & " New York Time",colLeft=gray,colright=gray,sep="Last Update ",xpos = xpos + 1,false,{styleReverse})                    
+
+    else:
+           
+          if dc < 36:
+               try:
+                 var ks = ktd[x].split(" ")
+                 if ktd[x].contains("Metals") == true:
+                    printLn(ktd[x],white,xpos = xpos - 1)
+                 else: 
+                    
+                    kss = @[]
+                    if ks.len > 0:
+                      for x in 0..<ks.len:
+                        if ks[x].len > 0:
+                          kss.add(ks[x].strip(false,true))
+                      if kss[0].startswith("Gold") or kss[0].startswith("Silver") or kss[0].startswith("Platinum") or kss[0].startswith("Palladium") == true:                    
+                          if dc > 18 :
+                                  
+                                if parsefloat(kss[3]) > 0.00 :
+                                    print(spaces(4) & uparrow,lime,xpos = 1)
+                                elif  parsefloat(kss[3]) == 0.00:
+                                    print(spaces(4) & leftrightarrow,dodgerblue,xpos = 1)
+                                else:
+                                    print(spaces(4) & downarrow,red,xpos = 1)                            
+                                
+                          else: 
+                                if parsefloat(kss[3]) > 0.00 :
+                                    print(spaces(4) & uparrow,lime,xpos = 1)
+                                elif  parsefloat(kss[3]) == 0.00:
+                                    print(spaces(4) & leftrightarrow,dodgerblue,xpos = 1)
+                                else:
+                                    print(spaces(4) & downarrow,red,xpos = 1)
+                                
+                                                         
+                          printLn(fmtx(["<9",">11",">12",">10",">8",">10",">10"],kss[0],kss[1],kss[2],kss[3],kss[4],kss[5],kss[6]))                  
+          
+               except:
+                  discard
+
+
+proc showKitcoMetal*(xpos:int = 1) =
+    ## showKitcoMetal
+    ## 
+    ## 
+    ## get and display kitco metal prices
+    ## 
+    ## 
+    ##  
+    let dl  = "   ----------------------------------------------------------------------"
+    let cls = "CLOSED"
+    let opn = "OPEN" 
   
+    var dc  = 0 # data counter
+    var kss = newSeq[string]()
+    #printLn("Gold,Silver,Platinum Spot price : New York and Asia / Europe ",peru,xpos = xpos)
+    var kt = ""
+    try:
+            let zcli = newHttpClient()
+            kt = zcli.getContent("http://www.kitco.com/texten/texten.html")
+
+            var kts = splitlines(kt)
+            var ktd = newSeq[string]()
+                  
+            var nymarket = false
+            var asiaeuropemarket = false
+              
+            var addflag = false 
+            for ktl in kts:
+              
+                if find(ktl,"File created on ") > 0:
+                    addflag = false 
+              
+                if find(ktl,"New York") > 0:
+                    addflag = true
+                                  
+                if addflag == true: 
+                    ktd.add(ktl)
+                  
+          
+            # now scan for closed metal markets
+            var lc = 0
+            for s in ktd:
+                inc lc
+                if find(s,cls) > 0:
+                  if lc < 5:
+                        nymarket = false
+                  elif lc > 10:
+                        asiaeuropemarket = false
+                if find(s,opn) > 0:
+                    if lc < 5:
+                        nymarket = true
+                    elif lc > 10:
+                        asiaeuropemarket = true
+        
+            if nymarket == false and asiaeuropemarket == false:
+                  printLn("All Metal Markets Closed or Data outdated/unavailable",truetomato,xpos = xpos)
+                  for x in 13.. 25 : 
+                     dc = 6
+                     metal(dc)   
+                      
+            elif nymarket == true and asiaeuropemarket == true:
+                  # both open we show new york gold       
+                  dc = 0
+                  for x in 0.. ktd.len - 18: 
+                    inc dc
+                    metal(dc)                                       
+          
+            elif nymarket == true and asiaeuropemarket == false:
+                # ny  open we show new york gold       
+                  dc = 0
+                  for x in 0..<ktd.len - 18: 
+                    inc dc
+                    metal(dc)                                                                     
+
+            elif nymarket == false and asiaeuropemarket == true:
+                  # asiaeuropemarket  open we show asiaeuropemarket gold       
+                  dc = 0
+                  for x in 13.. 25:  # <ktd.len:
+                    inc dc
+                    metal(dc)  
+            else :
+                  discard
+                  
+    except HttpRequestError:
+          printLn("Kitco Data temporary unavailable : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+    except ValueError:
+          discard
+    except OSError:
+          discard
+    except OverflowError:
+          discard
+    except  TimeoutError:
+         printLn("TimeoutError : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
+    except  ProtocolError:
+         printLn("Protocol Error : " & getCurrentExceptionMsg()  & " at : " & $getLocalTime(getTime()),truetomato,xpos = xpos)
+    except :
+         discard
+    finally:
+         discard         
+
+# utility procs
+
+proc presentValue*[T](FV: T,r:T,m:int,t:int):float =
+     ## presentValue
+     ##
+     ## Present Value Calculation for a Lump Sum Investment
+     ##
+     ## Future Value (FV)
+     ##   is the future value sum of an investment that you want to find a present value for
+     ## Number of Periods (t)
+     ##   commonly this will be number of years but periods can be any time unit.
+     ##   Use int or floats for partial periods such as months for
+     ##   example, 7.5 years is 7 yr 6 mo.
+     ## Interest Rate (R)
+     ##   is the annual nominal interest rate or "stated rate" in percent.
+     ##   r = R/100, the interest rate in integer or floats
+     ## Compounding (m)
+     ##   is the number of times compounding occurs per period. If a period is a year
+     ##   then annually=1, quarterly=4, monthly=12, daily = 365, etc.
+     ## Rate (i)
+     ##   i = (r/m); interest rate per compounding period.
+     ## Total Number of Periods (n)
+     ##   n = mt; is the total number of compounding periods for the life of the investment.
+     ## Present Value (PV)
+     ##   the calculated present value of your future value amount
+     ##
+     ## From http://www.CalculatorSoup.com - Online Calculator Resource.
+     ##
+     ## .. code-block:: nim
+     ##    var FV : float = 10000
+     ##    var PV : float = 0.0
+     ##    var r  : float = 0.0625
+     ##    var m  : int   = 2
+     ##    var t  : int   = 12
+     ##
+     ##    PV = presentValue(FV,r,m,t)
+     ##    echo PV
+     ##
+
+
+     var z = 1.0 + r.float / m.float
+     var s = m.float * t.float
+     result = FV / pow(z,s)
+
+
+proc presentValue*(FV: float,r:float,m:float,t:float):float =
+     ## presentValue
+     ##
+     ## Present Value Calculation for a Lump Sum Investment
+     ##
+     ## .. code-block:: nim
+     ##      PV = presentValue(FV,0.0925,2.0,12.0)
+     ##      echo PV
+
+     var z = 1.0 + r / m
+     var s = m * t
+     result = FV / pow(z,s)
+
+
+proc presentValueFV*(FV:float,i:float,n:int):float =
+     ## presentValueFV
+     ##
+     ## the present value of a future sum at a periodic
+     ## interest rate i where n is the number of periods in the future.
+     ##
+     ## .. code-block:: nim
+     ##    PV = presentValueFV(FV,0.0625,10)
+     ##    echo PV
+
+
+     var zz = 1.0 + i
+     result = FV / (pow(zz,n.float))
+
+
+proc presentValueFV*(FV:float,i:float,n:float):float =
+
+     ## .. code-block:: nim
+     ##    PV = presentValueFV(FV,0.0625,20.5)
+     ##    echo PV
+
+     var zz = 1.0 + i
+     result = FV / (pow(zz,n.float))         
+         
+         
 #------------------------------------------------------------------------------------------
 # End of nimFinLib
 #------------------------------------------------------------------------------------------
