@@ -128,8 +128,10 @@ type
         rv*    : seq[Runningstat]  ## RunningStat for volume price
         rca*   : seq[Runningstat]  ## RunningStat for adjusted close price
 
-
-               
+      
+       
+var mflag = 0  # used in metal
+          
 proc getData22*(url:string):auto =
   ## getData
   ## 
@@ -322,6 +324,7 @@ proc showStocksDf*(stckcode:string,xpos:int = 3,header:bool = false,apikey:strin
             xpos = 3) 
         decho(2)
         result = ndf9
+        
   
 proc showLocalStocksDf*(ndf9:nimdf,xpos:int = 3):nimdf {.discardable.} =
         ## showLocalStocksDf
@@ -387,8 +390,254 @@ proc showLocalStocksDf*(ndf9:nimdf,xpos:int = 3):nimdf {.discardable.} =
             xpos = 3) 
         decho(2)
         result = ndf9  
+
+        
+### Indicators
+      
+proc getavSMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10",seriestype:string="close",apikey:string,xpos:int = 3,savequiet:bool = true,dfinfo:bool = false) =
+    ## getavSMA
+    ## fetches data from alphavantage 
+    ## Note : first row is real time if markets are open
+    ## interval   : 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly
+    ## timeperiod : time_period=60, time_period=200  etc.
+    ## seriestype : close, open, high, low
+   
+    var callavsma = ""
+   
+    if apikey == "demo":
+      callavsma = "https://www.alphavantage.co/query?function=SMA&symbol=MSFT&interval=15min&time_period=10&series_type=close&apikey=demo"
+    else:
+      callavsma = "https://www.alphavantage.co/query?function=SMA&symbol=$1&interval=$2&time_period=$3&series_type=$4&apikey=$5" % [stckcode,interval,timeperiod,seriestype,apikey]
+  
+    let avdata = getData22(callavsma)  # get the sma data
+    
+    try:
+          withFile(txt2,avtempdata, fmWrite):
+              txt2.write(avdata)        
+    except:
+          currentline()
+          printLnBiCol("Error : Could not write to  " & avtempdata ,colLeft=red)
+          echo()
+          doFinish()
+          
+    #showrawdata()
+    #echo callavsma
+    
+    var indicator = "SMA"
+    let jsonNode = parseJson(avdata)
+    block jsonMeta:
+        try:
+            printLnBiCol("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
+            printLnBiCol("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
+            printLnBiCol("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
+            printLnBiCol("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
+            printLnBiCol("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
+            printLnBiCol("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
+            printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
+            echo()
+        except:
+            printLnBiCol("[Error Message] : " & indicator & " for " & stckcode  & " could not be retrieved",colLeft=red,xpos = xpos)
+            printLnBiCol(jsonNode["Error Message"].getStr(),colLeft = red,sep = "Invalid API call.",xpos = xpos)
+            break jsonMeta
+        
+        var nsi = "Technical Analysis: $1" % indicator
+        var z = jsonNode[nsi]
+        var smadate = newnimss()
+        var sma = newnimss()
+        for x,y in pairs(z):        # load the future columns of the dataframe
+            smadate.add(strip(x))
+            sma.add(strip(jsonNode[nsi][x][indicator].getStr())) 
+
+        var ndfSma =  makeNimDf(smadate,sma,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
+        
+        ndfsma.colwidths  = @[17,10]
+        ndfsma.colcolors  = @[violet,pastelgreen]
+        ndfsma.colHeaders = @["Date",indicator]
+        showDf(ndfSma,
+            rows = 10,       
+            cols =  @[1,2],                       
+            colwd = ndfsma.colwidths,
+            colcolors = ndfsma.colcolors,
+            showFrame =  true,
+            framecolor = skyblue,
+            showHeader = true,
+            headertext = ndfsma.colHeaders,  
+            leftalignflag = false,
+            xpos = xpos) 
+        echo()
+        if dfinfo == true:
+            showDataframeInfo(ndfSma)
+        if savequiet == true:    
+            dfSave(ndfsma,stckcode & "-" & indicator.toLowerAscii() & ".csv",quiet=true)   # save the df       
+        else:
+            dfSave(ndfsma,stckcode & "-" & indicator.toLowerAscii() & ".csv",quiet=false)   # save the df  
+      
+            
+proc getavWMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10",seriestype:string="close",apikey:string,xpos:int = 3,savequiet:bool = true,dfinfo:bool = false) =
+    ## getavWMA
+    ## fetches data from alphavantage 
+    ## Note : first row is real time if markets are open
+    ## interval   : 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly
+    ## timeperiod : time_period=60, time_period=200  etc.
+    ## seriestype : close, open, high, low
+   
+    var callavwma = ""
+   
+    if apikey == "demo":
+      callavwma = "https://www.alphavantage.co/query?function=WMA&symbol=MSFT&interval=15min&time_period=10&series_type=close&apikey=demo"
+    else:
+      callavwma = "https://www.alphavantage.co/query?function=WMA&symbol=$1&interval=$2&time_period=$3&series_type=$4&apikey=$5" % [stckcode,interval,timeperiod,seriestype,apikey]
+  
+    let avdata = getData22(callavwma)  # get the wma data
+    
+    try:
+          withFile(txt2,avtempdata, fmWrite):
+              txt2.write(avdata)        
+    except:
+          currentline()
+          printLnBiCol("Error : Could not write to  " & avtempdata ,colLeft=red)
+          echo()
+          doFinish()
+          
+    #showrawdata()
+    #echo callavwma
+    
+    var indicator = "WMA"
+    let jsonNode = parseJson(avdata)
+    block jsonMeta:
+        try:
+            printLnBiCol("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
+            printLnBiCol("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
+            printLnBiCol("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
+            printLnBiCol("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
+            printLnBiCol("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
+            printLnBiCol("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
+            printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
+            echo()
+        except: 
+            printLnBiCol("[Error Message] : " & indicator & " for " & stckcode  & " could not be retrieved",colLeft=red,xpos = xpos)
+            printLnBiCol(jsonNode["Error Message"].getStr(),colLeft = red,sep = "Invalid API call.",xpos = xpos)
+            printLnBiCol("[Note]          : Indicator data for some stocks / markets may not be available",colLeft=peru,xpos = xpos) 
+            break jsonMeta
+        
+        var nsi = "Technical Analysis: $1" % indicator
+        var z = jsonNode[nsi]
+        var wmadate = newnimss()
+        var wma = newnimss()
+        for x,y in pairs(z):        # load the future columns of the dataframe
+            wmadate.add(strip(x))
+            wma.add(strip(jsonNode[nsi][x][indicator].getStr())) 
+
+        var ndfWma =  makeNimDf(wmadate,wma,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
+        
+        ndfwma.colwidths  = @[17,10]
+        ndfwma.colcolors  = @[violet,pastelgreen]
+        ndfwma.colHeaders = @["Date",indicator]
+        showDf(ndfWma,
+            rows = 10,       
+            cols =  @[1,2],                       
+            colwd = ndfwma.colwidths,
+            colcolors = ndfwma.colcolors,
+            showFrame =  true,
+            framecolor = skyblue,
+            showHeader = true,
+            headertext = ndfwma.colHeaders,  
+            leftalignflag = false,
+            xpos = xpos) 
+        echo()
+        if dfinfo == true:
+            showDataframeInfo(ndfWma)
+        if savequiet == true:    
+            dfSave(ndfwma,stckcode & "-" & indicator.toLowerAscii() & ".csv",quiet=true)   # save the df       
+        else:
+            dfSave(ndfwma,stckcode & "-" & indicator.toLowerAscii() & ".csv",quiet=false)   # save the df  
  
-var flag = 0
+ 
+proc getavEMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10",seriestype:string="close",apikey:string,xpos:int = 3,savequiet:bool = true,dfinfo:bool = false) =
+    ## getavEMA
+    ## fetches data from alphavantage 
+    ## Note : first row is real time if markets are open
+    ## interval   : 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly
+    ## timeperiod : time_period=60, time_period=200  etc.
+    ## seriestype : close, open, high, low
+   
+    var callavema = ""
+   
+    if apikey == "demo":
+      callavema = "https://www.alphavantage.co/query?function=EMA&symbol=MSFT&interval=15min&time_period=10&series_type=close&apikey=demo"
+    else:
+      callavema = "https://www.alphavantage.co/query?function=EMA&symbol=$1&interval=$2&time_period=$3&series_type=$4&apikey=$5" % [stckcode,interval,timeperiod,seriestype,apikey]
+  
+    let avdata = getData22(callavema)  # get the ema data
+    
+    try:
+          withFile(txt2,avtempdata, fmWrite):
+              txt2.write(avdata)        
+    except:
+          currentline()
+          printLnBiCol("Error : Could not write to  " & avtempdata ,colLeft=red)
+          echo()
+          doFinish()
+          
+    #showrawdata()
+    #echo callavema
+    
+    var indicator = "EMA"
+    let jsonNode = parseJson(avdata)
+    block jsonMeta:
+        try:
+            printLnBiCol("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
+            printLnBiCol("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
+            printLnBiCol("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
+            printLnBiCol("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
+            printLnBiCol("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
+            printLnBiCol("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
+            printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
+            echo()
+        except: 
+            printLnBiCol("[Error Message] : " & indicator & " for " & stckcode  & " could not be retrieved",colLeft=red,xpos = xpos)
+            printLnBiCol(jsonNode["Error Message"].getStr(),colLeft = red,sep = "Invalid API call.",xpos = xpos)
+            printLnBiCol("[Note]          : Indicator data for some stocks / markets may not be available",colLeft=peru,xpos = xpos) 
+            break jsonMeta
+        
+        var nsi = "Technical Analysis: $1" % indicator
+        var z = jsonNode[nsi]
+        var emadate = newnimss()
+        var ema = newnimss()
+        for x,y in pairs(z):        # load the future columns of the dataframe
+            emadate.add(strip(x))
+            ema.add(strip(jsonNode[nsi][x][indicator].getStr())) 
+
+        var ndfEma =  makeNimDf(emadate,ema,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
+        
+        ndfema.colwidths  = @[17,10]
+        ndfema.colcolors  = @[violet,pastelgreen]
+        ndfema.colHeaders = @["Date",indicator]
+        showDf(ndfEma,
+            rows = 10,       
+            cols =  @[1,2],                       
+            colwd = ndfema.colwidths,
+            colcolors = ndfema.colcolors,
+            showFrame =  true,
+            framecolor = skyblue,
+            showHeader = true,
+            headertext = ndfema.colHeaders,  
+            leftalignflag = false,
+            xpos = xpos) 
+        echo()
+        if dfinfo == true:
+            showDataframeInfo(ndfEma)
+        if savequiet == true:    
+            dfSave(ndfema,stckcode & "-" & indicator.toLowerAscii() & ".csv",quiet=true)   # save the df       
+        else:
+            dfSave(ndfema,stckcode & "-" & indicator.toLowerAscii() & ".csv",quiet=false)   # save the df     
+
+
+        
+### end indicators        
+        
+        
+#var flag = 0
 template metal(dc:int):typed =
     ## metal
     ## 
@@ -402,22 +651,22 @@ template metal(dc:int):typed =
       
     elif find(ktd[x],"Asia / Europe") > 0:
        print(spaces(2) & strip(ktd[x],true,true),white,xpos = xpos)
-       flag = 1
+       mflag = 1
        
     elif find(ktd[x],"New York") > 0:
        print(spaces(2) & strip(ktd[x],true,true),white,xpos = xpos)
-       flag = 2
+       mflag = 2
        
     elif find(ktd[x],opn) > 0 :
-        if flag == 1:
+        if mflag == 1:
            printLn(fmtx([">48"],"MARKET IS OPEN"),lime)
-        elif flag == 2:
+        elif mflag == 2:
            printLn(fmtx([">53"],"MARKET IS OPEN"),lime)
            
     elif find(ktd[x],cls) > 0:
-        if flag == 1:
+        if mflag == 1:
           printLn(fmtx([">46"],"MARKET IS CLOSED"),truetomato)
-        elif flag == 2:
+        elif mflag == 2:
           printLn(fmtx([">51"],"MARKET IS CLOSED"),truetomato)
               
     elif find(ktd[x],"Update") > 0:

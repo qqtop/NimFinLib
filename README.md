@@ -90,6 +90,12 @@ Installation
 
 ![Image](http://qqtop.github.io/nfT53-3.png?raw=true)
 Example screen from nfT53.nim
+
+
+![Image](http://qqtop.github.io/nfT55.png?raw=true)
+Example screen from nfT55.nim  displaying SMA,WMA,EMA Indicator data
+
+
              
 Below of what it used to look like until Nov 1 2017
 
