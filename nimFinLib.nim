@@ -18,7 +18,6 @@
 ##
 ##               Kitco Metal Prices  
 ##
-##
 ##               Dataframe like objects for easy working with historical data and dataseries
 ##
 ##               Returns calculations
@@ -36,7 +35,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2017-11-24
+## Latest      : 2017-11-25
 ##
 ## NOTE        : 
 ##                              
@@ -56,10 +55,7 @@
 ##
 ##               nimble install nimFinLib 
 ##
-##               
-##               
-##               
-##               
+##                       
 ##
 ## Notes       :
 ## 
@@ -68,7 +64,7 @@
 ##               to improve coloring of data and positioning of output.
 ## 
 ##
-## Funding     : If you are happy send any amount of bitcoins you like to a nice wallet :
+## Funding     : If you are happy or unhappy send any amount of bitcoins you like to a nice wallet :
 ##              
 ##               194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                     
@@ -665,9 +661,9 @@ template metal(dc:int):typed =
            
     elif find(ktd[x],cls) > 0:
         if mflag == 1:
-          printLn(fmtx([">46"],"MARKET IS CLOSED"),truetomato)
+          printLn(fmtx([">46"],"MARKET IS CLOSED"),red)
         elif mflag == 2:
-          printLn(fmtx([">51"],"MARKET IS CLOSED"),truetomato)
+          printLn(fmtx([">51"],"MARKET IS CLOSED"),red)
               
     elif find(ktd[x],"Update") > 0:
         print(spaces(3))
@@ -767,7 +763,7 @@ proc showKitcoMetal*(xpos:int = 1) =
                         asiaeuropemarket = true
         
             if nymarket == false and asiaeuropemarket == false:
-                  printLn("All Metal Markets Closed or Data outdated/unavailable",truetomato,xpos = xpos)
+                  printLn("All Metal Markets Closed or Data outdated/unavailable",truetomato,xpos = xpos + 2)
                   for x in 13.. 25 : 
                      dc = 6
                      metal(dc)   
