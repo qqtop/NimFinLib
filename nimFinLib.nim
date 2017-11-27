@@ -3,31 +3,40 @@
 ##
 ## Program     : nimFinLib
 ##
-## Status      : Alpha   - Development Rewrite for Alpha Vantage API   
+## Status      : Development    
 ##
 ## License     : MIT opensource
 ##
 ## Version     : 0.3.0.0
 ##
-## Compiler    : nim 0.17+  dev branch
+## Compiler    : nim 0.17.x  dev branch
 ##
 ##
-## Description : A basic library for financial calculations with Nim
+## Description : A basic library for financial calculations with Nim 
+## 
+##               using data from Alpha Vantage API
 ##
-##               Currency , Stock and Index Data from Alpha Vantage
+##               Currency , Stock and Index 
 ##
 ##               Kitco Metal Prices  
 ##
-##               Dataframe like objects for easy working with historical data and dataseries
+##               Dataframe like objects for easy working with current and historical data 
+##
+##               EMA,SMA,WMA,RSI,WILLR,BBANDS Indicator   # Note may not be available for all stocks/markets
 ##
 ##               Returns calculations
 ##
-##               Ema calculation
+##               Data display procs 
+##               
+##               Simple plotting (planned )
+##               
+##               Dataframe save/reload complete with display parameters
 ##
-##               Date manipulations
-##
-##               Data display procs
-##
+##               Dataframe rotation  
+##               
+##               Portfolio management ( Random portfolio , User portfolio )
+##               
+##               
 ##               
 ## Project     :  https://github.com/qqtop/NimFinLib
 ##
@@ -35,7 +44,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2017-11-25
+## Latest      : 2017-11-27
 ##
 ## NOTE        : 
 ##                              
@@ -192,14 +201,14 @@ proc showRawData*() =
 proc showOriginalStockDf*(stckcode:string,xpos:int = 3,rows:int = 3,header:bool = false,apikey:string = "demo"):nimdf {.discardable.} =
    ## showOriginalStockData
    ## 
-   ## first line maybe realtime if markets online
-   ## here we always fetch fresh data
+   ## first data row maybe realtime if markets online
+   ## here we always fetch fresh data 
    ## 
    if not avDatafectcher(stckcode,"compact",apikey): doFinish()
    else:    
       
         var ndf1 = createDataFrame(avtempdata,cols = 7,hasHeader = true) 
-        ndf1.colwidths = @[8,13,10,10,10,10,10,11]         # change the default columnwidths created in dfDefaultSetup
+        ndf1.colwidths = @[13,10,10,10,10,10,11]         # change the default columnwidths created in dfDefaultSetup
         
         # how to access a certain value from the df lets get  row 1 col 1
         #echo parsefloat(ndf9.df[0][1])
@@ -213,12 +222,12 @@ proc showOriginalStockDf*(stckcode:string,xpos:int = 3,rows:int = 3,header:bool 
         var tdayopen = parseFloat(ndf1.df[1][2])
 
         # set up df colors we only change close and adjusted close 
-        if   yday < tday == true: ndf1.colcolors = @[lightgrey,pastelgreen,pastelpink,lightblue,goldenrod,lime,lime,white]  
-        elif yday > tday == true: ndf1.colcolors = @[lightgrey,pastelgreen,pastelpink,lightblue,goldenrod,truetomato,truetomato,white]
-        else:  ndf1.colcolors = @[lightgrey,pastelgreen,pastelpink,dodgerblue,gold,skyblue,skyblue,white]
-        ndf1.colheaders = @["code","timestamp","open", "high", "low", "close","adjclose" ,"volume"]
+        if   yday < tday == true: ndf1.colcolors = @[pastelgreen,pastelpink,lightblue,goldenrod,lime,lime,white]  
+        elif yday > tday == true: ndf1.colcolors = @[pastelgreen,pastelpink,lightblue,goldenrod,truetomato,truetomato,white]
+        else:  ndf1.colcolors = @[pastelgreen,pastelpink,dodgerblue,gold,skyblue,skyblue,white]
+        ndf1.colheaders = @["timestamp","open","high","low","close","adjclose" ,"volume"]
         
-        echo("Original data ndf1 " & stckcode)
+        printLnBiCol("Original Data  : " & spaces(1) & stckcode,xpos = xpos)
         showDf(ndf1,
             rows = rows,  #if there is a header we need 2 rows ,if there is no header and the header is passed in 1 row 
                           #of course we can show more rows like here show last three dates 1 row is realtime if markets open
@@ -230,7 +239,7 @@ proc showOriginalStockDf*(stckcode:string,xpos:int = 3,rows:int = 3,header:bool 
             showHeader = true,
             #headertext = ndf1.colheaders,  # not needed as we have headers in the incoming csv file
             leftalignflag = false,
-            xpos = 3) 
+            xpos = xpos) 
         echo()
         result = ndf1     
         
@@ -317,7 +326,7 @@ proc showStocksDf*(stckcode:string,xpos:int = 3,header:bool = false,apikey:strin
             showHeader = true,
             headertext = ndf9.colheaders,
             leftalignflag = false,
-            xpos = 3) 
+            xpos = xpos) 
         decho(2)
         result = ndf9
         
@@ -383,7 +392,7 @@ proc showLocalStocksDf*(ndf9:nimdf,xpos:int = 3):nimdf {.discardable.} =
             showHeader = true,
             headertext = ndf9.colheaders,
             leftalignflag = false,
-            xpos = 3) 
+            xpos = xpos) 
         decho(2)
         result = ndf9  
 
@@ -430,10 +439,16 @@ proc getavSMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
             printLnBiCol("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
             printLnBiCol("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
             printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
-            echo()
+            decho(1)
         except:
-            printLnBiCol("[Error Message] : " & indicator & " for " & stckcode  & " could not be retrieved",colLeft=red,xpos = xpos)
-            printLnBiCol(jsonNode["Error Message"].getStr(),colLeft = red,sep = "Invalid API call.",xpos = xpos)
+            printLnBiCol("[Error Message] : " & stckcode  & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
+            var jerror = jsonNode["Error Message"].getStr()
+            if jerror.len + xpos > tw - 5:
+                printLnBiCol("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
+            else:    
+                printLnBiCol(jerror,colLeft = red,sep = "Invalid API call.",xpos = xpos)
+            printLnBiCol("[Note]          : Indicator data for some stocks / markets may not be available",colLeft=peru,xpos = xpos) 
+            
             break jsonMeta
         
         var nsi = "Technical Analysis: $1" % indicator
@@ -511,9 +526,14 @@ proc getavWMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
             printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
             echo()
         except: 
-            printLnBiCol("[Error Message] : " & indicator & " for " & stckcode  & " could not be retrieved",colLeft=red,xpos = xpos)
-            printLnBiCol(jsonNode["Error Message"].getStr(),colLeft = red,sep = "Invalid API call.",xpos = xpos)
+            printLnBiCol("[Error Message] : " & stckcode  & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
+            var jerror = jsonNode["Error Message"].getStr()
+            if jerror.len + xpos > tw - 5:
+                printLnBiCol("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
+            else:    
+                printLnBiCol(jerror,colLeft = red,sep = "Invalid API call.",xpos = xpos)
             printLnBiCol("[Note]          : Indicator data for some stocks / markets may not be available",colLeft=peru,xpos = xpos) 
+            
             break jsonMeta
         
         var nsi = "Technical Analysis: $1" % indicator
@@ -591,8 +611,12 @@ proc getavEMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
             printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
             echo()
         except: 
-            printLnBiCol("[Error Message] : " & indicator & " for " & stckcode  & " could not be retrieved",colLeft=red,xpos = xpos)
-            printLnBiCol(jsonNode["Error Message"].getStr(),colLeft = red,sep = "Invalid API call.",xpos = xpos)
+            printLnBiCol("[Error Message] : " & stckcode  & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
+            var jerror = jsonNode["Error Message"].getStr()
+            if jerror.len + xpos > tw - 5:
+                printLnBiCol("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
+            else:    
+                printLnBiCol(jerror,colLeft = red,sep = "Invalid API call.",xpos = xpos)
             printLnBiCol("[Note]          : Indicator data for some stocks / markets may not be available",colLeft=peru,xpos = xpos) 
             break jsonMeta
         
@@ -628,8 +652,272 @@ proc getavEMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
         else:
             dfSave(ndfema,stckcode & "-" & indicator.toLowerAscii() & ".csv",quiet=false)   # save the df     
 
-
+ 
+proc getavRSI*(stckcode:string,interval:string = "15min",timeperiod:string = "10",seriestype:string="close",apikey:string,xpos:int = 3,savequiet:bool = true,dfinfo:bool = false) =
+    ## getavRSI
+    ## fetches data from alphavantage 
+    ## Note : first row is real time if markets are open
+    ## interval   : 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly
+    ## timeperiod : time_period=60, time_period=200  etc.
+    ## seriestype : close, open, high, low
+   
+    var callavrsi = ""
+   
+    if apikey == "demo":
+      callavrsi = "https://www.alphavantage.co/query?function=RSI&symbol=MSFT&interval=15min&time_period=10&series_type=close&apikey=demo"
+    else:
+      callavrsi = "https://www.alphavantage.co/query?function=RSI&symbol=$1&interval=$2&time_period=$3&series_type=$4&apikey=$5" % [stckcode,interval,timeperiod,seriestype,apikey]
+  
+    let avdata = getData22(callavrsi)  # get the rsi data
+    
+    try:
+          withFile(txt2,avtempdata, fmWrite):
+              txt2.write(avdata)        
+    except:
+          currentline()
+          printLnBiCol("Error : Could not write to  " & avtempdata ,colLeft=red)
+          echo()
+          doFinish()
+          
+    #showrawdata()
+    #echo callavrsi
+    
+    var indicator = "RSI"
+    let jsonNode = parseJson(avdata)
+    block jsonMeta:
+        try:
+            printLnBiCol("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
+            printLnBiCol("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
+            printLnBiCol("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
+            printLnBiCol("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
+            printLnBiCol("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
+            printLnBiCol("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
+            printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
+            echo()
+        except: 
+            printLnBiCol("[Error Message] : " & stckcode  & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
+            var jerror = jsonNode["Error Message"].getStr()
+            if jerror.len + xpos > tw - 5:
+                printLnBiCol("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
+            else:    
+                printLnBiCol(jerror,colLeft = red,sep = "Invalid API call.",xpos = xpos)
+            printLnBiCol("[Note]          : Indicator data for some stocks / markets may not be available",colLeft=peru,xpos = xpos) 
+            break jsonMeta
         
+        var nsi = "Technical Analysis: $1" % indicator
+        var z = jsonNode[nsi]
+        var rsidate = newnimss()
+        var rsi = newnimss()
+        for x,y in pairs(z):        # load the future columns of the dataframe
+            rsidate.add(strip(x))
+            rsi.add(strip(jsonNode[nsi][x][indicator].getStr())) 
+
+        var ndfRsi =  makeNimDf(rsidate,rsi,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
+        
+        ndfrsi.colwidths  = @[17,10]
+        ndfrsi.colcolors  = @[violet,pastelgreen]
+        ndfrsi.colHeaders = @["Date",indicator]
+        showDf(ndfRsi,
+            rows = 10,       
+            cols =  @[1,2],                       
+            colwd = ndfrsi.colwidths,
+            colcolors = ndfrsi.colcolors,
+            showFrame =  true,
+            framecolor = skyblue,
+            showHeader = true,
+            headertext = ndfrsi.colHeaders,  
+            leftalignflag = false,
+            xpos = xpos) 
+        echo()
+        if dfinfo == true:
+            showDataframeInfo(ndfRsi)
+        if savequiet == true:    
+            dfSave(ndfrsi,stckcode & "-" & indicator.toLowerAscii() & ".csv",quiet=true)   # save the df       
+        else:
+            dfSave(ndfrsi,stckcode & "-" & indicator.toLowerAscii() & ".csv",quiet=false)   # save the df     
+
+ 
+proc getavWILLR*(stckcode:string,interval:string = "15min",timeperiod:string = "10",seriestype:string="close",apikey:string,xpos:int = 3,savequiet:bool = true,dfinfo:bool = false) =
+    ## getavWILLR
+    ## fetches data from alphavantage 
+    ## Note : first row is real time if markets are open
+    ## interval   : 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly
+    ## timeperiod : time_period=60, time_period=200  etc.
+    ## seriestype : close, open, high, low
+   
+    var callavwillr = ""
+   
+    if apikey == "demo":
+      callavwillr = "https://www.alphavantage.co/query?function=WILLR&symbol=MSFT&interval=15min&time_period=10&apikey=demo"
+    else:
+      callavwillr = "https://www.alphavantage.co/query?function=WILLR&symbol=$1&interval=$2&time_period=$3&series_type=$4&apikey=$5" % [stckcode,interval,timeperiod,seriestype,apikey]
+  
+    let avdata = getData22(callavwillr)  # get the willr data
+    
+    try:
+          withFile(txt2,avtempdata, fmWrite):
+              txt2.write(avdata)        
+    except:
+          currentline()
+          printLnBiCol("Error : Could not write to  " & avtempdata ,colLeft=red)
+          echo()
+          doFinish()
+          
+    #showrawdata()
+    #echo callavwillr
+    
+    var indicator = "WILLR"
+    let jsonNode = parseJson(avdata)
+    block jsonMeta:
+        try:
+            printLnBiCol("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
+            printLnBiCol("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
+            printLnBiCol("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
+            printLnBiCol("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
+            printLnBiCol("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
+            printLnBiCol("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
+            printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
+            echo()
+        except: 
+            printLnBiCol("[Error Message] : " & stckcode  & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
+            var jerror = jsonNode["Error Message"].getStr()
+            if jerror.len + xpos > tw - 5:
+                printLnBiCol("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
+            else:    
+                printLnBiCol(jerror,colLeft = red,sep = "Invalid API call.",xpos = xpos)
+            printLnBiCol("[Note]          : Indicator data for some stocks / markets may not be available",colLeft=peru,xpos = xpos) 
+            break jsonMeta
+        
+        var nsi = "Technical Analysis: $1" % indicator
+        var z = jsonNode[nsi]
+        var willrdate = newnimss()
+        var willr = newnimss()
+        for x,y in pairs(z):        # load the future columns of the dataframe
+            willrdate.add(strip(x))
+            willr.add(strip(jsonNode[nsi][x][indicator].getStr())) 
+
+        var ndfWillr =  makeNimDf(willrdate,willr,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
+        
+        ndfwillr.colwidths  = @[17,10]
+        ndfwillr.colcolors  = @[violet,pastelgreen]
+        ndfwillr.colHeaders = @["Date",indicator]
+        showDf(ndfWillr,
+            rows = 10,       
+            cols =  @[1,2],                       
+            colwd = ndfwillr.colwidths,
+            colcolors = ndfwillr.colcolors,
+            showFrame =  true,
+            framecolor = skyblue,
+            showHeader = true,
+            headertext = ndfwillr.colHeaders,  
+            leftalignflag = false,
+            xpos = xpos) 
+        echo()
+        if dfinfo == true:
+            showDataframeInfo(ndfWillr)
+        if savequiet == true:    
+            dfSave(ndfwillr,stckcode & "-" & indicator.toLowerAscii() & ".csv",quiet=true)   # save the df       
+        else:
+            dfSave(ndfwillr,stckcode & "-" & indicator.toLowerAscii() & ".csv",quiet=false)   # save the df     
+
+            
+
+proc getavBBANDS*(stckcode:string,interval:string = "15min",timeperiod:string = "10",seriestype:string="close",apikey:string,xpos:int = 3,savequiet:bool = true,dfinfo:bool = false) =
+    ## getavBBANDS
+    ## fetches data from alphavantage 
+    ## Note : first row is real time if markets are open
+    ## interval   : 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly
+    ## timeperiod : time_period=60, time_period=200  etc.
+    ## seriestype : close, open, high, low
+    ## default params implemented here see  --->  https://www.alphavantage.co/documentation/
+   
+    var callavbbands = ""
+   
+    if apikey == "demo":
+      callavbbands = "https://www.alphavantage.co/query?function=BBANDS&symbol=MSFT&interval=15min&time_period=10&apikey=demo"
+    else:
+      callavbbands = "https://www.alphavantage.co/query?function=BBANDS&symbol=$1&interval=$2&time_period=$3&series_type=$4&apikey=$5" % [stckcode,interval,timeperiod,seriestype,apikey]
+  
+    let avdata = getData22(callavbbands)  # get the bbands data
+    
+    try:
+          withFile(txt2,avtempdata, fmWrite):
+              txt2.write(avdata)        
+    except:
+          currentline()
+          printLnBiCol("Error : Could not write to  " & avtempdata ,colLeft=red)
+          echo()
+          doFinish()
+          
+    #showrawdata()
+    #echo callavbbands
+    
+    var indicator = "BBANDS"
+    let jsonNode = parseJson(avdata)
+    block jsonMeta:
+        try:
+            printLnBiCol("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
+            printLnBiCol("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
+            printLnBiCol("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
+            printLnBiCol("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
+            printLnBiCol("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
+            printLnBiCol("UpperBand : " & $jsonNode["Meta Data"]["6.1: Deviation multiplier for upper band"].getInt(),xpos = xpos) 
+            printLnBiCol("LowerBand : " & $jsonNode["Meta Data"]["6.2: Deviation multiplier for lower band"].getInt(),xpos = xpos) 
+            printLnBiCol("MA Type   : " & $jsonNode["Meta Data"]["6.3: MA Type"].getInt(),xpos = xpos) 
+            printLnBiCol("SeriesType: " & jsonNode["Meta Data"]["7: Series Type"].getStr(),xpos = xpos) 
+            printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["8: Time Zone"].getStr(),xpos = xpos) 
+            echo()
+        except: 
+            printLnBiCol("[Error Message] : " & stckcode  & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
+            var jerror = jsonNode["Error Message"].getStr()
+            if jerror.len + xpos > tw - 5:
+                printLnBiCol("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
+            else:    
+                printLnBiCol(jerror,colLeft = red,sep = "Invalid API call.",xpos = xpos)
+            printLnBiCol("[Note]          : Indicator data for some stocks / markets may not be available",colLeft=peru,xpos = xpos)     
+            break jsonMeta
+        
+        var nsi = "Technical Analysis: $1" % indicator
+        var z = jsonNode[nsi]
+        var bbandsdate = newnimss()
+        var bbandsupper  = newnimss()
+        var bbandslower  = newnimss()
+        var bbandsmiddle = newnimss()
+        
+        for x,y in pairs(z):        # load the future columns of the dataframe
+            bbandsdate.add(strip(x))
+            bbandsupper.add(strip(jsonNode[nsi][x]["Real Upper Band"].getStr())) 
+            bbandslower.add(strip(jsonNode[nsi][x]["Real Lower Band"].getStr())) 
+            bbandsmiddle.add(strip(jsonNode[nsi][x]["Real Middle Band"].getStr())) 
+            
+        var ndfBBands =  makeNimDf(bbandsdate,bbandsupper,bbandslower,bbandsmiddle,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
+        
+        ndfbbands.colwidths  = @[17,14,14,14]
+        ndfbbands.colcolors  = @[violet,pastelgreen,pastelblue,pastelpink]
+        ndfbbands.colHeaders = @["Date",indicator & "-upper",indicator & "-lower",indicator & "-middle"]
+        showDf(ndfBBands,
+            rows = 10,       
+            cols =  @[1,2,3,4],                       
+            colwd = ndfbbands.colwidths,
+            colcolors = ndfbbands.colcolors,
+            showFrame =  true,
+            framecolor = skyblue,
+            showHeader = true,
+            headertext = ndfbbands.colHeaders,  
+            leftalignflag = false,
+            xpos = xpos) 
+        echo()
+        if dfinfo == true:
+            showDataframeInfo(ndfBBands)
+        if savequiet == true:    
+            dfSave(ndfbbands,stckcode & "-" & indicator.toLowerAscii() & ".csv",quiet=true)   # save the df       
+        else:
+            dfSave(ndfbbands,stckcode & "-" & indicator.toLowerAscii() & ".csv",quiet=false)   # save the df     
+
+                   
+            
+            
+            
 ### end indicators        
         
         
