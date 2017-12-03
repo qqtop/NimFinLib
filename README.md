@@ -9,13 +9,11 @@ Financial Library for Nim
 
 
 Note: 
-       Unfortunately, as of Nov 1 2017 Yahoo decided to take their finance api endpoints off air , which at an instant 
-       removes our ability to automatically pull in delayed data for stocks/indexes and currencies. 
-       
-       Testing with data via free apikey from Alpha Vantage , which looks promising but requires major refactoring. 
+       Unfortunately, as of Nov 1 2017 Yahoo decided to take their finance api endpoints off air.
+       Now testing with data via free apikey from Alpha Vantage which requires major refactoring. 
        Basic data fetching and display is now working.
-       
-       The indicator API does return data for some markets like USA,UK , but not for Germany or Hongkong.
+       The indicator API does return data for some markets like USA,UK but not for others like
+       Germany , Hongkong etc.
        
 
 
@@ -62,6 +60,7 @@ Tests and Examples
       
       nimexrates  ok with api key
       nfT53       ok w/o api key
+      nfT55       ok w/o api key
       nimmetal    ok
      
 
@@ -85,6 +84,10 @@ Installation
       
              as version numbers may not be updated often and always pull the latest nimcx from nimble.
 
+             
+![Image](http://qqtop.github.io/quickStock.png?raw=true)             
+Example screen from quickStock.nim              
+             
 ![Image](http://qqtop.github.io/nfT53-1.png?raw=true)
 
 ![Image](http://qqtop.github.io/nfT53-2.png?raw=true)
