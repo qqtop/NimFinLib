@@ -11,12 +11,13 @@ Financial Library for Nim
 Note: 
        Unfortunately, as of Nov 1 2017 Yahoo decided to take their finance api endpoints off air , which at an instant 
        removes our ability to automatically pull in delayed data for stocks/indexes and currencies. 
-       Currently testing with data via free apikey from Alpha Vantage , which looks promising
-       but will need a major refactoring, which may need some time .
        
+       Testing with data via free apikey from Alpha Vantage , which looks promising but requires major refactoring. 
+       Basic data fetching and display is now working.
        
+       The indicator API does return data for some markets like USA,UK , but not for Germany or Hongkong.
        
- 
+
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|

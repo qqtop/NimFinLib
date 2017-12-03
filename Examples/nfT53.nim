@@ -21,8 +21,8 @@ proc main() =
    for x in 0..<stockset.len: 
       var ndf9 = showStocksDf(stockset[x],apikey = apikey)  
       showDataframeinfo(ndf9)              # ok
-      dfShowColumnStats(ndf9,@[3,4,5,6],xpos = 3)   # ok     note count of cols starts with 1
-      dfsave(ndf9,"ndf9-" & stockset[x] & ".csv",quiet = false)        # save the current dataframe and show saving results
+      dfShowColumnStats(ndf9,@[3,4,5,6],xpos = 3)                    # ok     note count of cols starts with 1
+      dfsave(ndf9,"ndf9-" & stockset[x] & ".csv",quiet = false)      # save the current dataframe and show saving results
       showOriginalStockDf(stockset[x],rows = 1000,apikey = apikey)   # ok
    decho(1)
    for x in 0..<stockset.len:
