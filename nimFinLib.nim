@@ -80,15 +80,22 @@
 ##               to improve coloring of data and positioning of output.
 ## 
 ##
-## Funding     : If you are happy or unhappy send any amount of bitcoins you like to a nice wallet :
-##              
-##               194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
-##                     
-##                     
+##     Funding     : Here are the options :
+##     
+##                   You are happy             ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
+##                   
+##                   You are not happy         ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
+##                 
+##                   You are in any other mood ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
+##                                       
+##                                
 
 import
-       os,nimcx,nimdataframe,parseutils,net,tables,parsecsv,algorithm,math,unicode,stats    
+       os,nimcx,nimdataframe,parseutils,net,tables,parsecsv,algorithm,math,unicode,stats  
+       
 import nre except toSeq
+
+import av_utils
 
 let NIMFINLIBVERSION* = "0.3.0.0"   
 
@@ -158,8 +165,8 @@ proc getData22*(url:string):auto =
        doFinish()            
       
       
-proc avDatafectcher*(stckcode:string,mode:string = "compact",apikey:string):bool =
-   ## avDatafectcher
+proc avDatafetcher*(stckcode:string,mode:string = "compact",apikey:string):bool =
+   ## avDatafetcher
    ## fetches data from alphavantage 
    ## default = compact   abt 100 records if available
    ## option  = full      all available records
@@ -172,7 +179,8 @@ proc avDatafectcher*(stckcode:string,mode:string = "compact",apikey:string):bool
    var callav = ""
    
    if apikey == "demo":
-       callav = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo&datatype=csv"
+       callav = av_daily_adjusted_csv  
+       #callav = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo&datatype=csv"
    
    elif toLowerAscii(mode) == "compact":
        callav = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=$1&outputsize=compact&apikey=$2&datatype=csv" % [stckcode,apikey]
@@ -183,8 +191,7 @@ proc avDatafectcher*(stckcode:string,mode:string = "compact",apikey:string):bool
        printLnBiCol("Error :  Wrong mode specified . Use compact or full only",colLeft=red)
        echo()
        result = false
-       
-   
+
    if result == true:
       var avdata = getData22(callav)
       try:
@@ -198,8 +205,8 @@ proc avDatafectcher*(stckcode:string,mode:string = "compact",apikey:string):bool
           doFinish()
 
          
-proc avDatafectcherIntraday*(stckcode:string,mode:string = "compact",apikey:string):bool =
-   ## avDatafectcher
+proc avDatafetcherIntraday*(stckcode:string,mode:string = "compact",apikey:string):bool =
+   ## avDatafetcher
    ## fetches data from alphavantage 
    ## default = compact   abt 100 records if available
    ## option  = full      all available records
@@ -212,7 +219,8 @@ proc avDatafectcherIntraday*(stckcode:string,mode:string = "compact",apikey:stri
    var callav = ""
    
    if apikey == "demo":
-       callav = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=demo&datatype=csv"
+       callav = av_intraday_1m_csv  
+       #callav = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=demo&datatype=csv"
                  
    elif toLowerAscii(mode) == "compact":
        callav = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=$1&interval=1min&outputsize=compact&apikey=$2&datatype=csv" % [stckcode,apikey]
@@ -258,7 +266,7 @@ proc showOriginalStockDf*(stckcode:string,xpos:int = 3,rows:int = 3,header:bool 
    ## here we always fetch fresh data 
    ## 
    var okflag = true
-   if not avDatafectcherIntraday(stckcode,"compact",apikey): doFinish()
+   if not avDatafetcherIntraday(stckcode,"compact",apikey): doFinish()
    else:
           withFile(txt2,avtempdata, fmRead):
               var line = ""
@@ -313,7 +321,7 @@ proc showOriginalStockDf*(stckcode:string,xpos:int = 3,rows:int = 3,header:bool 
         result = ndf1
         
         
-proc showStocksDf*(stckcode:string,xpos:int = 3,header:bool = false,mode:string = "compact",apikey:string = "demo"):nimdf {.discardable.} =
+proc showStocksDf*(stckcode:string,rows:int=3,xpos:int = 3,header:bool = false,mode:string = "compact",apikey:string = "demo"):nimdf {.discardable.} =
      ## showStocksDf
      ## 
      ## a display routine with some more information
@@ -323,7 +331,7 @@ proc showStocksDf*(stckcode:string,xpos:int = 3,header:bool = false,mode:string 
      
      var ct  = newCxtimer("fetchTimer1") 
      ct.startTimer
-     if not avDatafectcher(stckcode,mode,apikey): 
+     if not avDatafetcher(stckcode,mode,apikey): 
        ct.stopTimer
        okflag = false
      
@@ -336,6 +344,7 @@ proc showStocksDf*(stckcode:string,xpos:int = 3,header:bool = false,mode:string 
               var line = ""
               while txt2.readLine(line):
                  if line.contains("Invalid API call.") == true:
+                    decho(2)
                     printLnBiCol("[AV  Error Message] : Invalid API call. Please retry or visit the documentation for TIME_SERIES_INTRADAY.", colLeft = red,xpos = 3)
                     printLnBiCol("[NIMFINLIB Message] : Data currently not available for : " & stckcode, colLeft = red,xpos = 3)
                     okflag = false
@@ -410,15 +419,13 @@ proc showStocksDf*(stckcode:string,xpos:int = 3,header:bool = false,mode:string 
                 printLnBiCol(fmtx(["","<9"],"Last  : " , ndf9.df[0][5]),colleft=skyblue,colright=white,xpos = xpos + 60,false,{styleReverse})     
         
         
-        printBiCol("Timing: " & ff(ct.duration,4) & " sec",xpos = xpos)
+        printBiCol("Timing: " & $ff(ct.duration,4) & " sec",xpos = xpos)
         var dayrange = ff(tdayo,4) & " - " & ff(tday,4) 
         printLnBiCol(fmtx(["","<$1" % [$30]],"Range : " , dayrange),colleft=skyblue,colright=pastelwhite,xpos = xpos + 60,false,{styleReverse})                   
-                                              
-         
-                    
+
         showDf(ndf9,
-            rows = 3,  #if there is a header we need 2 rows ,if there is no header and header is passed in 1 row 
-                        #of course we can show more rows like here show last three dates 1 row is realtime if markets open
+            rows = rows,  #if there is a header we need 2 rows ,if there is no header and header is passed in 1 row 
+                          #of course we can show more rows like here show last three dates 1 row is realtime if markets open
             cols =  toNimis(toSeq(1..ndf9.colcount)),                       
             colwd = ndf9.colwidths,
             colcolors = ndf9.colcolors,
@@ -522,7 +529,8 @@ proc getavSMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
     var callavsma = ""
    
     if apikey == "demo":
-      callavsma = "https://www.alphavantage.co/query?function=SMA&symbol=MSFT&interval=15min&time_period=10&series_type=close&apikey=demo"
+      callavsma = av_sma 
+      #callavsma = "https://www.alphavantage.co/query?function=SMA&symbol=MSFT&interval=15min&time_period=10&series_type=close&apikey=demo"
     else:
       callavsma = "https://www.alphavantage.co/query?function=SMA&symbol=$1&interval=$2&time_period=$3&series_type=$4&apikey=$5" % [stckcode,interval,timeperiod,seriestype,apikey]
   
@@ -692,7 +700,8 @@ proc getavEMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
     var callavema = ""
    
     if apikey == "demo":
-      callavema = "https://www.alphavantage.co/query?function=EMA&symbol=MSFT&interval=15min&time_period=10&series_type=close&apikey=demo"
+      callavema = av_ema 
+      #callavema = "https://www.alphavantage.co/query?function=EMA&symbol=MSFT&interval=15min&time_period=10&series_type=close&apikey=demo"
     else:
       callavema = "https://www.alphavantage.co/query?function=EMA&symbol=$1&interval=$2&time_period=$3&series_type=$4&apikey=$5" % [stckcode,interval,timeperiod,seriestype,apikey]
   
@@ -1202,7 +1211,7 @@ proc showKitcoMetal*(xpos:int = 1) =
     except  TimeoutError:
          printLn("TimeoutError : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
     except  ProtocolError:
-         printLn("Protocol Error : " & getCurrentExceptionMsg()  & " at : " & $getLocalTime(getTime()),truetomato,xpos = xpos)
+         printLn("Protocol Error : " & getCurrentExceptionMsg()  & " at : " & $now(),truetomato,xpos = xpos)
     except :
          discard
     finally:
