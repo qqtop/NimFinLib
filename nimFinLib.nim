@@ -12,7 +12,7 @@
 ## Compiler    : nim 0.17.x  dev branch
 ##
 ##
-## Description : A basic library for financial calculations with Nim 
+## Description : A basic library for financial data display and calculations 
 ## 
 ##               using data from Alpha Vantage API
 ##
@@ -22,21 +22,20 @@
 ##
 ##               Dataframe like objects for easy working with current and historical data 
 ##
-##               EMA,SMA,WMA,RSI,WILLR,BBANDS Indicator   # Note may not be available for all stocks/markets
+##               EMA,SMA,WMA,RSI,WILLR,BBANDS Indicator   #  may not yet be available for all stocks/markets
 ##
 ##               Returns calculations
 ##
 ##               Data display procs 
 ##               
-##               Simple plotting (planned )
+##               Simple plotting available via gnuplot
 ##               
 ##               Dataframe save/reload complete with display parameters
 ##
 ##               Dataframe rotation  
 ##               
 ##               Portfolio management ( Random portfolio , User portfolio )
-##               
-##               
+##                            
 ##               
 ## Project     :  https://github.com/qqtop/NimFinLib
 ##
@@ -44,17 +43,8 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2017-12-03
-##
-## NOTE        : In the future coding will be : I am thinking of it , now do it.
-##               After which your computer is supposed to produce bugfree code, successfully compiles , runs tests and
-##               generates documentation all by itself , while you enjoy the day.
-##               In the meantime we use NIM according to the motto:
-##               faster , better , more efficient
-##               schneller , besser,  rationeller
-##               更快，更好，更高效
-##               より速く、より良く、より効率的に
-##               lebih cepat, lebih baik, lebih efisien                  
+## Latest      : 2017-12-21
+##     
 ## 
 ## Todo        : anything not yet done
 ##               
@@ -70,8 +60,7 @@
 ##               nimble install https://github.com/qqtop/nimdataframe.git
 ##
 ##               nimble install nimFinLib 
-##
-##                       
+##           
 ##
 ## Notes       :
 ## 
@@ -80,28 +69,21 @@
 ##               to improve coloring of data and positioning of output.
 ## 
 ##
-##     Funding     : Here are the options :
+## Funding     :     Here are the options :
 ##     
 ##                   You are happy             ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                   
 ##                   You are not happy         ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                 
-##                   You are in any other mood ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
+##                   You wish to donate        ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                                       
 ##                                
 
-import
-       os,nimcx,nimdataframe,parseutils,net,tables,parsecsv,algorithm,math,unicode,stats  
-       
+import os,nimcx,nimdataframe,parseutils,net,tables,parsecsv,algorithm,math,unicode,stats     
 import nre except toSeq
-
-import av_utils
+import av_utils    
 
 let NIMFINLIBVERSION* = "0.3.0.0"   
-
-
-# for currencies
-#var callavcur  = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=CNY&to_currency=HKD&apikey=$1" % [apikey]
 
 # temporary holding place for data fetched from alphavantage , change directory as required below
 var avtempdata* = "/dev/shm/avdata.csv"    
@@ -115,23 +97,32 @@ type
 
   Portfolio* {.inheritable.} = object
         ## Portfolio type
+        ## 
         ## holds one portfolio with all relevant historic stocks data
-        nx* : string       ## nx  holds portfolio name  e.g. MyGetRichPortfolio
-        dx* : seq[Stocks]  ## dx  holds all stocks with historical data
+        ## 
+        pfname* : string       ## nx  holds portfolio name  e.g. MyGetRichPortfolio
+        pfdata* : seq[Stocks]  ## dx  holds all stocks with historical data
 
 
   Account*  = object
         ## Account type
+        ## 
         ## holds all portfolios similar to a master account
+        ## 
         ## portfolios are Portfolio objects
-        pf* : seq[Portfolio]  ## pf holds all Portfolio type portfolios for an account
+        ## 
+        apf* : seq[Portfolio]  ## pf holds all Portfolio type portfolios for an account
 
   
   Stocks* {.inheritable.} = object of Portfolio
         ## Stocks type
+        ## 
         ## holds individual stocks history data and RunningStat for ohlcva columns
+        ## 
         ## even more items may be added like full company name etc in the future
+        ## 
         ## items are stock code, ohlcva, rc and rca .
+        ## 
         stock* : string            ## yahoo style stock code ok with alpha vantage api
         date*  : seq[string]
         open*  : seq[float]
@@ -167,12 +158,19 @@ proc getData22*(url:string):auto =
       
 proc avDatafetcher*(stckcode:string,mode:string = "compact",apikey:string):bool =
    ## avDatafetcher
+   ## 
    ## fetches data from alphavantage 
-   ## default = compact   abt 100 records if available
+   ## 
+   ## default = compact   will fetch abt 100 records if available
+   ## 
    ## option  = full      all available records
+   ## 
    ## Note : first row is real time if markets are open
+   ## 
    ## data will be written into /dev/shm/avdata.csv  .. 
+   ## 
    ## /dev/shm temporary filesystem location may not be available on every distribution
+   ## 
    ## change accordingly or write to a disc location
    ## 
    result = true
@@ -183,10 +181,12 @@ proc avDatafetcher*(stckcode:string,mode:string = "compact",apikey:string):bool 
        #callav = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo&datatype=csv"
    
    elif toLowerAscii(mode) == "compact":
-       callav = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=$1&outputsize=compact&apikey=$2&datatype=csv" % [stckcode,apikey]
+       #callav = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=$1&outputsize=compact&apikey=$2&datatype=csv" % [stckcode,apikey]
+       callav = getcallavda(stckcode,apikey)   # calling the proc in av_utils
    elif toLowerAscii(mode) == "full":
-       callav = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=$1&outputsize=full&apikey=$2&datatype=csv" % [stckcode,apikey]
-   else:
+       #callav = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=$1&outputsize=full&apikey=$2&datatype=csv" % [stckcode,apikey]
+       callav = getcallavdafull(stckcode,apikey)
+       
        currentLine()
        printLnBiCol("Error :  Wrong mode specified . Use compact or full only",colLeft=red)
        echo()
@@ -207,12 +207,19 @@ proc avDatafetcher*(stckcode:string,mode:string = "compact",apikey:string):bool 
          
 proc avDatafetcherIntraday*(stckcode:string,mode:string = "compact",apikey:string):bool =
    ## avDatafetcher
+   ## 
    ## fetches data from alphavantage 
+   ## 
    ## default = compact   abt 100 records if available
+   ## 
    ## option  = full      all available records
+   ## 
    ## Note : first row is real time if markets are open
+   ## 
    ## data will be written into /dev/shm/avdata.csv  .. 
+   ## 
    ## /dev/shm temporary filesystem location may not be available on every distribution
+   ## 
    ## change accordingly or write to a disc location
    ## 
    result = true
@@ -245,10 +252,7 @@ proc avDatafetcherIntraday*(stckcode:string,mode:string = "compact",apikey:strin
           echo()
           doFinish()          
           
-          
-          
-          
-          
+
 proc showRawData*() =
      ## showRawData
      ## 
@@ -262,8 +266,7 @@ proc showOriginalStockDf*(stckcode:string,xpos:int = 3,rows:int = 3,header:bool 
    ## 
    ## using TIME_SERIES_INTRADAY 1 min  DATA   # this will be selectable in the future in respect of time_series and interval
    ## 
-   ## first data row maybe realtime if markets online
-   ## here we always fetch fresh data 
+   ## first data row maybe realtime if markets online , we always fetch fresh data 
    ## 
    var okflag = true
    if not avDatafetcherIntraday(stckcode,"compact",apikey): doFinish()
@@ -325,6 +328,7 @@ proc showStocksDf*(stckcode:string,rows:int=3,xpos:int = 3,header:bool = false,m
      ## showStocksDf
      ## 
      ## a display routine with some more information
+     ## 
      ## data is freshly downloaded
      ## 
      var okflag = true
@@ -366,7 +370,7 @@ proc showStocksDf*(stckcode:string,rows:int=3,xpos:int = 3,header:bool = false,m
         ndf9 = makeNimDf(mynewcol,getColData(ndf9,1),getColData(ndf9,2),getColData(ndf9,3),getColData(ndf9,4),
                             getColData(ndf9,5),getColData(ndf9,6),getColData(ndf9,7),status = true,hasHeader=true)
         #dfsave(ndf9,"ndf9.csv")  # used in debugging for checking what we get here
-        ndf9.colwidths = @[8,14,10,10,10,10,10,11]         # change the default columnwidths created in dfDefaultSetup
+        ndf9.colwidths = @[12,14,10,10,10,10,10,11]         # change the default columnwidths created in dfDefaultSetup
         # how to access a certain value from the df lets get  row 1 col 1
         #echo parsefloat(ndf9.df[0][1])
         #echo parsefloat(ndf9.df[0][4])
@@ -392,9 +396,9 @@ proc showStocksDf*(stckcode:string,rows:int=3,xpos:int = 3,header:bool = false,m
         
         
         if stckcode.startswith("^") == true:
-            printBiCol(fmtx(["",">11",],"Index:" , stckcode),colleft=darkturquoise,colright=lightgrey,sep=":",xpos = xpos,false,{styleReverse})
+            printBiCol(fmtx(["",">11",],"Index:" , stckcode),colleft=darkturquoise,colright=lightgrey,sep=":",xpos = xpos + 1,false,{styleReverse})
         else:
-            printBiCol(fmtx(["",">11",],"Code :" , stckcode),colleft=goldenrod,colright=lightgrey,sep=":",xpos = xpos,false,{styleReverse})
+            printBiCol(fmtx(["",">11",],"Code :" , stckcode),colleft=lightcoral,colright=lightgrey,sep=":",xpos = xpos + 1,false,{styleReverse})
         
         if pctchange > 0.0:
                 printBiCol(fmtx(["",">9"],"Change % ",ff(pctchange,5)),colright=white,sep="%",xpos = xpos  + 20,false,{styleReverse})
@@ -412,16 +416,25 @@ proc showStocksDf*(stckcode:string,rows:int=3,xpos:int = 3,header:bool = false,m
         
 
         if pctchange > 0.0:
-                printLnBiCol(fmtx(["","<9"],"Last  : " , ndf9.df[0][5]),colright=white,xpos = xpos + 60,false,{styleReverse})
+                printBiCol(fmtx(["","<9"],"Last  : " , ndf9.df[0][5]),colright=white,xpos = xpos + 60,false,{styleReverse})
         elif pctchange < 0.0:
-                printLnBiCol(fmtx(["","<9"],"Last  : " , ndf9.df[0][5]),colleft=truetomato,colright=white,xpos = xpos + 60,false,{styleReverse}) 
+                printBiCol(fmtx(["","<9"],"Last  : " , ndf9.df[0][5]),colleft=truetomato,colright=white,xpos = xpos + 60,false,{styleReverse}) 
         else :
-                printLnBiCol(fmtx(["","<9"],"Last  : " , ndf9.df[0][5]),colleft=skyblue,colright=white,xpos = xpos + 60,false,{styleReverse})     
+                printBiCol(fmtx(["","<9"],"Last  : " , ndf9.df[0][5]),colleft=skyblue,colright=white,xpos = xpos + 60,false,{styleReverse})     
         
+        printLnBiCol("Timing: " & $ff(ct.duration,4) & " sec",colleft=lightslategray,colright=pastelwhite,xpos = xpos + 80,false,{styleReverse})
         
-        printBiCol("Timing: " & $ff(ct.duration,4) & " sec",xpos = xpos)
+        if pctchange > 0.0:
+           printBiCol("State: " & uarrow,colleft=lightsteelblue,colright=lime,xpos = xpos + 1,false,{styleReverse})
+        elif pctchange < 0.0:
+           printBiCol("State: " & downarrow,colleft=lightsteelblue,colright=red,xpos = xpos + 1,false,{styleReverse})
+        else:
+           printBiCol("State: " & barrow,colleft=lightsteelblue,colright=skyblue,xpos = xpos + 1,false,{styleReverse})
+        
+        printBiCol("Time   : " & ($now()).replace("T"," ") & spaces(4),colleft=lightsteelblue,colright=pastelwhite,xpos = xpos + 20,false,{styleReverse})
+
         var dayrange = ff(tdayo,4) & " - " & ff(tday,4) 
-        printLnBiCol(fmtx(["","<$1" % [$30]],"Range : " , dayrange),colleft=skyblue,colright=pastelwhite,xpos = xpos + 60,false,{styleReverse})                   
+        printLnBiCol(fmtx(["","<$1" % [$30]],"Range : " , dayrange),colleft=aquamarine,colright=pastelwhite,xpos = xpos + 60,false,{styleReverse})                   
 
         showDf(ndf9,
             rows = rows,  #if there is a header we need 2 rows ,if there is no header and header is passed in 1 row 
@@ -430,7 +443,7 @@ proc showStocksDf*(stckcode:string,rows:int=3,xpos:int = 3,header:bool = false,m
             colwd = ndf9.colwidths,
             colcolors = ndf9.colcolors,
             showFrame =  true,
-            framecolor = blue,
+            framecolor = aqua,
             showHeader = true,
             headertext = ndf9.colheaders,
             leftalignflag = false,
@@ -448,6 +461,7 @@ proc showLocalStocksDf*(ndf9:nimdf,xpos:int = 3):nimdf {.discardable.} =
         ## showLocalStocksDf
         ## 
         ## used to display a df which already exists or has been loaded via dfLoad
+        ## 
         ## with all parameters pre specified
         ## 
         ## 
@@ -520,11 +534,17 @@ proc showLocalStocksDf*(ndf9:nimdf,xpos:int = 3):nimdf {.discardable.} =
       
 proc getavSMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10",seriestype:string="close",apikey:string,xpos:int = 3,savequiet:bool = true,dfinfo:bool = false) =
     ## getavSMA
+    ## 
     ## fetches data from alphavantage 
+    ## 
     ## Note : first row is real time if markets are open
+    ## 
     ## interval   : 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly
+    ## 
     ## timeperiod : time_period=60, time_period=200  etc.
+    ## 
     ## seriestype : close, open, high, low
+    ## 
    
     var callavsma = ""
    
@@ -606,11 +626,17 @@ proc getavSMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
             
 proc getavWMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10",seriestype:string="close",apikey:string,xpos:int = 3,savequiet:bool = true,dfinfo:bool = false) =
     ## getavWMA
+    ## 
     ## fetches data from alphavantage 
+    ## 
     ## Note : first row is real time if markets are open
+    ## 
     ## interval   : 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly
+    ## 
     ## timeperiod : time_period=60, time_period=200  etc.
+    ## 
     ## seriestype : close, open, high, low
+    ## 
    
     var callavwma = ""
    
@@ -691,11 +717,17 @@ proc getavWMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
  
 proc getavEMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10",seriestype:string="close",apikey:string,xpos:int = 3,savequiet:bool = true,dfinfo:bool = false) =
     ## getavEMA
+    ## 
     ## fetches data from alphavantage 
+    ## 
     ## Note : first row is real time if markets are open
+    ## 
     ## interval   : 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly
+    ## 
     ## timeperiod : time_period=60, time_period=200  etc.
+    ## 
     ## seriestype : close, open, high, low
+    ## 
    
     var callavema = ""
    

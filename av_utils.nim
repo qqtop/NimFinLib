@@ -1,6 +1,21 @@
 
-# nimalphavantage.nim
-# demo urls
+# av_utils.nim 
+# 
+# A support module for nimFinLib
+# 
+# this holds vars and procs for accessing the aplha vantage api
+# 
+# 
+# strings ending with demo do not need an apikey and can be used directly
+# 
+# Work in progress
+# 
+# Last : 2017-12-21
+# 
+# 
+
+import strutils
+
 
 # intraday
 var av_intraday_1m* =  "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=demo"
@@ -16,6 +31,13 @@ var av_daily_csv* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAIL
 var av_daily_adjusted* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo"
 var av_daily_adjusted_full* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&outputsize=full&apikey=demo"
 var av_daily_adjusted_csv* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo&datatype=csv"
+
+proc getcallavda*(stckcode:string,apikey:string):string = 
+     result = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=$1&outputsize=compact&apikey=$2&datatype=csv" % [stckcode,apikey]
+
+proc getcallavdafull*(stckcode:string,apikey:string):string = 
+     result = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=$1&outputsize=full&apikey=$2&datatype=csv" % [stckcode,apikey]
+      
 
 # weekly
 var av_weekly* = "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=MSFT&apikey=demo"
@@ -36,6 +58,9 @@ var av_monthly_adjusted_csv* = "https://www.alphavantage.co/query?function=TIME_
 # forex
 var forex_btc_cny* = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=BTC&to_currency=CNY&apikey=demo"
 var forex_usd_jpy* = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency=JPY&apikey=demo"
+
+proc getexchangerate*(fromCur:string,toCur:string,apikey:string):string =
+     result  = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=$1&to_currency=$2&apikey=$3" % [fromCur,toCur,apikey]
 
 # digital currency intraday
 var av_digital_intraday* = "https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_INTRADAY&symbol=BTC&market=CNY&apikey=demo"
