@@ -8,12 +8,15 @@ Financial Library for Nim
 (Work in Progress)
 
 
-Note: 
-       Unfortunately, as of Nov 1 2017 Yahoo decided to take their finance api endpoints off air.
-       Now testing with data via free apikey from Alpha Vantage which requires major refactoring. 
-       Basic data fetching and display is now working.
-       The indicator API does return data for some markets like USA,UK but not for others like
-       Germany , Hongkong etc.
+Description: 
+
+             Now using historic data via free apikey from Alpha Vantage. 
+             Basic data fetching and data display is working.
+             The indicator API does return data for some markets like USA , UK
+             but not yet for others like Germany , Hongkong etc.
+             The plan is to add portfolio management and analysis.
+             Basic charts can currently be displayed via gnuplot.
+       
        
 
 
@@ -30,15 +33,14 @@ Data gathering and calculations support
                           
               Alpha Vantage Api support               ----> testing since Nov 2017
               
-              Planned 
-              
-              Dataframe like structure for easy working with dataseries
+                         
+              Dataframe for display and easy working with dataseries
               
               Multiple accounts and portfolios management
               
-              Returns calculations
+              Returns calculations and more
               
-              Ema and other indicators calculation
+              Indicator displays
                       
               Kitco Metal Prices                      
               
@@ -80,10 +82,9 @@ Installation
        
       nimble install nimFinLib 
       
-      Note : it is always a good idea to remove old packages from the .nimble/pkgs dir 
+      Note : it is always a good idea to install the latest libraries
       
-             as version numbers may not be updated often and always pull the latest nimcx from nimble.
-
+  
              
 ![Image](http://qqtop.github.io/quickStock.png?raw=true)             
 Example screen from quickStock.nim              
@@ -100,8 +101,10 @@ Example screen from nfT53.nim
 Example screen from nfT55.nim  displaying SMA,WMA,EMA Indicator data
 
 
-             
-Below of what it used to look like until Nov 1 2017
+
+
+Below screenshots of nimFinLib usage prior to demise of Yahoo Finance API on Nov 1 2017.
+
 
 ![Image](http://qqtop.github.io/nfT50.png?raw=true)
 Example screen from nfT50.nim
@@ -119,9 +122,11 @@ NOTE :
   
      Improvements may be made at any time.              
      Forking ,testing, suggestions ,ideas are welcome.
-     This is development code , hence use at your own risk.
+     This is development code , use at your own risk.
      
-     Tested openSuse TumbleWeed
+     
+     
+     Tested on openSuse TumbleWeed
               
 
 ![Image](http://qqtop.github.io/qqtop-small.png?raw=true)
