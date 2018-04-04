@@ -3,14 +3,20 @@
 # 
 # A support module for nimFinLib
 # 
-# this holds vars and procs for accessing the aplha vantage api
+# this holds vars and procs for accessing the alpha vantage api
 # 
 # 
 # strings ending with demo do not need an apikey and can be used directly
 # 
-# Work in progress
+# Work in progress   
 # 
-# Last : 2017-12-21
+# Note json parsing for all these needs to be implemented as indicators have different json structures
+# 
+# some of them are still in beta or do not actually return data for non US market components. 
+#       
+# 
+# 
+# Last : 2018-03-04
 # 
 # 
 
@@ -86,6 +92,12 @@ var av_sma_csv* = "https://www.alphavantage.co/query?function=SMA&symbol=MSFT&in
 
 var av_ema* = "https://www.alphavantage.co/query?function=EMA&symbol=MSFT&interval=15min&time_period=10&series_type=close&apikey=demo"
 var av_ema_csv* = "https://www.alphavantage.co/query?function=EMA&symbol=MSFT&interval=weekly&time_period=10&series_type=open&apikey=demo"
+
+var av_wma* = "https://www.alphavantage.co/query?function=WMA&symbol=MSFT&interval=15min&time_period=10&series_type=close&apikey=demo"
+
+var av_trima* = "https://www.alphavantage.co/query?function=TRIMA&symbol=MSFT&interval=15min&time_period=10&series_type=close&apikey=demo"
+
+var av_sector = "https://www.alphavantage.co/query?function=SECTOR&apikey=demo"
 
 # many more to go https://www.alphavantage.co/documentation/
 

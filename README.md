@@ -17,12 +17,22 @@ Description:
              The plan is to add portfolio management and analysis.
              Basic charts can currently be displayed via gnuplot.
        
-       
+Update Apr. 2018 :
+
+             Data drawn from the API still seems to have occasional holes 
+             especially for non US market stocks or is not available all
+             the time . Often two or more hits are needed for the API
+             to return data . Sometimes the API returns error messages
+             of being hit too fast , despite one hit per second being
+             the advertised capability and sufficient time spacing on the
+             client side. Some of the indicator returns json data fine , but
+             apparently only for US stocks. 
+             
 
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|
-| nimFinLib  | Development | 0.3.0.x | MIT opensource | Linux  | Nim >= 0.17.x  |
+| nimFinLib  | Development | 0.3.0.x | MIT opensource | Linux  | Nim >= 0.18.x  |
 
 
 
@@ -31,7 +41,7 @@ Data gathering and calculations support
 ----------------------------------------
 
                           
-              Alpha Vantage Api support               ----> testing since Nov 2017
+              Alpha Vantage Api support            ----> testing since Nov 2017
               
                          
               Dataframe for display and easy working with dataseries
@@ -39,6 +49,8 @@ Data gathering and calculations support
               Multiple accounts and portfolios management
               
               Returns calculations and more
+              
+              Williams R% calculation
               
               Indicator displays
                       
@@ -88,6 +100,10 @@ Installation
              
 ![Image](http://qqtop.github.io/quickStock.png?raw=true)             
 Example screen from quickStock.nim              
+
+![Image](http://qqtop.github.io/williamsR.png?raw=true)             
+Example screen from an attempt to plot williams R indicator output
+plotting is done via gnuplot.nim ex https://github.com/dvolk/gnuplot.nim
              
 ![Image](http://qqtop.github.io/nfT53-1.png?raw=true)
 
@@ -126,7 +142,7 @@ NOTE :
      
      
      
-     Tested on openSuse TumbleWeed
+     Tested on openSuse TumbleWeed, Debian Testing
               
 
 ![Image](http://qqtop.github.io/qqtop-small.png?raw=true)

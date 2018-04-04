@@ -7,9 +7,9 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.3.0.0
+## Version     : 0.3.0.1
 ##
-## Compiler    : nim 0.17.x  dev branch
+## Compiler    : nim 0.18.x  dev branch
 ##
 ##
 ## Description : A basic library for financial data display and calculations 
@@ -43,7 +43,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2017-12-21
+## Latest      : 2018-04-04
 ##     
 ## 
 ## Todo        : anything not yet done
@@ -77,13 +77,15 @@
 ##                 
 ##                   You wish to donate        ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                                       
+##                   You do not wish to donate ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                                
 
 import os,nimcx,nimdataframe,parseutils,net,tables,parsecsv,algorithm,math,unicode,stats     
 import nre except toSeq
-import av_utils    
+import av_utils
+export av_utils
 
-let NIMFINLIBVERSION* = "0.3.0.0"   
+let NIMFINLIBVERSION* = "0.3.0.1"   
 
 # temporary holding place for data fetched from alphavantage , change directory as required below
 var avtempdata* = "/dev/shm/avdata.csv"    
@@ -145,15 +147,21 @@ var mflag = 0  # used in metal
 proc getData22*(url:string):auto =
   ## getData
   ## 
- 
+  var zclitiming = epochTime()
+  var mytimeout = 15000   # hope this is sensible
   try:
-       var zcli = newHttpClient()
+       
+       var zcli = newHttpClient(timeout = mytimeout)  # 15 secs
        result  = zcli.getcontent(url)   # orig test data
+       
   except :
        currentLine()
-       printLnBiCol("Error : " & url & " content could not be fetched . Retry with -d:ssl",red,bblack,":",0,true,{}) 
+       printLnBiCol("Error : " & url & " content could not be fetched ",red,black,":",0,true,{}) 
        printLn(getCurrentExceptionMsg(),red,xpos = 9)
-       doFinish()            
+       printLn("Timeout default = $1 secs" % ff2(mytimeout div 1000,2),red,xpos = 9)
+       printLnBiCol("Timing : " & ff2(epochTime() - zclitiming,2),xpos=9)
+       decho(2)
+       #doFinish()            
       
       
 proc avDatafetcher*(stckcode:string,mode:string = "compact",apikey:string):bool =
@@ -172,6 +180,10 @@ proc avDatafetcher*(stckcode:string,mode:string = "compact",apikey:string):bool 
    ## /dev/shm temporary filesystem location may not be available on every distribution
    ## 
    ## change accordingly or write to a disc location
+   ## 
+   ## this is the best data fetcher for worldwide markets as of 2018-01 others may work too
+   ## 
+   ## but currently seem more US focused. it returns av_daily_adjusted_csv
    ## 
    result = true
    var callav = ""
@@ -200,13 +212,13 @@ proc avDatafetcher*(stckcode:string,mode:string = "compact",apikey:string):bool 
            
       except:
           currentline()
-          printLnBiCol("Error : Could not write to  " & avtempdata ,colLeft=red)
+          printLnErrorMsg("Could not write to  " & avtempdata)
           echo()
           doFinish()
 
          
-proc avDatafetcherIntraday*(stckcode:string,mode:string = "compact",apikey:string):bool =
-   ## avDatafetcher
+proc avDataFetcherIntraday*(stckcode:string,mode:string = "compact",apikey:string):bool =
+   ## avDataFetcherIntraday
    ## 
    ## fetches data from alphavantage 
    ## 
@@ -221,6 +233,8 @@ proc avDatafetcherIntraday*(stckcode:string,mode:string = "compact",apikey:strin
    ## /dev/shm temporary filesystem location may not be available on every distribution
    ## 
    ## change accordingly or write to a disc location
+   ## 
+   ## works occassionally with non US stocks but mostly not ...
    ## 
    result = true
    var callav = ""
@@ -259,7 +273,7 @@ proc showRawData*() =
      ## displays raw data currently in avtempdata  
      ## 
      nimcat(avtempdata)  
-
+     printLnInfoMsg("Info","End of RawData")
         
 proc showOriginalStockDf*(stckcode:string,xpos:int = 3,rows:int = 3,header:bool = false,apikey:string = "demo"):nimdf {.discardable.} =
    ## showOriginalStockData 
@@ -324,7 +338,13 @@ proc showOriginalStockDf*(stckcode:string,xpos:int = 3,rows:int = 3,header:bool 
         result = ndf1
         
         
-proc showStocksDf*(stckcode:string,rows:int=3,xpos:int = 3,header:bool = false,mode:string = "compact",apikey:string = "demo"):nimdf {.discardable.} =
+proc showStocksDf*(stckcode: string,
+                   rows    : int = 3,
+                   xpos    : int = 3,
+                   header  : bool = false,
+                   mode    : string = "compact",   # indicating mode for api call compact , full 
+                   infodf  : bool = true,          # show a current details dataframe
+                   apikey  : string = "demo") : nimdf {.discardable.} =
      ## showStocksDf
      ## 
      ## a display routine with some more information
@@ -332,7 +352,6 @@ proc showStocksDf*(stckcode:string,rows:int=3,xpos:int = 3,header:bool = false,m
      ## data is freshly downloaded
      ## 
      var okflag = true
-     
      var ct  = newCxtimer("fetchTimer1") 
      ct.startTimer
      if not avDatafetcher(stckcode,mode,apikey): 
@@ -349,6 +368,7 @@ proc showStocksDf*(stckcode:string,rows:int=3,xpos:int = 3,header:bool = false,m
               while txt2.readLine(line):
                  if line.contains("Invalid API call.") == true:
                     decho(2)
+                    printLnBiCol("[Error            ] : Request may have timed out . Try again later.", colleft = red ,xpos = 3)
                     printLnBiCol("[AV  Error Message] : Invalid API call. Please retry or visit the documentation for TIME_SERIES_INTRADAY.", colLeft = red,xpos = 3)
                     printLnBiCol("[NIMFINLIB Message] : Data currently not available for : " & stckcode, colLeft = red,xpos = 3)
                     okflag = false
@@ -365,7 +385,7 @@ proc showStocksDf*(stckcode:string,rows:int=3,xpos:int = 3,header:bool = false,m
         for x in 0..<ndf9.rowcount-1: mynewcol.add(stckcode) 
         # obviously we could add any old thing but for now we want stckcode
         # now just lets make a new df with mynewcol as first col and all other cols from ndf9 df
-        # makeNimDf looses the header from ndf9 and we pass in a new header for our cols
+        # makeNimDf forgets the header from ndf9 hence we pass in a new header for our cols
         
         ndf9 = makeNimDf(mynewcol,getColData(ndf9,1),getColData(ndf9,2),getColData(ndf9,3),getColData(ndf9,4),
                             getColData(ndf9,5),getColData(ndf9,6),getColData(ndf9,7),status = true,hasHeader=true)
@@ -376,9 +396,11 @@ proc showStocksDf*(stckcode:string,rows:int=3,xpos:int = 3,header:bool = false,m
         #echo parsefloat(ndf9.df[0][4])
         
         # calc the percentage change from last day close to current real time close
-        var yday = parsefloat(ndf9.df[1][5])   # last close
-        var tdayo = parseFloat(ndf9.df[0][2])  # current open
-        var tday = parseFloat(ndf9.df[0][5])   # current close
+        var yday  = parsefloat(ndf9.df[1][5])   # last close
+        var tdayo = parseFloat(ndf9.df[0][2])   # current open
+        var tdayh = parseFloat(ndf9.df[0][3])   # current high
+        var tdayl = parseFloat(ndf9.df[0][4])   # current low
+        var tday  = parseFloat(ndf9.df[0][5])   # current close
         var pctchange = ((yday / tday) - 1.0) * -100.0 
         var actchange = tday - yday
         var tdayopen = parseFloat(ndf9.df[0][2])
@@ -422,21 +444,29 @@ proc showStocksDf*(stckcode:string,rows:int=3,xpos:int = 3,header:bool = false,m
         else :
                 printBiCol(fmtx(["","<9"],"Last  : " , ndf9.df[0][5]),colleft=skyblue,colright=white,xpos = xpos + 60,false,{styleReverse})     
         
-        printLnBiCol("Timing: " & $ff(ct.duration,4) & " sec",colleft=lightslategray,colright=pastelwhite,xpos = xpos + 80,false,{styleReverse})
+        printLnBiCol("Timing: " & $ff(ct.duration,4) & " sec",colleft=lightslategray,colright=pastelwhite,xpos = xpos + 79,false,{styleReverse})
         
         if pctchange > 0.0:
-           printBiCol("State: " & uarrow,colleft=lightsteelblue,colright=lime,xpos = xpos + 1,false,{styleReverse})
+           printBiCol("State: " & uparrow,colleft=lightsteelblue,colright=lime,xpos = xpos + 1,false,{styleReverse})
         elif pctchange < 0.0:
            printBiCol("State: " & downarrow,colleft=lightsteelblue,colright=red,xpos = xpos + 1,false,{styleReverse})
         else:
-           printBiCol("State: " & barrow,colleft=lightsteelblue,colright=skyblue,xpos = xpos + 1,false,{styleReverse})
+           printBiCol("State: " & lrarrow,colleft=lightsteelblue,colright=skyblue,xpos = xpos + 1,false,{styleReverse})
+        
+        # we check if date and and date of first row and our time == same , to indicate old data displayed
+        if strip(ndf9.df[0][1],true,true) == strip(cxtoday(),true,true) :
+              printBiCol("Age: New",colleft=lightsteelblue,colright=yellowgreen,xpos = xpos + 10,false,{styleReverse})
+        else:
+              printBiCol("Age: Old",colleft=lightsteelblue,colright=red,xpos = xpos + 10,false,{styleReverse})
+        
         
         printBiCol("Time   : " & ($now()).replace("T"," ") & spaces(4),colleft=lightsteelblue,colright=pastelwhite,xpos = xpos + 20,false,{styleReverse})
 
-        var dayrange = ff(tdayo,4) & " - " & ff(tday,4) 
-        printLnBiCol(fmtx(["","<$1" % [$30]],"Range : " , dayrange),colleft=aquamarine,colright=pastelwhite,xpos = xpos + 60,false,{styleReverse})                   
-
-        showDf(ndf9,
+        var dayrange = ff(tdayl,4) & " - " & ff(tdayh,4) 
+        printLnBiCol(fmtx(["","<$1" % [$29]],"Range : " , dayrange),colleft=aquamarine,colright=pastelwhite,xpos = xpos + 60,false,{styleReverse})                   
+        
+        if infodf == true :  # also show the dataframe
+          showDf(ndf9,
             rows = rows,  #if there is a header we need 2 rows ,if there is no header and header is passed in 1 row 
                           #of course we can show more rows like here show last three dates 1 row is realtime if markets open
             cols =  toNimis(toSeq(1..ndf9.colcount)),                       
@@ -467,9 +497,11 @@ proc showLocalStocksDf*(ndf9:nimdf,xpos:int = 3):nimdf {.discardable.} =
         ## 
 
         # calc the percentage change from last day close to current real time close
-        var yday = parsefloat(ndf9.df[1][5])   # last close   yday =  ndf9.df[1][5].map(parseFloat)
+        var yday  = parsefloat(ndf9.df[1][5])   # last close   yday =  ndf9.df[1][5].map(parseFloat)
         var tdayo = parseFloat(ndf9.df[0][2])  # current open
-        var tday = parseFloat(ndf9.df[0][5])   # current close
+        var tdayh = parseFloat(ndf9.df[0][3])   # current high
+        var tdayl = parseFloat(ndf9.df[0][4])   # current low
+        var tday  = parseFloat(ndf9.df[0][5])   # current close
         var pctchange = ((yday / tday) - 1.0) * -100.0 
         var actchange = tday - yday
         var tdayopen = parseFloat(ndf9.df[0][2])
@@ -504,14 +536,14 @@ proc showLocalStocksDf*(ndf9:nimdf,xpos:int = 3):nimdf {.discardable.} =
         
 
         if pctchange > 0.0:
-                printLnBiCol(fmtx(["",">9",],"Last : " , ndf9.df[0][5]),colright=white,xpos = xpos + 62,false,{styleReverse})
+                printLnBiCol(fmtx(["",">9"],"Last : " , ndf9.df[0][5]),colright=white,xpos = xpos + 62,false,{styleReverse})
         elif pctchange < 0.0:
-                printLnBiCol(fmtx(["",">9",],"Last : " , ndf9.df[0][5]),colleft=truetomato,colright=white,xpos = xpos + 62,false,{styleReverse}) 
+                printLnBiCol(fmtx(["",">9"],"Last : " , ndf9.df[0][5]),colleft=truetomato,colright=white,xpos = xpos + 62,false,{styleReverse}) 
         else :
-                printLnBiCol(fmtx(["",">9",],"Last : " , ndf9.df[0][5]),colleft=skyblue,colright=white,xpos = xpos + 62,false,{styleReverse})                   
+                printLnBiCol(fmtx(["",">9"],"Last : " , ndf9.df[0][5]),colleft=skyblue,colright=white,xpos = xpos + 62,false,{styleReverse})                   
 
-               
-        printLnBiCol(fmtx(["",">12",],"Range : " , ff(tdayo,4) & " - " & ff(tday,4)),colleft=skyblue,colright=white,xpos = xpos + 82,false,{styleReverse})                   
+                              
+        printLnBiCol(fmtx(["","<$1" % [$29]],"Range : " , ff(tdayl,4) & " - " & ff(tdayh,4)),colleft=skyblue,colright=white,xpos = xpos + 82,false,{styleReverse})                   
           
          
         showDf(ndf9,
@@ -744,7 +776,7 @@ proc getavEMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
               txt2.write(avdata)        
     except:
           currentline()
-          printLnBiCol("Error : Could not write to  " & avtempdata ,colLeft=red)
+          printLnErrorMsg("Could not write to  " & avtempdata)
           echo()
           doFinish()
           
@@ -764,13 +796,13 @@ proc getavEMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
             printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
             echo()
         except: 
-            printLnBiCol("[Error Message] : " & stckcode  & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
+            printLnErrorMsg(stckcode  & " - " & indicator & " data unavailable",xpos = xpos)
             var jerror = jsonNode["Error Message"].getStr()
             if jerror.len + xpos > tw - 5:
-                printLnBiCol("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
+                printLnErrorMsg("Invalid API call. No valid json data returned.",xpos = xpos) 
             else:    
-                printLnBiCol(jerror,colLeft = red,sep = "Invalid API call.",xpos = xpos)
-            printLnBiCol("[Note]          : Indicator data for some stocks / markets may not be available",colLeft=peru,xpos = xpos) 
+                printLnErrorMsg(jerror,xpos = xpos)
+            printLnInfoMsg("Indicator data for some stocks / markets may not be available",xpos = xpos) 
             break jsonMeta
         
         var nsi = "Technical Analysis: $1" % indicator
@@ -897,7 +929,8 @@ proc getavWILLR*(stckcode:string,interval:string = "15min",timeperiod:string = "
     ## interval   : 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly
     ## timeperiod : time_period=60, time_period=200  etc.
     ## seriestype : close, open, high, low
-   
+    ## getavWILLR("MSFT","15min","10","close",apikey = apikey, 3, true, false) 
+    
     var callavwillr = ""
    
     if apikey == "demo":
@@ -1075,7 +1108,7 @@ proc getavBBANDS*(stckcode:string,interval:string = "15min",timeperiod:string = 
         
         
 #var flag = 0
-template metal(dc:int):typed =
+template metal(dc:int,xpos:int):typed =
     ## metal
     ## 
     ## utility template to display Kitco metal data
@@ -1128,19 +1161,19 @@ template metal(dc:int):typed =
                           if dc > 18 :
                                   
                                 if parsefloat(kss[3]) > 0.00 :
-                                    print(spaces(4) & uparrow,lime,xpos = 1)
-                                elif  parsefloat(kss[3]) == 0.00:
-                                    print(spaces(4) & leftrightarrow,dodgerblue,xpos = 1)
+                                    print(spaces(4) & uparrow,lime,xpos = xpos - 3)
+                                elif parsefloat(kss[3]) == 0.00:
+                                    print(spaces(4) & leftrightarrow,dodgerblue,xpos = xpos - 3)
                                 else:
-                                    print(spaces(4) & downarrow,red,xpos = 1)                            
+                                    print(spaces(4) & downarrow,red,xpos = xpos - 3)                            
                                 
                           else: 
                                 if parsefloat(kss[3]) > 0.00 :
-                                    print(spaces(4) & uparrow,lime,xpos = 1)
-                                elif  parsefloat(kss[3]) == 0.00:
-                                    print(spaces(4) & leftrightarrow,dodgerblue,xpos = 1)
+                                    print(spaces(4) & uparrow,lime,xpos = xpos - 3)
+                                elif parsefloat(kss[3]) == 0.00:
+                                    print(spaces(4) & leftrightarrow,dodgerblue,xpos = xpos - 3)
                                 else:
-                                    print(spaces(4) & downarrow,red,xpos = 1)
+                                    print(spaces(4) & downarrow,red,xpos = xpos - 3)
                                 
                                                          
                           printLn(fmtx(["<9",">11",">12",">10",">8",">10",">10"],kss[0],kss[1],kss[2],kss[3],kss[4],kss[5],kss[6]))                  
@@ -1207,28 +1240,28 @@ proc showKitcoMetal*(xpos:int = 1) =
                   printLn("All Metal Markets Closed or Data outdated/unavailable",truetomato,xpos = xpos + 2)
                   for x in 13.. 25 : 
                      dc = 6
-                     metal(dc)   
+                     metal(dc,xpos)   
                       
             elif nymarket == true and asiaeuropemarket == true:
                   # both open we show new york gold       
                   dc = 0
                   for x in 0.. ktd.len - 18: 
                     inc dc
-                    metal(dc)                                       
+                    metal(dc,xpos = xpos)                                       
           
             elif nymarket == true and asiaeuropemarket == false:
                 # ny  open we show new york gold       
                   dc = 0
                   for x in 0..<ktd.len - 18: 
                     inc dc
-                    metal(dc)                                                                     
+                    metal(dc,xpos)                                                                     
 
             elif nymarket == false and asiaeuropemarket == true:
                   # asiaeuropemarket  open we show asiaeuropemarket gold       
                   dc = 0
                   for x in 13.. 25:  # <ktd.len:
                     inc dc
-                    metal(dc)  
+                    metal(dc,xpos)  
             else :
                   discard
                   
@@ -1249,7 +1282,39 @@ proc showKitcoMetal*(xpos:int = 1) =
     finally:
          discard         
 
-# utility procs
+# utility procs and indicators
+
+# experimental
+
+# since indicators from the Alpha vantage API work sometimes , but not always
+# some handrolled indicators are provided here some may come from this python repo
+# https://github.com/kylejusticemagnuson/pyti/tree/master/pyti
+
+proc williams_percent_r*(close_data:seq[float]):seq[float] =
+    #     """
+    #     Williams %R.
+    #     Formula:
+    #     wr = (HighestHigh - close / HighestHigh - LowestLow) * -100
+    #     """
+    result = newSeq[float]()
+    var highest_high = max(close_data)
+    var lowest_low   = min(close_data)
+    for close in close_data:
+       result.add ((highest_high - close) / (highest_high - lowest_low)) * -100.0 
+
+proc dailyReturns*(self:seq[string]):nimss =
+    ## dailyReturns
+    ##
+    ## daily returns calculation gives same results as dailyReturns in R / quantmod
+    ##
+    var k = 1
+    var lgx = newSeq[string]()
+    for z in 1+k..<self.len:
+        var lga = (1-(parseFloat(self[z]) / parseFloat(self[z-k])))
+        lgx.add(ff(lga,5))   # this will give us returns with 5 dec pplplaces for display
+    result = tonimss(lgx)
+
+
 
 proc presentValue*[T](FV: T,r:T,m:int,t:int):float =
      ## presentValue
