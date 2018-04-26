@@ -3,9 +3,8 @@
 # 
 # A support module for nimFinLib
 # 
-# this holds vars and procs for accessing the alpha vantage api
-# 
-# 
+# this module holds vars and procs for accessing the alpha vantage api
+# # 
 # strings ending with demo do not need an apikey and can be used directly
 # 
 # Work in progress   
@@ -16,27 +15,36 @@
 #       
 # 
 # 
-# Last : 2018-03-04
+# Last : 2018-04-25
 # 
 # 
 
 import strutils
 
 
+#batch 
+#returns spot price of multiple stock codes --->  US markets only
+proc  getcallavbatch*(stckcode:string,apikey:string):string =  
+       if apikey == "demo":
+             result = "https://www.alphavantage.co/query?function=BATCH_STOCK_QUOTES&symbols=MSFT,FB,AAPL&apikey=demo"
+       else:
+             result = "https://www.alphavantage.co/query?function=BATCH_STOCK_QUOTES&symbols=$1&apikey=$2" % [stckcode, apikey]
+ 
+
 # intraday
-var av_intraday_1m* =  "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=demo"
-var av_intraday_15m* = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=15min&outputsize=full&apikey=demo"
-var av_intraday_1m_csv* = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=demo&datatype=csv"
+let av_intraday_1m* =  "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=demo"
+let av_intraday_15m* = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=15min&outputsize=full&apikey=demo"
+let av_intraday_1m_csv* = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=demo&datatype=csv"
 
 # daily
-var av_daily* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=MSFT&apikey=demo"
-var av_daily_full* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=MSFT&outputsize=full&apikey=demo"
-var av_daily_csv* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=MSFT&apikey=demo&datatype=csv"
+let av_daily* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=MSFT&apikey=demo"
+let av_daily_full* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=MSFT&outputsize=full&apikey=demo"
+let av_daily_csv* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=MSFT&apikey=demo&datatype=csv"
 
 # daily adjusted
-var av_daily_adjusted* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo"
-var av_daily_adjusted_full* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&outputsize=full&apikey=demo"
-var av_daily_adjusted_csv* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo&datatype=csv"
+let av_daily_adjusted* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo"
+let av_daily_adjusted_full* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&outputsize=full&apikey=demo"
+let av_daily_adjusted_csv* = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo&datatype=csv"
 
 proc getcallavda*(stckcode:string,apikey:string):string = 
      result = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=$1&outputsize=compact&apikey=$2&datatype=csv" % [stckcode,apikey]
@@ -46,12 +54,12 @@ proc getcallavdafull*(stckcode:string,apikey:string):string =
       
 
 # weekly
-var av_weekly* = "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=MSFT&apikey=demo"
-var av_weekly_csv* = "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=MSFT&apikey=demo&datatype=csv"
+let av_weekly* = "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=MSFT&apikey=demo"
+let av_weekly_csv* = "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=MSFT&apikey=demo&datatype=csv"
 
 # weekly_adjusted
-var av_weekly_adjusted* = "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=MSFT&apikey=demo"
-var av_weekly_adjusted_csv* = "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=MSFT&apikey=demo&datatype=csv"
+let av_weekly_adjusted* = "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=MSFT&apikey=demo"
+let av_weekly_adjusted_csv* = "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=MSFT&apikey=demo&datatype=csv"
 
 # monthly
 var av_monthly* = "https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=MSFT&apikey=demo"
@@ -71,6 +79,10 @@ proc getexchangerate*(fromCur:string,toCur:string,apikey:string):string =
 # digital currency intraday
 var av_digital_intraday* = "https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_INTRADAY&symbol=BTC&market=CNY&apikey=demo"
 var av_digital_intraday_csv* = "https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_INTRADAY&symbol=BTC&market=CNY&apikey=demo&datatype=csv"
+
+proc getdigitalexchangerate*(fromCur:string,toCur:string,apikey:string):string =
+     result  = "https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_INTRADAY&symbol=$1&market=$2&apikey=$3" % [fromCur,toCur,apikey]
+     #curl "https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_INTRADAY&symbol=BTC&market=CNY&apikey=demo"
 
 # digital currency daily 
 var av_digital_daily* = "https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=BTC&market=CNY&apikey=demo"

@@ -25,8 +25,11 @@ Update Apr. 2018 :
              to return data . Sometimes the API returns error messages
              of being hit too fast , despite one hit per second being
              the advertised capability and sufficient time spacing on the
-             client side. Some of the indicator returns json data fine , but
-             apparently only for US stocks. 
+             client side.
+             Indicator data returns json data fine , but currently only for certain US stocks. 
+             Batch fetching of stock data only works for US market components and may return
+             a default timestamp of 1969 during off trading hours.
+             
              
 
 
@@ -54,7 +57,12 @@ Data gathering and calculations support
               
               Indicator displays
                       
-              Kitco Metal Prices                      
+              Kitco Metal Prices    
+              
+              US market spot prices
+              
+              Digital currencies 5 min intraday prices                  
+              
               
               
 API Docs
@@ -99,7 +107,15 @@ Installation
   
              
 ![Image](http://qqtop.github.io/quickStock.png?raw=true)             
-Example screen from quickStock.nim              
+Example screen from quickStock.nim   
+
+![Image](http://qqtop.github.io/digitalcurrency.png?raw=true)             
+Example screen from nfT58.nim   
+
+![Image](http://qqtop.github.io/quickSpot.png?raw=true)             
+Example screen from quickSpot.nim showing some quotes for Vanguard components.  
+
+
 
 ![Image](http://qqtop.github.io/williamsR.png?raw=true)             
 Example screen from an attempt to plot williams R indicator output

@@ -43,9 +43,8 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2018-04-04
+## Latest      : 2018-04-25
 ##     
-## 
 ## Todo        : anything not yet done
 ##               
 ##
@@ -144,25 +143,26 @@ type
        
 var mflag = 0  # used in metal
           
-proc getData22*(url:string):auto =
+proc getData22*(url:string,timeout:int = 20000):auto =
   ## getData
   ## 
+  ## 
+  ## 
   var zclitiming = epochTime()
-  var mytimeout = 15000   # hope this is sensible
+  var mytimeout = timeout
   try:
-       
-       var zcli = newHttpClient(timeout = mytimeout)  # 15 secs
-       result  = zcli.getcontent(url)   # orig test data
+       var zcli = newHttpClient(timeout = mytimeout)  # 20 secs
+       result = zcli.getcontent(url)   # orig test data
        
   except :
        currentLine()
-       printLnBiCol("Error : " & url & " content could not be fetched ",red,black,":",0,true,{}) 
-       printLn(getCurrentExceptionMsg(),red,xpos = 9)
-       printLn("Timeout default = $1 secs" % ff2(mytimeout div 1000,2),red,xpos = 9)
-       printLnBiCol("Timing : " & ff2(epochTime() - zclitiming,2),xpos=9)
+       printLnErrorMsg(url & " ") 
+       printLnBErrorMsg("Content for one or more stockcodes could not be fetched ")
+       printLnErrorMsg(getCurrentExceptionMsg())
+       printLnInfoMsg("Timeout", "default = $1 secs" % ff2(mytimeout div 1000,2))
+       printLnInfoMsg("Timing ", ff2(epochTime() - zclitiming,2))
        decho(2)
-       #doFinish()            
-      
+       discard()
       
 proc avDatafetcher*(stckcode:string,mode:string = "compact",apikey:string):bool =
    ## avDatafetcher
@@ -266,7 +266,8 @@ proc avDataFetcherIntraday*(stckcode:string,mode:string = "compact",apikey:strin
           echo()
           doFinish()          
           
-
+         
+          
 proc showRawData*() =
      ## showRawData
      ## 
@@ -359,7 +360,7 @@ proc showStocksDf*(stckcode: string,
        okflag = false
      
      else:  
-        
+        # data has been fetched ok
         ct.stopTimer
         #saveTimerResults(ct) 
         
@@ -1291,6 +1292,7 @@ proc showKitcoMetal*(xpos:int = 1) =
 # https://github.com/kylejusticemagnuson/pyti/tree/master/pyti
 
 proc williams_percent_r*(close_data:seq[float]):seq[float] =
+
     #     """
     #     Williams %R.
     #     Formula:

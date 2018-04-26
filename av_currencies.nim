@@ -2,17 +2,18 @@ import nimcx , nimdataframe
 
 # av_currencies
 # 
-# a utility which displays current world and digital 
-# currencies available in Alpha Vantage API
+# a simple utility which displays current world and digital currencies 
+# available via Alpha Vantage API
 # 
+# 2018-04-26
 # 
 
 
 cleanscreen()
-let ufo =  "https://www.alphavantage.co/physical_currency_list/"    # data used in pandas documentation
+let ufo =  "https://www.alphavantage.co/physical_currency_list/"    
 var ndf9 = createDataFrame(ufo,hasHeader = true)
 
-let ufo2 =  "https://www.alphavantage.co/digital_currency_list/"    # data used in pandas documentation
+let ufo2 =  "https://www.alphavantage.co/digital_currency_list/"    
 var ndf10 = createDataFrame(ufo2,hasHeader = true)
 
 ndf9 = dfDefaultSetup(ndf9)   # basic setup
