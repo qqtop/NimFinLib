@@ -43,7 +43,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2018-06-21
+## Latest      : 2018-07-17
 ##     
 ## Todo        : anything not yet done
 ##               
@@ -424,7 +424,7 @@ proc showStocksDf*(stckcode: string,
             printBiCol(fmtx(["",">11",],"Code :" , stckcode),colleft=lightcoral,colright=lightgrey,sep=":",xpos = xpos + 1,false,{styleReverse})
         
         if pctchange > 0.0:
-                printBiCol(fmtx(["",">9"],"Change % ",ff(pctchange,5)),colright=white,sep="%",xpos = xpos  + 20,false,{styleReverse})
+                printBiCol(fmtx(["",">9"],"Change % ",ff(pctchange,5)),colright=white,sep="%",xpos = xpos + 20,false,{styleReverse})
         elif pctchange < 0.0:
                 printBiCol(fmtx(["",">9"],"Change % ",ff(pctchange,5)),colleft=truetomato,colright=white,sep="%",xpos = xpos + 20,false,{styleReverse}) 
         else :
@@ -521,7 +521,7 @@ proc showLocalStocksDf*(ndf9:nimdf,xpos:int = 3):nimdf {.discardable.} =
         printBiCol(fmtx(["",">11",],"Code :" , ndf9.df[0][1]),colleft=olivedrab,colright=lightgrey,sep=":",xpos = xpos,false,{styleReverse})
         
         if pctchange > 0.0:
-                printBiCol(fmtx(["",">9"],"Change % ",ff(pctchange,5)),colright=white,sep="%",xpos = xpos  + 22,false,{styleReverse})
+                printBiCol(fmtx(["",">9"],"Change % ",ff(pctchange,5)),colright=white,sep="%",xpos = xpos + 22,false,{styleReverse})
         elif pctchange < 0.0:
                 printBiCol(fmtx(["",">9"],"Change % ",ff(pctchange,5)),colleft=truetomato,colright=white,sep="%",xpos = xpos + 22,false,{styleReverse}) 
         else :
@@ -614,7 +614,7 @@ proc getavSMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
             printLnBiCol2("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
             decho(1)
         except:
-            printLnBiCol("[Error Message] : " & stckcode  & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
+            printLnBiCol("[Error Message] : " & stckcode & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
             var jerror = jsonNode["Error Message"].getStr()
             if jerror.len + xpos > tw - 5:
                 printLnBiCol("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
@@ -705,7 +705,7 @@ proc getavWMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
             printLnBiCol2("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
             echo()
         except: 
-            printLnBiCol("[Error Message] : " & stckcode  & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
+            printLnBiCol("[Error Message] : " & stckcode & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
             var jerror = jsonNode["Error Message"].getStr()
             if jerror.len + xpos > tw - 5:
                 printLnBiCol("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
@@ -797,7 +797,7 @@ proc getavEMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
             printLnBiCol2("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
             echo()
         except: 
-            printLnErrorMsg(stckcode  & " - " & indicator & " data unavailable",xpos = xpos)
+            printLnErrorMsg(stckcode & " - " & indicator & " data unavailable",xpos = xpos)
             var jerror = jsonNode["Error Message"].getStr()
             if jerror.len + xpos > tw - 5:
                 printLnErrorMsg("Invalid API call. No valid json data returned.",xpos = xpos) 
@@ -881,7 +881,7 @@ proc getavRSI*(stckcode:string,interval:string = "15min",timeperiod:string = "10
             printLnBiCol2("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
             echo()
         except: 
-            printLnBiCol2("[Error Message] : " & stckcode  & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
+            printLnBiCol2("[Error Message] : " & stckcode & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
             var jerror = jsonNode["Error Message"].getStr()
             if jerror.len + xpos > tw - 5:
                 printLnBiCol2("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
@@ -966,7 +966,7 @@ proc getavWILLR*(stckcode:string,interval:string = "15min",timeperiod:string = "
             printLnBiCol2("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
             echo()
         except: 
-            printLnBiCol2("[Error Message] : " & stckcode  & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
+            printLnBiCol2("[Error Message] : " & stckcode & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
             var jerror = jsonNode["Error Message"].getStr()
             if jerror.len + xpos > tw - 5:
                 printLnBiCol2("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
@@ -1055,7 +1055,7 @@ proc getavBBANDS*(stckcode:string,interval:string = "15min",timeperiod:string = 
             printLnBiCol2("TimeZone  : " & jsonNode["Meta Data"]["8: Time Zone"].getStr(),xpos = xpos) 
             echo()
         except: 
-            printLnBiCol("[Error Message] : " & stckcode  & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
+            printLnBiCol("[Error Message] : " & stckcode & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
             var jerror = jsonNode["Error Message"].getStr()
             if jerror.len + xpos > tw - 5:
                 printLnBiCol2("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
@@ -1197,7 +1197,7 @@ proc showKitcoMetal*(xpos:int = 1) =
   
     var dc  = 0 # data counter
     var kss = newSeq[string]()
-    #printLn("Gold,Silver,Platinum Spot price : New York and Asia / Europe ",peru,xpos = xpos)
+    # printLn("Gold,Silver,Platinum Spot price : New York and Asia / Europe ",peru,xpos = xpos)
     var kt = ""
     try:
             let zcli = newHttpClient()
@@ -1277,7 +1277,7 @@ proc showKitcoMetal*(xpos:int = 1) =
     except  TimeoutError:
          printLn("TimeoutError : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)
     except  ProtocolError:
-         printLn("Protocol Error : " & getCurrentExceptionMsg()  & " at : " & $now(),truetomato,xpos = xpos)
+         printLn("Protocol Error : " & getCurrentExceptionMsg() & " at : " & $now(),truetomato,xpos = xpos)
     except :
          discard
     finally:
