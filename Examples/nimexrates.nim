@@ -1,15 +1,17 @@
 import nimcx
 
+
 # example for fetching exchangrates from Alpha Vantage api
+# just provide your free api key
 
 
 # nimexrate
 # 
-# test to pull real time exchange rates using Alpha Vantage Api call
+# pulls real time exchange rates using Alpha Vantage Api call
 #
 # status : ok
 # 
-# 2017-11-18
+# 2018-07-20
 # 
 # this returns json like so
 # {
@@ -28,23 +30,18 @@ import nimcx
 # 
 
 
-let apikey = ""
+let apikey = ""            #   <------------   your apikey needed
 
-
-if apikey == "":
-   
-   echo()
-   printLnBiCol("Error : Please provide your free Alpha Vantage api key.",red,bblack,":",0,true,{}) 
-   doByeBye()
-
-#  add your own curpair 
+#  add/change for your own curpair requirements
 let currencypairs = @[["CNY","HKD"],
                       ["USD","HKD"],
                       ["GBP","HKD"],
+                      ["EUR","HKD"],
                       ["CAD","HKD"],
                       ["USD","JPY"],
                       ["GBP","USD"],
-                      ["GBP","EUR"]]
+                      ["GBP","EUR"],
+                      ["BTC","USD"]]
 
 
 proc currequeststring(cur1,cur2:string):string =
@@ -60,7 +57,7 @@ proc getData1*(url:string):auto =
        var zcli = newHttpClient()
        result  = zcli.getcontent(url)   # orig test data
   except :
-       printLnBiCol("Error : " & url & " content could not be fetched . Retry with -d:ssl",red,bblack,":",0,true,{}) 
+       printLnErrorMsg("Error : " & url & " content could not be fetched . Retry with -d:ssl")
        printLn(getCurrentExceptionMsg(),red,xpos = 9)
        doFinish()
 
@@ -93,14 +90,20 @@ proc getexrate[T](bdata:T,xpos:int=3) =
 
 cleanscreen() 
 decho(3)
-var myxpos = 3
-printLnBiCol("Realtime Exchange Rate      ",colleft=truetomato,colRight = lightslategray,sep = " ",xpos = myxpos,styled={stylereverse})    
-for ufox in  0..<currencypairs.len:   
-   var cxdata = parseJson(getdata1(currequeststring(currencypairs[ufox][0],currencypairs[ufox][1])))
-   getexrate(cxdata,xpos=myxpos)
+if apikey == "":
+   echo()
+   printLnErrorMsg("Please provide your free Alpha Vantage api key.")
+   
+else:   
+   var myxpos = 3
+   printLnBiCol("Realtime Exchange Rate      ",colleft=truetomato,colRight = lightslategray,sep = " ",xpos = myxpos,styled={stylereverse})    
+   for ufox in  0 ..< currencypairs.len:   
+      var cxdata = parseJson(getdata1(currequeststring(currencypairs[ufox][0],currencypairs[ufox][1])))
+      getexrate(cxdata,xpos=myxpos)
 
-printlnBiCol("Data    : Alpha Vantage     ",colLeft = gray,xpos = myxpos ,styled = {stylereverse})
-printLnBiCol("UTC " & $(getTimeZone() div 3600) & "  : " & now(),colLeft = pastelblue,colRight = slategray,xpos = myxpos)  
-
+   printLnBiCol(cxTimeZone() & spaces(4) & $now(),colLeft = pastelblue,colRight = slategray,sep=spaces(4),xpos = myxpos)  
+   echo()
+   printLnBiCol(fmtx(["","",],"Data : " , "CURRENCY_EXCHANGE_RATE  by Alpha Vantage"),colleft=slategray,colright=pastelwhite,sep=":",xpos = myxpos,false,{styleReverse})       
+  
 
 doFinish()
