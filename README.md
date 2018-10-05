@@ -37,7 +37,11 @@ Update Oct. 2018
             for any reasonable work.
             Of course there is the unpriced and untested premium option. 
             Kitco metal prices are not effected by this call limit . 
-            The library has been updated to reasonably work with nim 0.19.x  
+            The library has been updated to work with nim 0.19.x 
+            If sudden crashes occure see : cat /dev/shm/avdata.csv
+            most likely reason is inserted nagging lines by the api to ask for registration
+            and once registered ask to visit their premium site.
+            
              
 
 
