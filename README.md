@@ -30,12 +30,20 @@ Update Apr. 2018 :
              Batch fetching of stock data only works for US market components and may return
              a default timestamp of 1969 during off trading hours.
              
+Update Oct. 2018
+
+            Data quality and speed has slightly improved , unfortunately the free apikey now has a
+            standard call-frequency limit of 5 requests per minute , which is much too low
+            for any reasonable work.
+            Of course there is the unpriced and untested premium option. 
+            Kitco metal prices are not effected by this call limit . 
+            The library has been updated to reasonably work with nim 0.19.x  
              
 
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|
-| nimFinLib  | Development | 0.3.0.x | MIT opensource | Linux  | Nim >= 0.18.x  |
+| nimFinLib  | Development | 0.3.0.x | MIT opensource | Linux  | Nim >= 0.19.x  |
 
 
 
@@ -61,7 +69,7 @@ Data gathering and calculations support
               
               US market spot prices
               
-              Digital currencies 5 min intraday prices                  
+              Digital currencies 5 min intraday prices .               
               
               
               
@@ -80,10 +88,10 @@ Tests and Examples
 ------------------
     
       
-      nimexrates  ok with api key
-      nfT53       ok w/o api key
-      nfT55       ok w/o api key
-      nimmetal    ok
+      nimexrates  
+      nfT53       
+      nfT55       
+      nimmetal    
      
 
 Requirements

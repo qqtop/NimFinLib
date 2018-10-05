@@ -7,9 +7,9 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.3.0.1
+## Version     : 0.3.0.2
 ##
-## Compiler    : nim 0.18.x  dev branch
+## Compiler    : nim 0.19.x  dev branch
 ##
 ##
 ## Description : A basic library for financial data display and calculations 
@@ -43,7 +43,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2018-07-17
+## Latest      : 2018-10-05
 ##     
 ## Todo        : anything not yet done
 ##               
@@ -78,13 +78,15 @@
 ##                                       
 ##                   You do not wish to donate ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                                
-
-import os,nimcx,nimdataframe,parseutils,net,tables,parsecsv,algorithm,math,unicode,stats     
+ 
+import nimcx
+import nimdataframe
 import nre except toSeq
 import av_utils
+
 export av_utils
 
-let NIMFINLIBVERSION* = "0.3.0.1"   
+let NIMFINLIBVERSION* = "0.3.0.2"   
 
 # temporary holding place for data fetched from alphavantage , change directory as required by your setup below
 var avtempdata* = "/dev/shm/avdata.csv"    
@@ -152,8 +154,7 @@ proc getData22*(url:string,timeout:int = 20000):auto =
   var mytimeout = timeout
   try:
        var zcli = newHttpClient(timeout = mytimeout)  # 20 secs
-       result = zcli.getcontent(url)   # orig test data
-       
+       result = zcli.getcontent(url)   
   except :
        currentLine()
        printLnErrorMsg(url & " ") 
@@ -198,7 +199,7 @@ proc avDatafetcher*(stckcode:string,mode:string = "compact",apikey:string):bool 
    elif toLowerAscii(mode) == "full":
        #callav = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=$1&outputsize=full&apikey=$2&datatype=csv" % [stckcode,apikey]
        callav = getcallavdafull(stckcode,apikey)
-       
+   else:    
        currentLine()
        printLnBiCol("Error :  Wrong mode specified . Use compact or full only",colLeft=red)
        echo()
@@ -274,15 +275,18 @@ proc showRawData*() =
      ## displays raw data currently in avtempdata  
      ## 
      nimcat(avtempdata)  
-     printLnInfoMsg("Info","End of RawData")
+     printLnInfoMsg("Info","End of RawData",xpos=0)
         
 proc showOriginalStockDf*(stckcode:string,xpos:int = 3,rows:int = 3,header:bool = false,apikey:string = "demo"):nimdf {.discardable.} =
-   ## showOriginalStockData 
+   ## showOriginalStockData WIP
+   ## 
    ## 
    ## using TIME_SERIES_INTRADAY 1 min  DATA   # this will be selectable in the future in respect of time_series and interval
    ## 
    ## first data row maybe realtime if markets online , we always fetch fresh data 
    ## 
+    
+   
    var okflag = true
    if not avDatafetcherIntraday(stckcode,"compact",apikey): doFinish()
    else:
@@ -293,45 +297,83 @@ proc showOriginalStockDf*(stckcode:string,xpos:int = 3,rows:int = 3,header:bool 
                     printLnBiCol("[AV  Error Message] : Invalid API call. Please retry or visit the documentation for TIME_SERIES_INTRADAY.", colLeft = red,xpos = 3)
                     printLnBiCol("[NIMFINLIB Message] : Data currently not available for : " & stckcode, colLeft = red,xpos = 3)
                     okflag = false
+                 elif line.contains("premium") == true:
+                    # we ran into an api limiting issue
+                    # need to exit to avoid sigfaults and what not
+                    decho(3)
+                    printLnInfoMsg("Info ","Alpha Vantage standard call-frequency limit 5 requests per minute with free api key")
+                    printLnStatusMsg("[showOriginalStockDf] Last call hit the api limit, need to exit",colLeft=red)
+                    decho(2)
+                    okflag = false
+                    doByeBye()
+                    echo()
+                    quit(0)
               
    if okflag == true:    
       
         var ndf1 = createDataFrame(avtempdata,cols = 7,hasHeader = true) 
         ndf1.colwidths = @[20,10,10,10,10,11]      # change the default columnwidths created in dfDefaultSetup
-        
+        var contbool:bool = false
+        try:
+           if parseFloat(ndf1.df[2][5]) > -0.0000001 : contbool = true  
+        except:
+           contbool = false
+           
         # how to access a certain value from the df lets get  row 1 col 1
         #echo parsefloat(ndf9.df[0][1])
         #echo parsefloat(ndf9.df[0][4])
 
         # calc the percentage change from last day close to current real time close
-        var yday = parsefloat(ndf1.df[2][5])   # last close
-        var tday = parseFloat(ndf1.df[1][5])   # current close
-        var pctchange = ((yday / tday) - 1.0) * -100.0 
-        var actchange = tday - yday
-        var tdayopen = parseFloat(ndf1.df[1][2])
-
-        # set up df colors we only change close and adjusted close 
-        if   yday < tday == true: ndf1.colcolors = @[pastelgreen,pastelpink,lightblue,goldenrod,lime,lime,white]  
-        elif yday > tday == true: ndf1.colcolors = @[pastelgreen,pastelpink,lightblue,goldenrod,truetomato,truetomato,white]
-        else:  ndf1.colcolors = @[pastelgreen,pastelpink,dodgerblue,gold,skyblue,skyblue,white]
-        ndf1.colheaders = @["timestamp","open","high","low","close","adjclose" ,"volume"]
+        if contbool == true:
+          try:
+            var yday = 0.00
+            var tday = 0.00
+            var pctchange = 0.00
+            var actchange = 0.00
+            var tdayopen = 0.00 
+                    
+            yday = parsefloat(ndf1.df[2][5])   # last close
+            tday = parseFloat(ndf1.df[1][5])   # current close
+            pctchange = ((yday / tday) - 1.0) * -100.0 
+            actchange = tday - yday
+            tdayopen = parseFloat(ndf1.df[1][2])
+            
+            # set up df colors we only change close and adjusted close 
+           
+            if   yday < tday == true: ndf1.colcolors = @[pastelgreen,pastelpink,lightblue,goldenrod,lime,lime,white]  
+            elif yday > tday == true: ndf1.colcolors = @[pastelgreen,pastelpink,lightblue,goldenrod,truetomato,truetomato,white]
+            else:  ndf1.colcolors = @[pastelgreen,pastelpink,dodgerblue,gold,skyblue,skyblue,white]
+            ndf1.colheaders = @["timestamp","open","high","low","close","adjclose" ,"volume"]
+           
+            printLnBiCol("Original Data  : " & spaces(1) & stckcode,xpos = xpos)
+            showDf(ndf1,
+                rows = rows,  #if there is a header we need 2 rows ,if there is no header and the header is passed in 1 row 
+                              #of course we can show more rows like here show last three dates 1 row is realtime if markets open
+                cols = toNimis(toSeq(1..ndf1.colcount)),                       
+                colwd = ndf1.colwidths,
+                colcolors = ndf1.colcolors,
+                showFrame =  true,
+                framecolor = gold,
+                showHeader = true,
+                #headertext = ndf1.colheaders,  # not needed as we have headers in the incoming csv file
+                leftalignflag = false,
+                xpos = xpos) 
+            echo()
+            ndf1.status = true
+            result = ndf1
+          except :
+            printLnErrorMsg("IndexError occured in showOriginalStockDf. Check data .")
+            discard
+            var ndf1 = newNimDf()
+            ndf1.status = false
+            result = ndf1    
         
-        printLnBiCol("Original Data  : " & spaces(1) & stckcode,xpos = xpos)
-        showDf(ndf1,
-            rows = rows,  #if there is a header we need 2 rows ,if there is no header and the header is passed in 1 row 
-                          #of course we can show more rows like here show last three dates 1 row is realtime if markets open
-            cols =  toNimis(toSeq(1..ndf1.colcount)),                       
-            colwd = ndf1.colwidths,
-            colcolors = ndf1.colcolors,
-            showFrame =  true,
-            framecolor = blue,
-            showHeader = true,
-            #headertext = ndf1.colheaders,  # not needed as we have headers in the incoming csv file
-            leftalignflag = false,
-            xpos = xpos) 
-        echo()
-        ndf1.status = true
-        result = ndf1
+        else: # contbool == false
+            printLnErrorMsg("showOriginalStockDf could not be displayed for : " & $stckcode)
+            # return a dummy dataframe
+            var ndf1 = newNimDf()
+            ndf1.status = false
+            result = ndf1
    else:
         # we create a dummy dataframe to pass the status out of the proc
         var ndf1 = newNimDf()
@@ -363,7 +405,6 @@ proc showStocksDf*(stckcode: string,
         # data has been fetched ok
         ct.stopTimer
         #saveTimerResults(ct) 
-        
         withFile(txt2,avtempdata, fmRead):
               var line = ""
               while txt2.readLine(line):
@@ -373,7 +414,16 @@ proc showStocksDf*(stckcode: string,
                     printLnBiCol("[AV  Error Message] : Invalid API call. Please retry or visit the documentation for TIME_SERIES_INTRADAY.", colLeft = red,xpos = 3)
                     printLnBiCol("[NIMFINLIB Message] : Data currently not available for : " & stckcode, colLeft = red,xpos = 3)
                     okflag = false
-                    
+                 if line.contains("premium") == true:
+                    var avline = line.split("! ")
+                    printLnErrorMsg(cxpad("Api call limit of 5 calls/minute reached",avline[1].len))
+                    printLnAlertMsg(cxpad(avline[0].strip(),avline[1].len))
+                    printLnAlertMsg(avline[1])
+                    okflag = false   
+                    echo()
+                    doByeBye()
+                    echo()
+                    quit(0)
                     
      if okflag == true:    
         
@@ -526,7 +576,6 @@ proc showLocalStocksDf*(ndf9:nimdf,xpos:int = 3):nimdf {.discardable.} =
                 printBiCol(fmtx(["",">9"],"Change % ",ff(pctchange,5)),colleft=truetomato,colright=white,sep="%",xpos = xpos + 22,false,{styleReverse}) 
         else :
                 printBiCol(fmtx(["",">9"],"Change % ",ff(pctchange,5)),colleft=skyblue,colright=white,sep="%",xpos = xpos + 22,false,{styleReverse})     
-        
         
         if actchange > 0.0:
                 printBiCol(fmtx(["",">9"],"Change : ",ff(actchange,6)),colright=white,xpos = xpos + 42,false,{styleReverse})
