@@ -43,7 +43,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2018-10-05
+## Latest      : 2018-10-06
 ##     
 ## Todo        : anything not yet done
 ##               
@@ -266,8 +266,109 @@ proc avDataFetcherIntraday*(stckcode:string,mode:string = "compact",apikey:strin
           printLnBiCol("Error : Could not write to  " & avtempdata ,colLeft=red)
           echo()
           doFinish()          
-          
+
+proc avDataFetcherGlobal*(stckcode:string,mode:string = "compact",apikey:string):bool =
+   ## avDataFetcherGlobal
+   ## 
+   ## fetches data from alphavantage  
+   ## 
+   ## default = compact   
+   ## 
+   ## 
+   ## 
+   ## data will be written into /dev/shm/avdata.csv  .. 
+   ## 
+   ## change accordingly or write to a disc location
+   ## 
+   ## works occassionally with non US stocks but mostly not ...
+   ## 
+   result = true
+   var callav = ""
+   
+   if apikey == "demo":
+       decho(2)
+       printLnErrorMsg("Only with Api key")
+       echo()
+       doByebye()
+       decho(2)
+       quit(0)
+       
+   elif toLowerAscii(mode) == "compact": # just using the default
+       callav = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=$1&apikey=$2&datatype=csv" % [stckcode,apikey]
+   else:
+       currentLine()
+       printLnErrorMsg("[NimFinLib] avDataFetcherGlobal : Wrong mode specified . Use compact or full only")
+       echo()
+       result = false
+  
+   if result == true:
+      let avdata = getData22(callav)
+      try:
+          withFile(txt2,avtempdata, fmWrite):
+                  txt2.write(avdata)
+           
+      except:
+          currentline()
+          printLnErrorMsg("[NimFinLib] avDataFetcherGlobal : Could not write to  " & avtempdata)
+          echo()
+          doFinish()          
          
+         
+proc avDataFetcherGlobal*(stckcodes:seq[string],mode:string = "compact",apikey:string):bool =
+   ## avDataFetcherGlobal
+   ## 
+   ## fetches data from alphavantage  
+   ## 
+   ## default = compact   
+   ## 
+   ## here we provide a seq of stockcodes to fetch 
+   ## 
+   ## data will be written into /dev/shm/avdata.csv  .. 
+   ## 
+   ## change accordingly or write to a disc location
+   ## 
+   ## works occassionally with non US stocks but mostly not ...
+   ## 
+   result = true
+   var callav = ""
+   removeFile(avtempdata)
+   var dc = 0
+   for stckcode in stckcodes:
+       if apikey == "demo":
+           decho(2)
+           printLnErrorMsg("You need an Api key for this request")
+           echo()
+           doByebye()
+           decho(2)
+           quit(0)
+           
+       elif toLowerAscii(mode) == "compact": # just using the default
+           callav = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=$1&apikey=$2&datatype=csv" % [stckcode,apikey]
+       else:
+           currentLine()
+           printLnErrorMsg("[NimFinLib] avDataFetcherGlobal : Wrong mode specified . Use compact or full only")
+           echo()
+           result = false        
+       
+       if result == true:
+         
+          let avdata = getData22(callav)
+          try:
+              withFile(txt2,avtempdata, fmAppend):
+                      if dc == 0:
+                         txt2.write(avdata)
+                         dc = dc + 1
+                      else :
+                         var bvdata = avdata.splitLines()[1]  
+                         txt2.writeLine(bvdata)
+          except:
+              currentline()
+              printLnErrorMsg("[NimFinLib] avDataFetcherGlobal : Could not write to  " & avtempdata)
+              echo()
+              doByebye()
+              decho(2)
+              quit(0)         
+              
           
 proc showRawData*() =
      ## showRawData

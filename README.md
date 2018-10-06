@@ -33,9 +33,9 @@ Update Apr. 2018 :
 Update Oct. 2018
 
             Data quality and speed has slightly improved , unfortunately the free apikey now has a
-            standard call-frequency limit of 5 requests per minute , which is much too low
+            standard call-frequency limit of 4-5 requests per minute , which is much too low
             for any reasonable work.
-            Of course there is the unpriced and untested premium option. 
+            Of course there is the premium option which allows more requests / minute. 
             Kitco metal prices are not effected by this call limit . 
             The library has been updated to work with nim 0.19.x 
             If sudden crashes occure see : cat /dev/shm/avdata.csv
@@ -56,7 +56,7 @@ Data gathering and calculations support
 ----------------------------------------
 
                           
-              Alpha Vantage Api support            ----> testing since Nov 2017
+              Alpha Vantage Api support            
               
                          
               Dataframe for display and easy working with dataseries
@@ -94,7 +94,8 @@ Tests and Examples
       
       nimexrates  
       nfT53       
-      nfT55       
+      nfT55  
+      nfT60     
       nimmetal    
      
 
