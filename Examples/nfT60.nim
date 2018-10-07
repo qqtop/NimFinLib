@@ -1,9 +1,7 @@
-#import nimcx
-#import nimFinLib
-#import nimdataframe
-import "/data5/NimStuff/nimdataframedevel/nimdataframe.nim"
-import "/data5/NimStuff/NimCxDevel/cx.nim"
-import "/data5/NimStuff/NimFinLibDevel/nimFinLib.nim"
+import nimcx
+import nimFinLib
+import nimdataframe
+
 #
 # example nfT60.nim
 # 

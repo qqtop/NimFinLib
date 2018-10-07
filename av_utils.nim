@@ -15,7 +15,7 @@
 #       
 # 
 # 
-# Last : 2018-04-25
+# Last : 2018-10-06
 # 
 # 
 
@@ -30,7 +30,9 @@ proc  getcallavbatch*(stckcode:string,apikey:string):string =
        else:
              result = "https://www.alphavantage.co/query?function=BATCH_STOCK_QUOTES&symbols=$1&apikey=$2" % [stckcode, apikey]
  
-
+#global
+let av_global_omx* = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=^OMX&apikey="
+ 
 # intraday
 let av_intraday_1m* =  "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=demo"
 let av_intraday_15m* = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=15min&outputsize=full&apikey=demo"
