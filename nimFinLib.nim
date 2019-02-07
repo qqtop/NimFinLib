@@ -7,7 +7,7 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.3.0.2
+## Version     : 0.3.0.3
 ##
 ## Compiler    : nim 0.19.x  dev branch
 ##
@@ -15,6 +15,10 @@
 ## Description : A basic library for financial data display and calculations 
 ## 
 ##               using data from Alpha Vantage API
+##               
+##               As mentioned the free API calls allowed are now limited to abt 4/minute , which is 
+##               
+##               really to low for any reasonable work . 
 ##
 ##               Currency , Stock and Index 
 ##
@@ -43,7 +47,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2018-10-06
+## Latest      : 2019-02-07
 ##     
 ## Todo        : anything not yet done
 ##               
@@ -86,7 +90,7 @@ import av_utils
 
 export av_utils
 
-let NIMFINLIBVERSION* = "0.3.0.2"   
+let NIMFINLIBVERSION* = "0.3.0.3"   
 
 # temporary holding place for data fetched from alphavantage , change directory as required by your setup below
 var avtempdata* = "/dev/shm/avdata.csv"    
@@ -539,8 +543,7 @@ proc showStocksDf*(stckcode: string,
         # now just lets make a new df with mynewcol as first col and all other cols from ndf9 df
         # makeNimDf forgets the header from ndf9 hence we pass in a new header for our cols
         
-        ndf9 = makeNimDf(mynewcol,getColData(ndf9,1),getColData(ndf9,2),getColData(ndf9,3),getColData(ndf9,4),
-                            getColData(ndf9,5),getColData(ndf9,6),getColData(ndf9,7),status = true,hasHeader=true)
+        ndf9 = makeNimDf(@[mynewcol,getColData(ndf9,1),getColData(ndf9,2),getColData(ndf9,3),getColData(ndf9,4),getColData(ndf9,5),getColData(ndf9,6),getColData(ndf9,7)],status = true,hasHeader=true)
         #dfsave(ndf9,"ndf9.csv")  # used in debugging for checking what we get here
         ndf9.colwidths = @[12,14,10,10,10,10,10,11]         # change the default columnwidths created in dfDefaultSetup
         # how to access a certain value from the df lets get  row 1 col 1
@@ -782,7 +785,7 @@ proc getavSMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
             smadate.add(strip(x))
             sma.add(strip(jsonNode[nsi][x][indicator].getStr())) 
 
-        var ndfSma =  makeNimDf(smadate,sma,status = true,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
+        var ndfSma =  makeNimDf(@[smadate,sma],status = true,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
         
         ndfsma.colwidths  = @[17,10]
         ndfsma.colcolors  = @[violet,pastelgreen]
@@ -873,7 +876,7 @@ proc getavWMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
             wmadate.add(strip(x))
             wma.add(strip(jsonNode[nsi][x][indicator].getStr())) 
 
-        var ndfWma =  makeNimDf(wmadate,wma,status = true,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
+        var ndfWma =  makeNimDf(@[wmadate,wma],status = true,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
         
         ndfwma.colwidths  = @[17,10]
         ndfwma.colcolors  = @[violet,pastelgreen]
@@ -964,7 +967,7 @@ proc getavEMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
             emadate.add(strip(x))
             ema.add(strip(jsonNode[nsi][x][indicator].getStr())) 
 
-        var ndfEma =  makeNimDf(emadate,ema,status = true,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
+        var ndfEma =  makeNimDf(@[emadate,ema],status = true,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
         
         ndfema.colwidths  = @[17,10]
         ndfema.colcolors  = @[violet,pastelgreen]
@@ -1048,7 +1051,7 @@ proc getavRSI*(stckcode:string,interval:string = "15min",timeperiod:string = "10
             rsidate.add(strip(x))
             rsi.add(strip(jsonNode[nsi][x][indicator].getStr())) 
 
-        var ndfRsi =  makeNimDf(rsidate,rsi,status = true,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
+        var ndfRsi =  makeNimDf(@[rsidate,rsi],status = true,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
         
         ndfrsi.colwidths  = @[17,10]
         ndfrsi.colcolors  = @[violet,pastelgreen]
@@ -1133,7 +1136,7 @@ proc getavWILLR*(stckcode:string,interval:string = "15min",timeperiod:string = "
             willrdate.add(strip(x))
             willr.add(strip(jsonNode[nsi][x][indicator].getStr())) 
 
-        var ndfWillr =  makeNimDf(willrdate,willr,status = true,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
+        var ndfWillr =  makeNimDf(@[willrdate,willr],status = true,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
         
         ndfwillr.colwidths  = @[17,10]
         ndfwillr.colcolors  = @[violet,pastelgreen]
@@ -1227,7 +1230,7 @@ proc getavBBANDS*(stckcode:string,interval:string = "15min",timeperiod:string = 
             bbandslower.add(strip(jsonNode[nsi][x]["Real Lower Band"].getStr())) 
             bbandsmiddle.add(strip(jsonNode[nsi][x]["Real Middle Band"].getStr())) 
             
-        var ndfBBands =  makeNimDf(bbandsdate,bbandsupper,bbandslower,bbandsmiddle,status = true,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
+        var ndfBBands =  makeNimDf(@[bbandsdate,bbandsupper,bbandslower,bbandsmiddle],status = true,hasHeader = true)  # tell makeNimDf that we will have a header , which will be passed in
         
         ndfbbands.colwidths  = @[17,14,14,14]
         ndfbbands.colcolors  = @[violet,pastelgreen,pastelblue,pastelpink]

@@ -43,6 +43,14 @@ Update Oct. 2018
             and once registered ask to visit their premium site.
             
              
+Update Feb. 2019
+
+            Made the library compile with latest nim devel
+            Call frequency limit stated above has unfortunately not improved .
+            The current nagging line is:
+               "Thank you for using Alpha Vantage! Our standard API call frequency is 5 calls per minute and 500 calls per day."
+            Well ... why bother.   
+            
 
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
