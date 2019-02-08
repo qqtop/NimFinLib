@@ -48,8 +48,13 @@ Update Feb. 2019
             Made the library compile with latest nim devel
             Call frequency limit stated above has unfortunately not improved .
             The current nagging line is:
-               "Thank you for using Alpha Vantage! Our standard API call frequency is 5 calls per minute and 500 calls per day."
-            Well ... why bother.   
+               "Thank you for using Alpha Vantage! Our standard API call frequency is 5 
+               calls per minute and 500 calls per day."
+            
+            Next maybe will be looking into https://iextrading.com/developer/ , however this api is mainly Us-market focused
+            so of limited use for anyone not trading or researching there.
+            At least they currently (2019-02) promise up to 100 request/sec , which is more like it.
+            
             
 
 
