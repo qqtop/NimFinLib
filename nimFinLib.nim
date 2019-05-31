@@ -47,7 +47,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2019-02-07
+## Latest      : 2019-05-31
 ##     
 ## Todo        : anything not yet done
 ##               
@@ -758,13 +758,13 @@ proc getavSMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
     let jsonNode = parseJson(avdata)
     block jsonMeta:
         try:
-            printLnBiCol2("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
-            printLnBiCol2("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
-            printLnBiCol2("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
-            printLnBiCol2("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
-            printLnBiCol2("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
-            printLnBiCol2("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
-            printLnBiCol2("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
+            printLnBiCol("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
+            printLnBiCol("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
+            printLnBiCol("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
+            printLnBiCol("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
+            printLnBiCol("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
+            printLnBiCol("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
+            printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
             decho(1)
         except:
             printLnBiCol("[Error Message] : " & stckcode & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
@@ -849,13 +849,13 @@ proc getavWMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
     let jsonNode = parseJson(avdata)
     block jsonMeta:
         try:
-            printLnBiCol2("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
-            printLnBiCol2("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
-            printLnBiCol2("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
-            printLnBiCol2("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
-            printLnBiCol2("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
-            printLnBiCol2("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
-            printLnBiCol2("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
+            printLnBiCol("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
+            printLnBiCol("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
+            printLnBiCol("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
+            printLnBiCol("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
+            printLnBiCol("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
+            printLnBiCol("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
+            printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
             echo()
         except: 
             printLnBiCol("[Error Message] : " & stckcode & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
@@ -941,13 +941,13 @@ proc getavEMA*(stckcode:string,interval:string = "15min",timeperiod:string = "10
     let jsonNode = parseJson(avdata)
     block jsonMeta:
         try:
-            printLnBiCol2("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
-            printLnBiCol2("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
-            printLnBiCol2("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
-            printLnBiCol2("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
-            printLnBiCol2("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
-            printLnBiCol2("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
-            printLnBiCol2("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
+            printLnBiCol("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
+            printLnBiCol("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
+            printLnBiCol("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
+            printLnBiCol("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
+            printLnBiCol("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
+            printLnBiCol("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
+            printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
             echo()
         except: 
             printLnErrorMsg(stckcode & " - " & indicator & " data unavailable",xpos = xpos)
@@ -1025,22 +1025,22 @@ proc getavRSI*(stckcode:string,interval:string = "15min",timeperiod:string = "10
     let jsonNode = parseJson(avdata)
     block jsonMeta:
         try:
-            printLnBiCol2("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
-            printLnBiCol2("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
-            printLnBiCol2("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
-            printLnBiCol2("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
-            printLnBiCol2("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
-            printLnBiCol2("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
-            printLnBiCol2("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
+            printLnBiCol("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
+            printLnBiCol("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
+            printLnBiCol("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
+            printLnBiCol("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
+            printLnBiCol("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
+            printLnBiCol("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
+            printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
             echo()
         except: 
-            printLnBiCol2("[Error Message] : " & stckcode & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
+            printLnBiCol("[Error Message] : " & stckcode & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
             var jerror = jsonNode["Error Message"].getStr()
             if jerror.len + xpos > tw - 5:
-                printLnBiCol2("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
+                printLnBiCol("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
             else:    
-                printLnBiCol2(jerror,colLeft = red,sep = "Invalid API call.",xpos = xpos)
-            printLnBiCol2("[Note]          : Indicator data for some stocks / markets may not be available",colLeft=peru,xpos = xpos) 
+                printLnBiCol(jerror,colLeft = red,sep = "Invalid API call.",xpos = xpos)
+            printLnBiCol("[Note]          : Indicator data for some stocks / markets may not be available",colLeft=peru,xpos = xpos) 
             break jsonMeta
         
         var nsi = "Technical Analysis: $1" % indicator
@@ -1110,21 +1110,21 @@ proc getavWILLR*(stckcode:string,interval:string = "15min",timeperiod:string = "
     let jsonNode = parseJson(avdata)
     block jsonMeta:
         try:
-            printLnBiCol2("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
-            printLnBiCol2("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
-            printLnBiCol2("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
-            printLnBiCol2("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
-            printLnBiCol2("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
-            printLnBiCol2("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
-            printLnBiCol2("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
+            printLnBiCol("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
+            printLnBiCol("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
+            printLnBiCol("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
+            printLnBiCol("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
+            printLnBiCol("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
+            printLnBiCol("SeriesType: " & jsonNode["Meta Data"]["6: Series Type"].getStr(),xpos = xpos) 
+            printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["7: Time Zone"].getStr(),xpos = xpos) 
             echo()
         except: 
-            printLnBiCol2("[Error Message] : " & stckcode & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
+            printLnBiCol("[Error Message] : " & stckcode & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
             var jerror = jsonNode["Error Message"].getStr()
             if jerror.len + xpos > tw - 5:
-                printLnBiCol2("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
+                printLnBiCol("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
             else:    
-                printLnBiCol2(jerror,colLeft = red,sep = "Invalid API call.",xpos = xpos)
+                printLnBiCol(jerror,colLeft = red,sep = "Invalid API call.",xpos = xpos)
             printLnBiCol("[Note]          : Indicator data for some stocks / markets may not be available",colLeft=peru,xpos = xpos) 
             break jsonMeta
         
@@ -1196,25 +1196,25 @@ proc getavBBANDS*(stckcode:string,interval:string = "15min",timeperiod:string = 
     let jsonNode = parseJson(avdata)
     block jsonMeta:
         try:
-            printLnBiCol2("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
-            printLnBiCol2("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
-            printLnBiCol2("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
-            printLnBiCol2("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
-            printLnBiCol2("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
-            printLnBiCol2("UpperBand : " & $jsonNode["Meta Data"]["6.1: Deviation multiplier for upper band"].getInt(),xpos = xpos) 
-            printLnBiCol2("LowerBand : " & $jsonNode["Meta Data"]["6.2: Deviation multiplier for lower band"].getInt(),xpos = xpos) 
-            printLnBiCol2("MA Type   : " & $jsonNode["Meta Data"]["6.3: MA Type"].getInt(),xpos = xpos) 
-            printLnBiCol2("SeriesType: " & jsonNode["Meta Data"]["7: Series Type"].getStr(),xpos = xpos) 
-            printLnBiCol2("TimeZone  : " & jsonNode["Meta Data"]["8: Time Zone"].getStr(),xpos = xpos) 
+            printLnBiCol("Code      : " & jsonNode["Meta Data"]["1: Symbol"].getStr(),xpos = xpos)      
+            printLnBiCol("Indicator : " & jsonNode["Meta Data"]["2: Indicator"].getStr(),xpos = xpos) 
+            printLnBiCol("Last      : " & jsonNode["Meta Data"]["3: Last Refreshed"].getStr(),xpos = xpos) 
+            printLnBiCol("Interval  : " & jsonNode["Meta Data"]["4: Interval"].getStr(),xpos = xpos) 
+            printLnBiCol("TimePeriod: " & $jsonNode["Meta Data"]["5: Time Period"].getInt(),xpos = xpos) 
+            printLnBiCol("UpperBand : " & $jsonNode["Meta Data"]["6.1: Deviation multiplier for upper band"].getInt(),xpos = xpos) 
+            printLnBiCol("LowerBand : " & $jsonNode["Meta Data"]["6.2: Deviation multiplier for lower band"].getInt(),xpos = xpos) 
+            printLnBiCol("MA Type   : " & $jsonNode["Meta Data"]["6.3: MA Type"].getInt(),xpos = xpos) 
+            printLnBiCol("SeriesType: " & jsonNode["Meta Data"]["7: Series Type"].getStr(),xpos = xpos) 
+            printLnBiCol("TimeZone  : " & jsonNode["Meta Data"]["8: Time Zone"].getStr(),xpos = xpos) 
             echo()
         except: 
             printLnBiCol("[Error Message] : " & stckcode & " - " & indicator & " data unavailable",colLeft=red,xpos = xpos)
             var jerror = jsonNode["Error Message"].getStr()
             if jerror.len + xpos > tw - 5:
-                printLnBiCol2("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
+                printLnBiCol("Invalid API call. No valid json data returned.",colLeft = red,sep = "Invalid API call.",xpos = xpos) 
             else:    
-                printLnBiCol2(jerror,colLeft = red,sep = "Invalid API call.",xpos = xpos)
-            printLnBiCol2("[Note]          : Indicator data for some stocks / markets may not be available",colLeft=peru,xpos = xpos)     
+                printLnBiCol(jerror,colLeft = red,sep = "Invalid API call.",xpos = xpos)
+            printLnBiCol("[Note]          : Indicator data for some stocks / markets may not be available",colLeft=peru,xpos = xpos)     
             break jsonMeta
         
         var nsi = "Technical Analysis: $1" % indicator
