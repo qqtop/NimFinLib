@@ -47,7 +47,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2019-05-31
+## Latest      : 2019-07-11
 ##     
 ## Todo        : anything not yet done
 ##               
@@ -1262,7 +1262,7 @@ proc getavBBANDS*(stckcode:string,interval:string = "15min",timeperiod:string = 
         
         
 #var flag = 0
-template metal(dc:int,xpos:int):typed =
+template metal(dc:int,xpos:int):void =
     ## metal
     ## 
     ## utility template to display Kitco metal data
