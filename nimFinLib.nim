@@ -9,7 +9,7 @@
 ##
 ## Version     : 0.3.0.3
 ##
-## Compiler    : nim 0.19.x  dev branch
+## Compiler    : nim 1.0.0 and 1.0.99 devel branch
 ##
 ##
 ## Description : A basic library for financial data display and calculations 
@@ -47,7 +47,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2019-07-11
+## Latest      : 2019-10-01
 ##     
 ## Todo        : anything not yet done
 ##               

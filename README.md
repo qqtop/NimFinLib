@@ -60,7 +60,7 @@ Update Feb. 2019
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|
-| nimFinLib  | Development | 0.3.0.x | MIT opensource | Linux  | Nim >= 0.19.x  |
+| nimFinLib  | Development | 0.3.0.x | MIT opensource | Linux  | Nim >= 1.0.0   |
 
 
 
