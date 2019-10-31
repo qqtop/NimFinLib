@@ -55,7 +55,10 @@ Update Feb. 2019
             mainly Us-market focused so of limited use for anyone not trading or researching there.
             At least they currently (2019-02) promise up to 100 request/sec , which is more like it.
             
-            
+ 
+Update Oct. 2019
+
+            Library works with Nim 1.1.0
 
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
