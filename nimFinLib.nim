@@ -7,9 +7,9 @@
 ##
 ## License     : MIT opensource
 ##
-## Version     : 0.3.0.3
+## Version     : 0.3.0.5
 ##
-## Compiler    : nim 1.0.0 and 1.0.99 devel branch
+## Compiler    : Nim 1.5.1
 ##
 ##
 ## Description : A basic library for financial data display and calculations 
@@ -47,7 +47,7 @@
 ##
 ## ProjectStart: 2015-06-05 
 ## 
-## Latest      : 2019-10-01
+## Latest      : 2021-01-02
 ##     
 ## Todo        : anything not yet done
 ##               
@@ -69,19 +69,10 @@
 ## 
 ##               nimFinlib is being developed utilizing nimcx.nim module and nimdataframe.nim
 ##
-##               to improve coloring of data and positioning of output.
+##               to improve coloring of data and display positioning of output.
 ## 
 ##
-## Funding     :     Here are the options :
-##     
-##                   You are happy             ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
-##                   
-##                   You are not happy         ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
-##                 
-##                   You wish to donate        ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
-##                                       
-##                   You do not wish to donate ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
-##                                
+                                
  
 import nimcx
 import nimdataframe
@@ -90,9 +81,10 @@ import av_utils
 
 export av_utils
 
-let NIMFINLIBVERSION* = "0.3.0.3"   
+let NIMFINLIBVERSION* = "0.3.0.5"   
 
-# temporary holding place for data fetched from alphavantage , change directory as required by your setup below
+# temporary holding place for data fetched from alphavantage , 
+# change directory as required for your setup below
 var avtempdata* = "/dev/shm/avdata.csv"    
 
 const
@@ -535,7 +527,8 @@ proc showStocksDf*(stckcode: string,
         var ndf9 = createDataFrame(avtempdata,cols = 7,hasHeader = true)
         
         # here we start to add a new column not found in ndf9 (the original data received)
-        # we want it to be the first col of our df and in all rows has the stock code stckcode passed in above
+        # we want it to be the first column of our df and in all rows has the stock code 
+        # stckcode passed in above.
         # the way to do this is 
         var mynewcol:nimss = @[]
         for x in 0..<ndf9.rowcount-1: mynewcol.add(stckcode) 
@@ -547,6 +540,7 @@ proc showStocksDf*(stckcode: string,
         #dfsave(ndf9,"ndf9.csv")  # used in debugging for checking what we get here
         ndf9.colwidths = @[12,14,10,10,10,10,10,11]         # change the default columnwidths created in dfDefaultSetup
         # how to access a certain value from the df lets get  row 1 col 1
+        # todo: consider a proc getDfValue(row,col):string for esier access
         #echo parsefloat(ndf9.df[0][1])
         #echo parsefloat(ndf9.df[0][4])
         
@@ -1425,7 +1419,7 @@ proc showKitcoMetal*(xpos:int = 1) =
           discard
     except OSError:
           discard
-    except OverflowError:
+    except OverflowDefect:
           discard
     except  TimeoutError:
          printLn("TimeoutError : " & getCurrentExceptionMsg(),truetomato,xpos = xpos)

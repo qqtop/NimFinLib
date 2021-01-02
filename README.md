@@ -46,24 +46,23 @@ Update Oct. 2018
 Update Feb. 2019
 
             Made the library compile with latest nim devel
-            Call frequency limit stated above has unfortunately not improved .
+            Call frequency limit stated above has unfortunately not improved so far.
             The current nagging line is:
                "Thank you for using Alpha Vantage! Our standard API call frequency is 5 
                calls per minute and 500 calls per day."
             
-            Next maybe will be looking into https://iextrading.com/developer/ , however this api is 
-            mainly Us-market focused so of limited use for anyone not trading or researching there.
-            At least they currently (2019-02) promise up to 100 request/sec , which is more like it.
-            
+            Another option may be IEX https://iextrading.com/developer
+            a very limited free plan appears to be available
+                        
  
-Update Oct. 2019
+Update Jan. 2021
 
-            Library works with Nim 1.1.0
+            Library works with Nim 1.5.1
 
 
 | Library    | Status      | Version | License        | OS     | Compiler       |
 |------------|-------------|---------|----------------|--------|----------------|
-| nimFinLib  | Development | 0.3.0.x | MIT opensource | Linux  | Nim >= 1.0.0   |
+| nimFinLib  | Development | 0.3.0.x | MIT opensource | Linux  | Nim >= 1.4.2   |
 
 
 
@@ -191,3 +190,4 @@ NOTE :
               
 
 ![Image](http://qqtop.github.io/qqtop-small.png?raw=true)
+ qqTop  -  2021
